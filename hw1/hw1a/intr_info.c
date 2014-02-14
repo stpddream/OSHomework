@@ -25,6 +25,7 @@ int get_intr_info() {
         }        
         
     }          
+    fclose(fp);
     return -1;
     
 }

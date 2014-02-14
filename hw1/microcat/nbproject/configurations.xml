@@ -37,6 +37,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <linkerTool>
+          <output>out/microcat</output>
+        </linkerTool>
       </compileType>
       <item path="cat.c" ex="false" tool="0" flavor2="0">
       </item>

@@ -8,35 +8,43 @@
  * of readin file
  * @return -1 if error, 0 otherwise
  */
-int cat(char* read_path, char* write_path) {
-    
+int cat(char* read_path, char* write_path, int app_flag) {
+           
     //Process path of readin file/stdin and open iostream
-    int rfd;
-    if(strcmp(read_path, "-") == 0) rfd = 1;
-    else {
-        if((rfd = open(read_path, O_RDONLY)) == -1) {
-            return -1;
-        } 
+    int rfd = 1;
+    if(read_path[0] == '-' && read_path[1] == '\0') rfd = 1;
+    else if((rfd = open(read_path, O_RDONLY)) == -1) {
+        return -1;        
+    }   
+    
+     
+    //Process path of output file/stdout and open iostream    
+    int w_flags = O_WRONLY | O_CREAT | ((app_flag == APP_ON) ? O_APPEND : O_TRUNC);
+    
+    int wfd = 1;
+    if(write_path != NULL && 
+        (wfd = open(write_path, w_flags, 0640)) == -1) {
+        return -1;           
     }
     
-    //Process path of output file/stdout and open iostream
-    int wfd = 1;
-    if(write_path != NULL) {
-        if((wfd = open(write_path, O_WRONLY)) == -1) {
-            return -1;   
-        }
-    }
-        
+
     //Incrementally read and write
     char buff[BUFF_SZ];
     int n;
     while((n = read(rfd, buff, BUFF_SZ)) > 0) {
-        write(wfd, buff, n);
+        if(write(wfd, buff, n)  == -1) {                    
+            return -1;
+        }
     }
     
     //Clean up
-    close(rfd);
-    close(wfd);
+    //STDIN/OUT shouldn't be closed
+    if(rfd != 1) {
+        if(close(rfd) == -1) return -1; 
+    }
+    if(wfd != 1) {
+        if(close(wfd) == -1) return -1;   
+    }
     
     return 0;
 }

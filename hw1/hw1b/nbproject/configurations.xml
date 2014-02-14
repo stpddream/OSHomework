@@ -37,6 +37,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <linkerTool>
+          <output>out/hw1b</output>
+        </linkerTool>
       </compileType>
       <item path="intr_info.c" ex="false" tool="0" flavor2="0">
       </item>

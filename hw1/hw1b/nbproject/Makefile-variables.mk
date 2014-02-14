@@ -8,9 +8,9 @@ CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
-CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
+CND_ARTIFACT_DIR_Debug=out
 CND_ARTIFACT_NAME_Debug=hw1b
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/hw1b
+CND_ARTIFACT_PATH_Debug=out/hw1b
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
 CND_PACKAGE_NAME_Debug=hw1b.tar
 CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/hw1b.tar

@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
         
         //Print values
         printf("[Total]: %d\n", intr_total_count);                        
-        printf("[In 1s]: %d\n", intr_second_count);
+        printf("[In %ds]: %d\n", sec, intr_second_count);
         printf("........Updating........\n");
                
     }

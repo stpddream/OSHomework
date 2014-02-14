@@ -8,17 +8,17 @@
 #ifndef CAT_H
 #define	CAT_H
 
-
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <string.h>
 
 #define BUFF_SZ 100
 
-int cat(char*, char*);
+#define APP_ON 1
+#define APP_OFF 0
+
+int cat(char*, char*, int);
 
 #endif	/* CAT_H */
 
