@@ -11,7 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ctype.h"
+#include <ctype.h>
+#include "cmd_history.h"
 
 #define MAX_ARG_NUM 30
 

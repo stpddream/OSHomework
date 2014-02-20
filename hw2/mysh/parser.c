@@ -1,5 +1,6 @@
 #include "parser.h"
 
+extern HistoryList* hist_list;
 
 void parse_args(char* cmd_str, char** args) {
     
@@ -8,7 +9,7 @@ void parse_args(char* cmd_str, char** args) {
         token = strtok(cmd_str, " ");                    
         while(token) {           
             args[i++] = strip_space(token);
-            token = strtok(NULL, " ");           
+            token = strtok(NULL, " ");                              
         }        
         args[i] = NULL;
         

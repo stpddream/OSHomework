@@ -4,8 +4,9 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>cmd_control.h</itemPath>
       <itemPath>cmd_history.h</itemPath>
-      <itemPath>command.h</itemPath>
+      <itemPath>exception.h</itemPath>
       <itemPath>parser.h</itemPath>
       <itemPath>util.h</itemPath>
     </logicalFolder>
@@ -16,8 +17,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>cmd_control.c</itemPath>
       <itemPath>cmd_history.c</itemPath>
-      <itemPath>command.c</itemPath>
+      <itemPath>exception.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>parser.c</itemPath>
       <itemPath>util.c</itemPath>
@@ -47,13 +49,17 @@
           <output>mysh</output>
         </linkerTool>
       </compileType>
+      <item path="cmd_control.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmd_control.h" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmd_history.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmd_history.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="command.c" ex="false" tool="0" flavor2="0">
+      <item path="exception.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="command.h" ex="false" tool="0" flavor2="0">
+      <item path="exception.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -86,13 +92,17 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="cmd_control.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmd_control.h" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmd_history.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmd_history.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="command.c" ex="false" tool="0" flavor2="0">
+      <item path="exception.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="command.h" ex="false" tool="0" flavor2="0">
+      <item path="exception.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>

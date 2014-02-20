@@ -7,9 +7,14 @@
 
 #ifndef UTIL_H
 #define	UTIL_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int mod(int, int);
-
+void print_cmd(char**);
+int cmd_compare(char**, char**);
+char* substring(char*, int, int);
 
 #endif	/* UTIL_H */
 

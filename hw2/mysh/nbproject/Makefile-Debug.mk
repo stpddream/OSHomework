@@ -35,8 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/cmd_control.o \
 	${OBJECTDIR}/cmd_history.o \
-	${OBJECTDIR}/command.o \
+	${OBJECTDIR}/exception.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/parser.o \
 	${OBJECTDIR}/util.o
@@ -65,20 +66,25 @@ LDLIBSOPTIONS=
 mysh: ${OBJECTFILES}
 	${LINK.c} -o mysh ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/cmd_control.o: cmd_control.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmd_control.o cmd_control.c
+
+${OBJECTDIR}/cmd_control.h.gch: cmd_control.h 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o "$@" cmd_control.h
+
 ${OBJECTDIR}/cmd_history.o: cmd_history.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmd_history.o cmd_history.c
 
-${OBJECTDIR}/command.o: command.c 
+${OBJECTDIR}/exception.o: exception.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/command.o command.c
-
-${OBJECTDIR}/command.h.gch: command.h 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o "$@" command.h
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/exception.o exception.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}

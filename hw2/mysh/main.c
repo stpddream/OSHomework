@@ -13,15 +13,18 @@
 #include <sys/signal.h>
 
 #include "parser.h"
-#include "command.h"
+#include "cmd_control.h"
 #include "cmd_history.h"
+#include "util.h"
 
 char* path;
-char* args[MAX_ARG_NUM];
+char** args;
+
 HistoryList* hist_list;
 
-
-
+/**
+ * Clean up before exit, prevent memory leak
+ */
 void clean_up() {
     int i = 0;
     while(!args[i]) {
@@ -39,12 +42,11 @@ void term_handler(int sig_num) {
 
 
 
-
 /*
  * 
  */
 int main(int argc, char** argv) {
-
+            
     //Register handler
     if(signal(SIGTERM, term_handler) == SIG_ERR) {
         fprintf(stderr, "Unable to register handler\n");
@@ -52,15 +54,16 @@ int main(int argc, char** argv) {
     }
     
     hist_list = histlst_create(MAX_HIST);
+    
 
     printf("======== Welcome to ^ ^ ST Terminal! ========= \n");
-        
+    
     while(1) {
         printf(">> ");      
         
-        char* cmd = NULL;
+        char* cmd = NULL;   
+        args = (char**)malloc(sizeof(char*)*MAX_ARG_NUM);
         size_t size;
-  
           
         if(getline(&cmd, &size, stdin) == -1) {
             fprintf(stderr, "IO Error\n");
@@ -68,28 +71,14 @@ int main(int argc, char** argv) {
                               
         //Parse arguments
         parse_args(cmd, args);
-        path = args[0];
         
-        //Program execution
-          
-        pid_t pid;
-        if((pid = fork()) > 0) {
-            //Parent
-            wait();            
-            histlst_add(hist_list, strip_space(cmd));
-        }
-        else if(pid == 0) {                       
-            //Child          
-            
-            if(exec_sh(path, args) == -1) {
-                fprintf(stderr, "Program Execution Error\n");
-            } 
-            return (EXIT_SUCCESS);
-        }
-          
+        //Execute 
+        path = args[0];
+        exec_sh(path, args);
+             
     }
     
-    
+    clean_up();
     
     return (EXIT_SUCCESS);
 }

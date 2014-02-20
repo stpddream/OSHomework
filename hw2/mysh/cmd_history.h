@@ -16,7 +16,7 @@
 
 typedef struct {
     
-    char** contents;
+    char*** contents;
     int cursor;    
     int head;
     int capacity;
@@ -25,8 +25,8 @@ typedef struct {
 } HistoryList;
 
 HistoryList* histlst_create(int);
-int histlst_add(HistoryList*, char*);
-char* histlst_get(HistoryList*, int);
+int histlst_add(HistoryList*, char**);
+char** histlst_get_recent(HistoryList*, int);
 int histlst_is_empty(HistoryList*);
 
 
