@@ -62,10 +62,6 @@ int main(int argc, char** argv) {
 
     printf("Remove a null job: %d", jobs_remove(23));
     
-    
-    
-    
-    
     exit(0);
     
     

@@ -1,5 +1,6 @@
 #include "jobs.h"
 
+int id_edge = 0;
 
 Job* job_createc(int id) {
     //Simple job create func for test
@@ -12,9 +13,9 @@ Job* job_createc(int id) {
 /**
  * Constructor for Job 
  */
-Job* job_create(int id, int status, char* path, pid_t pid) {
+Job* job_create(int status, char* path, pid_t pid) {
     Job* new_job = (Job*)malloc(sizeof(Job));
-    new_job->id = id;
+    new_job->id = id_edge++;
     new_job->status = status;
     new_job->path = path;
     new_job->pid = pid;
@@ -93,6 +94,20 @@ Job* jobs_get(int id) {
     }
     return NULL;
 }
+
+
+void jobs_print() {
+    ListNode* current = head->next;
+    
+    while(current != NULL) {
+        printf("[%d] ", current->job->id);
+        if(current->job->status == JOB_BACK) printf("Running");
+        printf("\t%s\n", current->job->path);
+        current = current->next;
+    }
+}
+    
+
 
 
 //Test func to print the whole list

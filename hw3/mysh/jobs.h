@@ -27,7 +27,7 @@ typedef struct {
 } Job;
 
 
-Job* job_create(int, int, char*, pid_t);
+Job* job_create(int, char*, pid_t);
 Job* job_createc(int);
 
 typedef struct List_Node {
@@ -39,6 +39,7 @@ typedef struct List_Node {
 ListNode *head;
 ListNode *tail;
 int size;
+int id_edge; //Next id to be allocated
 
 int jobs_init();
 int jobs_add(Job*);
