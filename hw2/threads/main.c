@@ -2,11 +2,8 @@
  * Project: threads
  * File:   main.c
  * Author: Panda
- *
  * Created on February 17, 2014, 4:42 PM
  */
-
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,15 +22,26 @@ int MAX_ROW_SUM;
 unsigned int seeds[N][N];
 pthread_mutex_t mp;
 
+/**
+ * Randomly write a value of matrix A and B
+ * @param loc x: loc[0], y:loc[1]
+ * @return 
+ */
 void* write_mat(void* loc) {
     int* pos = (int*)loc;          
-    A[pos[0]][pos[1]] = rand_r(&seeds[pos[0]][pos[1]]) % 5; 
-    B[pos[0]][pos[1]] = rand_r(&seeds[pos[1]][pos[0]]) % 5;        
+      
+    A[pos[0]][pos[1]] = rand_r(&seeds[pos[0]][pos[1]]) % 899 + 100; 
+    B[pos[0]][pos[1]] = rand_r(&seeds[pos[0]][pos[1]]) % 899 + 100;        
 }
 
+
+/**
+ * Thread func that claculate one cell (x, y) of mult of two matrix
+ * @param loc: x: loc[0], y: loc[1]
+ * @return 
+ */
 void* eval_mult(void* loc) {
-    int* pos = (int*)loc;
-    
+    int* pos = (int*)loc;    
     int i;
     int sum = 0;   
     
@@ -41,9 +49,14 @@ void* eval_mult(void* loc) {
         sum += A[pos[0]][i] * B[i][pos[1]];        
     }
     C[pos[0]][pos[1]] = sum;
-    
 }
 
+
+/**
+ * Update row sum thread
+ * @param row
+ * @return 
+ */
 void* update_row_sum(void* row) {
     int* r = (int*)row;
     int i;
@@ -51,31 +64,26 @@ void* update_row_sum(void* row) {
     for(i = 0; i < *r; i++) {
         sum += C[*r][i];
     }
+       
+    //Sleep for some random seconds
+    int sec = rand_r(&seeds[0][*r]) % 5 + 1;
+    sleep(sec);
     
-    printf("sum: %d\n", sum);
-
-    //update
+    //Mutual exclusion
     pthread_mutex_lock(&mp);
     if(sum > MAX_ROW_SUM) {
         MAX_ROW_SUM = sum;
     }    
     pthread_mutex_unlock(&mp);
-    
-    int sec = rand_r(&seeds[0][*r]) % 5 + 1;
-    sleep(sec);
-   
 }
 
 
 
 /**
- * Print out a matrix
- * @param mat
- * @param cols
- * @param rows
+ * Print out a N*N matrix
+ * @param mat 
  */
-void print_mat(int mat[][N]) {
-    
+void print_mat(int mat[][N]) {    
     int i;
     int j;
     
@@ -84,8 +92,7 @@ void print_mat(int mat[][N]) {
             printf("%d ", mat[i][j]);            
         }
         printf("\n");
-    }
-    
+    }    
 }
 
 
@@ -96,23 +103,25 @@ int main(int argc, char** argv) {
     int j;
     
     pthread_mutex_init(&mp, NULL);
-    printf("Start\n");
-    
+
+    /* Fill in matrix A and B with random numbers */
     pthread_t tid[N][N];
-    
+    int pos[N][N][2]; 
+        
     for(i = 0; i < N; i++) {
         for(j = 0; j < N; j++) {                               
-            int* pos = (int*)malloc(sizeof(int)*2); //Memory leak?
-            pos[0] = i;
-            pos[1] = j;
-            seeds[i][j] = (int)tid + (i + 10) * (j + 22); //Each thread has its own seed
-//            int pos[2] = {i, j};   //A question to be asked why this won't work          
-            pthread_create(&tid[i][j], NULL, write_mat, pos);
+            pos[i][j][0] = i;
+            pos[i][j][1] = j;
             
+            //Generate seed for each thread             
+            struct timeval tv;            
+            gettimeofday(&tv,NULL);
+            seeds[i][j] = (unsigned int)tid + i * 10 + j * 13 + tv.tv_usec; 
+            
+            pthread_create(&tid[i][j], NULL, write_mat, pos[i][j]);            
         }
     }
-    
-    
+        
     for(i = 0; i < N; i++) {
         for(j = 0; j < N; j++) {
             pthread_join(tid[i][j], NULL);
@@ -124,18 +133,19 @@ int main(int argc, char** argv) {
     printf("\n");
     printf("==== Matrix B ====\n");
     print_mat(B);
+    printf("\n");
+
     
-    //Print out matrix C 
-    //Optimize: use DP
-    
+    /* Calculate C = A x B */    
+    //TODO: Optimize: use DP 
+    //Too lazy to optimize, not sure how DP works in multithread
     pthread_t tids[N][N];
     
     for(i = 0; i < N; i++) {
-        for(j = 0; j < N; j++) {
-            int* pos = (int*)malloc(sizeof(int)*2);
-            pos[0] = i;
-            pos[1] = j;       
-            pthread_create(&tids[i][j], NULL, eval_mult, pos);
+        for(j = 0; j < N; j++) {            
+            pos[i][j][0] = i;
+            pos[i][j][1] = j;       
+            pthread_create(&tids[i][j], NULL, eval_mult, pos[i][j]);
         }
     }
     
@@ -147,25 +157,26 @@ int main(int argc, char** argv) {
 
     printf("==== Matrix C ====\n");
     print_mat(C);
+    printf("\n");
 
     
     /* Calculate the max row sum */
-    MAX_ROW_SUM = 0;
-    
+    MAX_ROW_SUM = 0;    
     pthread_t stid[N];
-    
+        
+    int row[N];
     for(i = 0; i < N; i++) {
-        int* row = (int*)malloc(sizeof(int));
-        *row = i;
-        pthread_create(&stid[i], NULL, update_row_sum, row);
+        row[i] = i;
+        pthread_create(&stid[i], NULL, update_row_sum, &row[i]);
     }
     
     for(i = 0; i < N; i++) {
         pthread_join(stid[i], NULL);
     }
     
-    printf("%d\n", MAX_ROW_SUM);
+    printf("Max Sum: %d\n", MAX_ROW_SUM);
     pthread_mutex_destroy(&mp);
+    
     return (EXIT_SUCCESS);
 }
 

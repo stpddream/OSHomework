@@ -56,10 +56,11 @@ LDLIBSOPTIONS=-pthread
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk threads
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk out/threads
 
-threads: ${OBJECTFILES}
-	${LINK.c} -o threads ${OBJECTFILES} ${LDLIBSOPTIONS}
+out/threads: ${OBJECTFILES}
+	${MKDIR} -p out
+	${LINK.c} -o out/threads ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -72,7 +73,7 @@ ${OBJECTDIR}/main.o: main.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} threads
+	${RM} out/threads
 
 # Subprojects
 .clean-subprojects:

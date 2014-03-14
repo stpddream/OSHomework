@@ -9,8 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
-#include <sys/signal.h>
 
 #include "parser.h"
 #include "cmd_control.h"
@@ -26,40 +24,36 @@ HistoryList* hist_list;
  * Clean up before exit, prevent memory leak
  */
 void clean_up() {
+    
     int i = 0;
-    while(!args[i]) {
-        free(args[i]);
-    }
     
+    while(i < hist_list->size) {
+        int j = 0;
+        while(hist_list->contents[i][j] != NULL) {
+            free(hist_list->contents[i][j]);
+            j++;
+        }
+        i++;
+    }
     free(hist_list);
-}
-
-void term_handler(int sig_num) {
-    clean_up();
-    exit(0);
+    free(args);
 }
 
 
-
-
-/*
- * 
- */
-int main(int argc, char** argv) {
-            
-    //Register handler
-    if(signal(SIGTERM, term_handler) == SIG_ERR) {
-        fprintf(stderr, "Unable to register handler\n");
-        b_exit(3);
+int main(int argc, char** argv) {           
+    
+    char* hist_size_ch = getenv("HISTSIZE");
+    int hist_size;
+    if(hist_size_ch == NULL || int_valueof(hist_size_ch, &hist_size) == -1) {
+        hist_size = MAX_HIST;
     }
-    
-    hist_list = histlst_create(MAX_HIST);
-    
+    hist_list = histlst_create(hist_size);    
 
     printf("======== Welcome to ^ ^ ST Terminal! ========= \n");
     
     while(1) {
-        printf(">> ");      
+        char* curDir = getenv("PWD");     
+        printf("%s >> ", curDir);      
         
         char* cmd = NULL;   
         args = (char**)malloc(sizeof(char*)*MAX_ARG_NUM);
@@ -74,7 +68,7 @@ int main(int argc, char** argv) {
         
         //Execute 
         path = args[0];
-        exec_sh(path, args);
+        exec_sh(path, args);        
              
     }
     

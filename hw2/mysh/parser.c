@@ -11,7 +11,7 @@ void parse_args(char* cmd_str, char** args) {
             args[i++] = strip_space(token);
             token = strtok(NULL, " ");                              
         }        
-        args[i] = NULL;
+        args[i] = NULL;       
         
 }
 

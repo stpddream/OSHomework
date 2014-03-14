@@ -5,3 +5,11 @@
 /hw2/threads/build/
 /hw2/mysh/build/
 /hw2/mysh/dist/
+/hw2/README.txt~
+/hw3/baboon/build/
+/hw3/baboon/dist/
+/hw3/share_memory/build/
+/hw3/share_memory/dist/
+/hw3/mysh/build/
+/hw3/mysh/out/
+**/*#

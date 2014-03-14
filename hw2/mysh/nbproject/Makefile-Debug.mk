@@ -61,10 +61,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk mysh
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk out/mysh
 
-mysh: ${OBJECTFILES}
-	${LINK.c} -o mysh ${OBJECTFILES} ${LDLIBSOPTIONS}
+out/mysh: ${OBJECTFILES}
+	${MKDIR} -p out
+	${LINK.c} -o out/mysh ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/cmd_control.o: cmd_control.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -107,7 +108,7 @@ ${OBJECTDIR}/util.o: util.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} mysh
+	${RM} out/mysh
 
 # Subprojects
 .clean-subprojects:

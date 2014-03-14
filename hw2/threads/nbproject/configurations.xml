@@ -36,7 +36,7 @@
       </toolsSet>
       <compileType>
         <linkerTool>
-          <output>threads</output>
+          <output>out/threads</output>
           <linkerLibItems>
             <linkerOptionItem>-pthread</linkerOptionItem>
           </linkerLibItems>

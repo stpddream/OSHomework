@@ -49,14 +49,13 @@ int cmd_compare(char** a, char** b) {
 /**
  * Non standard substring function
  * @param str
- * @param start index (starting from 0) inclusive
- * @param end index exclusive
+ * @param start: index (starting from 0) inclusive
+ * @param end: index exclusive
  * @return substring
  */
 char* substring(char* str, int start, int end) {    
       char* num = (char*)malloc(sizeof(char)*(end - start + 1));
-      strncpy(num, str + start, end - start);
-      printf("%s\n", num);
+      strncpy(num, str + start, end - start);      
       return num;
 }
 
@@ -64,7 +63,7 @@ char* substring(char* str, int start, int end) {
 /**
  * Non standard atoi function with error check
  * @param str
- * @param res result integer
+ * @param res: result integer
  * @return 
  */
 int int_valueof(char* str, int* res) {
@@ -81,3 +80,14 @@ int int_valueof(char* str, int* res) {
     return 0;
 }
 
+
+
+extern void clean_up();
+
+/**
+ * Exit program and do clean up
+ */
+void exit_clean() {
+    clean_up();
+    exit(0);
+}

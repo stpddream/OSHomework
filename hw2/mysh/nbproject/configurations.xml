@@ -46,7 +46,7 @@
       </toolsSet>
       <compileType>
         <linkerTool>
-          <output>mysh</output>
+          <output>out/mysh</output>
         </linkerTool>
       </compileType>
       <item path="cmd_control.c" ex="false" tool="0" flavor2="0">
