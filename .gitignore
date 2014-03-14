@@ -1,6 +1,7 @@
 **/build
 **/dist
 **/.dep.inc
+**/*~
 /hw2/threads/dist/
 /hw2/threads/build/
 /hw2/mysh/build/
