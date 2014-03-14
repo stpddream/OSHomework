@@ -14,6 +14,7 @@
 #include "cmd_control.h"
 #include "cmd_history.h"
 #include "util.h"
+#include "jobs.h"
 
 char* path;
 char** args;
@@ -40,7 +41,33 @@ void clean_up() {
 }
 
 
-int main(int argc, char** argv) {           
+int main(int argc, char** argv) {        
+    
+    jobs_init();
+    
+    printf("Nothing in the list %d\n", jobs_remove(20));
+    
+    jobs_add(job_createc(10));
+    print_jobs();
+    jobs_add(job_createc(20));
+    print_jobs();
+    jobs_add(job_createc(50));
+    print_jobs();
+    jobs_add(job_createc(100));
+    print_jobs();
+    
+    jobs_remove(20);
+    print_jobs();
+   
+
+    printf("Remove a null job: %d", jobs_remove(23));
+    
+    
+    
+    
+    
+    exit(0);
+    
     
     char* hist_size_ch = getenv("HISTSIZE");
     int hist_size;
