@@ -25,6 +25,15 @@ int b_repeat_cmd(int n) {
 }
 
 
+int b_jobs() {
+    jobs_print();
+}
+
+int b_kill() {
+    
+}
+
+
 /* ===== Command execution functions ===== */
 
 int exec_sh(char* path, char** args) {

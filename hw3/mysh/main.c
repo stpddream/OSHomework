@@ -9,12 +9,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <sys/types.h>
+
 
 #include "parser.h"
 #include "cmd_control.h"
 #include "cmd_history.h"
 #include "util.h"
 #include "jobs.h"
+
+#define MAX_CMD 20
 
 char* path;
 char** args;
@@ -44,24 +50,42 @@ void clean_up() {
 int main(int argc, char** argv) {        
     
     jobs_init();
+        
+    char* input;
+    char** cmdlines = malloc(MAX_CMD*sizeof(char*));
+    char** args = malloc(MAX_CMD*sizeof(char*));
+    int i, j;
+    int n_cmd, n_args;
     
-    printf("Nothing in the list %d\n", jobs_remove(20));
-    
-    jobs_add(job_createc(10));
-    print_jobs();
-    jobs_add(job_createc(20));
-    print_jobs();
-    jobs_add(job_createc(50));
-    print_jobs();
-    jobs_add(job_createc(100));
-    print_jobs();
-    
-    jobs_remove(20);
-    print_jobs();
-   
+    while(1){
+        if((input = readline(""))!=NULL){
+            jobs_init();
+            n_cmd = parse_args(input, cmdlines);
+            printf("Command num: %d", n_cmd);
+            for(i = 0; i < n_cmd; i++){
+                
+                Job* new_job = job_create((cmdlines[i][0] == '&'? JOB_BACK:JOB_FORE),cmdlines[i]+1,0);  
+                jobs_add(new_job);
+                /*
+                n_args = parse_space(cmdlines[i]+1, args);
+                for(j = 0; j < n_args; j++){
+                    printf("%s\n",args[j]);
+                }*/
 
-    printf("Remove a null job: %d", jobs_remove(23));
+            }
+            
+	    //print_jobs();
+              jobs_print(); 
+        }
+        // Free input.
+        free(input);
+    }
+   return 0; 
+
     
+    
+
+
     exit(0);
     
     

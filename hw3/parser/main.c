@@ -21,8 +21,8 @@ int main(){
 
             }
             
-        print_jobs();
-        jobs_print(); 
+	    //print_jobs();
+              jobs_print(); 
         }
         // Free input.
         free(input);

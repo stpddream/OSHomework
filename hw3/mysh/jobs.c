@@ -31,7 +31,7 @@ Job* job_create(int status, char* path, pid_t pid) {
 int jobs_init() {
     //Init Dummy Node
     head = (ListNode*)malloc(sizeof(ListNode));
-    head->job = job_create(INT_MAX, -1, NULL, 0); //Dummy Node
+    head->job = job_create(-1, NULL, 0); //Dummy Node
     tail = head;
     size = 0;
 }

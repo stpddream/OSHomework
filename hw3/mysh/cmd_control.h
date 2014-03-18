@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <string.h>
 #include "cmd_history.h"
+#include "jobs.h"
 
 int save_flag;
 

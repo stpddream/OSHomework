@@ -49,6 +49,7 @@ Job* jobs_get(int);
 
 
 void print_jobs();
+void jobs_print();
 
 
 #endif	/* JOBLIST_H */
