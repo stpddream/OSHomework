@@ -34,6 +34,8 @@ int jobs_init() {
     head->job = job_create(-1, NULL, 0); //Dummy Node
     tail = head;
     size = 0;
+    head->next = NULL;
+    return 0;
 }
 
 /**
