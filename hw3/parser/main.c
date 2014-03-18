@@ -13,7 +13,8 @@ int main(){
                 
                 Job* new_job = job_create((cmdlines[i][0] == '&'? JOB_BACK:JOB_FORE),cmdlines[i]+1,0);  
                 jobs_add(new_job);
-                /*
+
+               /* 
                 n_args = parse_space(cmdlines[i]+1, args);
                 for(j = 0; j < n_args; j++){
                     printf("%s\n",args[j]);
