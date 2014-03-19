@@ -82,6 +82,15 @@ int int_valueof(char* str, int* res) {
 
 
 
+void print_usage(int cmd_id){
+    if(cmd_id == KILL) {
+        printf("kill: usage: kill [-9] jid | pid\n");
+    } else if (cmd_id == FG) {
+    } else if (cmd_id == BG) {
+    }
+}
+
+
 extern void clean_up();
 
 /**

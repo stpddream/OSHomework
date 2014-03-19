@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <readline/readline.h>
 #include <sys/types.h>
 
@@ -21,9 +22,14 @@
 #include "jobs.h"
 
 #define MAX_CMD 20
+#define MAX_ARG_LEN 256
+
 
 char* path;
-char** args;
+char** args; //// Deprecated
+char** commands;
+char* cmd;
+char* line;
 
 HistoryList* hist_list;
 
@@ -46,81 +52,69 @@ void clean_up() {
     free(args);
 }
 
+/*
+void free_everything(){
+    clean_cmdlines();
+    clean_args();
+    free(input);
+    //TODO: clean up jobs list
+}*/
+/*
+void clean_cmdlines(){
+    int i;
+    for(i =0; i < n_cmd; i++)
+        free(cmds[i]);
+    free(cmdlines);
+}*/
+
+
+
+
+
 
 int main(int argc, char** argv) {        
     
-    jobs_init();
-        
-    char* input;
-    char** cmdlines = malloc(MAX_CMD*sizeof(char*));
-    char** args = malloc(MAX_CMD*sizeof(char*));
-    int i, j;
-    int n_cmd, n_args;
+    /***** Block Signals *****/
+    /*
+    sigset_t block_mask;
+    sigaddset(&block_mask, SIGINT);
+    sigaddset(&block_mask, SIGTSTP);
+    sigprocmask(SIG_BLOCK, &block_mask, NULL);
+*/
+    /***** Set signal handlers *****/
     
-    while(1){
-        if((input = readline(""))!=NULL){
-            jobs_init();
-            n_cmd = parse_args(input, cmdlines);
-            printf("Command num: %d", n_cmd);
-            for(i = 0; i < n_cmd; i++){
-                
-                Job* new_job = job_create((cmdlines[i][0] == '&'? JOB_BACK:JOB_FORE),cmdlines[i]+1,0);  
-                jobs_add(new_job);
-                /*
-                n_args = parse_space(cmdlines[i]+1, args);
-                for(j = 0; j < n_args; j++){
-                    printf("%s\n",args[j]);
-                }*/
-
-            }
+    signal_wrapper(SIGCHLD, sigchld_handler);  
+    signal(SIGTSTP, sigtstp_handler);
             
-	    //print_jobs();
-              jobs_print(); 
+    commands = malloc(MAX_CMD*sizeof(char*));
+    
+    jobs_init();   
+    int n_cmd, n_args;
+        
+    while(1) {
+        
+        if((line = readline(">>> ")) == NULL) {
+            perror("IO Error\n");
+            return 1;
         }
-        // Free input.
-        free(input);
+                    
+        //allocates memory to cmdlines array and parse the input       
+        n_cmd = parse_args(line, commands);
+             
+        //further parse each commands and execute the commands
+        int i;      
+        for(i = 0; i < n_cmd; i++){    
+            args = (char**)malloc(sizeof(char*)*MAX_ARG_LEN);
+            cmd = (char*)malloc(sizeof(char*)*strlen(commands[i]));            
+            strcpy(cmd, commands[i]); //Preserve the original string                        
+            n_args = parse_space(commands[i] + 1, args);                                           
+            exec_sh(args, n_args, cmd);
+        }
+
+
     }
    return 0; 
-
     
-    
-
-
-    exit(0);
-    
-    
-    char* hist_size_ch = getenv("HISTSIZE");
-    int hist_size;
-    if(hist_size_ch == NULL || int_valueof(hist_size_ch, &hist_size) == -1) {
-        hist_size = MAX_HIST;
-    }
-    hist_list = histlst_create(hist_size);    
-
-    printf("======== Welcome to ^ ^ ST Terminal! ========= \n");
-    
-    while(1) {
-        char* curDir = getenv("PWD");     
-        printf("%s >> ", curDir);      
-        
-        char* cmd = NULL;   
-        args = (char**)malloc(sizeof(char*)*MAX_ARG_NUM);
-        size_t size;
-          
-        if(getline(&cmd, &size, stdin) == -1) {
-            fprintf(stderr, "IO Error\n");
-        }
-                              
-        //Parse arguments
-        parse_args(cmd, args);
-        
-        //Execute 
-        path = args[0];
-        exec_sh(path, args);        
-             
-    }
-    
-    clean_up();
-    
-    return (EXIT_SUCCESS);
 }
+
 

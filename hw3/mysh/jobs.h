@@ -12,12 +12,14 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
-
+#include <string.h>
 
 
 #define JOB_BACK 0
 #define JOB_FORE 1
 #define JOB_SUSP 2
+
+#define TAIL_ID -2
 
 typedef struct {
 	int id;
@@ -29,7 +31,7 @@ typedef struct {
 
 Job* job_create(int, char*, pid_t);
 Job* job_createc(int);
-
+void job_free(Job*);
 typedef struct List_Node {
     Job* job;
     struct List_Node* next;
@@ -43,14 +45,16 @@ int id_edge; //Next id to be allocated
 
 int jobs_init();
 int jobs_add(Job*);
-int jobs_remove(int);
+int jobs_remove_by_jid(int);
+int jobs_remove_by_pid(pid_t);
 int jobs_is_empty();
-Job* jobs_get(int);
-
+Job* jobs_get_by_jid(int);
+Job* jobs_get_by_pid(pid_t);
 
 void print_jobs();
 void jobs_print();
 
+Job* get_fg_job();
 
 #endif	/* JOBLIST_H */
 

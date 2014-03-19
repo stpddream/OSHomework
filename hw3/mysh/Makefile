@@ -28,4 +28,4 @@ util.o: util.c util.h
 
 
 clean:
-	rm *.o *~ mysh *.swp
+	rm *.o mysh

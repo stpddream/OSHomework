@@ -29,6 +29,7 @@ typedef struct {
 HistoryList* histlst_create(int);
 int histlst_add(HistoryList*, char**);
 char** histlst_get_recent(HistoryList*, int);
+char** histlst_get(HistoryList*, int);
 int histlst_is_empty(HistoryList*);
 int histlst_get_id(HistoryList*, int);
 

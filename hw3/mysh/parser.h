@@ -17,9 +17,10 @@
 
 #define MAX_ARG_NUM 30
 
-int parse_args(char*, char**);
 char* strip_space(char*);
 
+int parse_args(char*, char**);
+int parse_space(char*, char**);
 
 
 

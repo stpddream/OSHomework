@@ -1,45 +1,40 @@
 #include "parser.h"
 #include "jobs.h"
 
-extern HistoryList* hist_list;
-
-int parse_args(char* cmdline, char** cmdlines ){
+int parse_args(char* line, char** commands) {
     char* prv;
-    int i = 0;
-    int flag;  
+    int count = 0;
+    int back_flag = 0;
 	
-    i = 0;
-    while(*cmdline != '\0'){
-        if(*cmdline == '&' || *cmdline == ';'){
+    while(*line != '\0'){
+        
+        while(*line == ' ' && *line != '\0') line++;    //Skip white spaces        
+        
+        if(*line == '&' || *line == ';'){
             printf("-mysh:\tsyntax error\n");
             return 0;
         }
 
-        prv = cmdline;
-
-        while(*cmdline != '&' && *cmdline != ';' && *cmdline != '\0'){
-            cmdline++;
-        }
-
-        if(*cmdline == '&'){
-            flag = JOB_BACK;
-        }else{
-            flag = JOB_FORE;
-        }
-
-        if(*cmdline!= '\0') *cmdline++ = '\0';
-        cmdlines[i] = malloc((2+strlen(prv))*sizeof(char));
-        cmdlines[i][0] = (flag == JOB_FORE? '%' : '&');
-        strcpy(cmdlines[i]+1, prv);            
-        if(flag == JOB_BACK){
-            printf("char is %c\n", cmdlines[i][strlen(prv)]);
-            cmdlines[i][strlen(prv)+1] = '&';
-            cmdlines[i][strlen(prv)+2] = '\0';
-        }
-        i++;
+        prv = line; //Start of command        
+           
+        //Find the next delimiter
+        while(*line != '&' && *line != ';' && *line != '\0') line++;
+        
+        if(*line == '&') back_flag = 1;
+        else back_flag = 0;
+        
+        //Set the end of command flag
+        if(*line != '\0') *line++ = '\0';
+        commands[count] = malloc((1 + strlen(prv))*sizeof(char));      
+        
+        //Set background flag
+        if(back_flag) commands[count][0] = '&';     
+        else commands[count][0] = '%';
+                     
+        strcpy(commands[count++] + 1, prv);            
     }
-
-    return i;
+    
+    return count;
 }
 
 
@@ -55,23 +50,3 @@ int parse_space(char* cmd_str, char** args){
     return i;
 }
 
-
-
-char* strip_space(char *str) {
-    
-    int i = -1;
-    int wr = 0;    
-    char ch;
-    char* res_str = (char*)malloc(sizeof(char)*(strlen(str)));
-    
-    //Skip white space characters at the beginning
-    while((ch = str[++i]) != '\0' && (isspace(ch) || ch == '\n')) ;
-       
-    //Move nonspace to the start of string
-    while((ch = str[i++]) != '\0' && (!isspace(ch)) && ch != '\n') {     
-        res_str[wr++] = ch;
-    }
-    res_str[wr] = '\0';        //Append '\0'
-    return res_str;
-    
-}
