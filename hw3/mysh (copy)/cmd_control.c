@@ -25,7 +25,7 @@ void b_kill(char** cur_args, int n_args) {
         if(cur_args[i][0] == '-'){
             if(!kill_flag && strcmp(cur_args[i], "-9")==0){
                 kill_flag = TRUE;
-            } else {
+            }else{
                 print_usage(KILL);
                 return;
             }
@@ -59,7 +59,8 @@ void b_kill(char** cur_args, int n_args) {
                 }                                                
                 
             }
-            else {                
+            else {
+                printf("kill by id %d\n", id);
                 if(kill(id, (kill_flag ? SIGKILL : SIGTERM)) == -1) { 
                     fprintf(stderr, "Kill failed. No such process\n");
                 }
@@ -79,14 +80,7 @@ void b_kill(char** cur_args, int n_args) {
 void b_fg(char** args, int n_args){
    Job* job;   
    int job_id;
-   if(n_args == 1) {
-       job_id = TAIL_ID;
-       if(jobs_is_empty()) {
-           printf("fg: %d : no such job\n", job_id);
-           return ;
-       }
-   }
-   
+   if(n_args == 1) job_id = TAIL_ID;
    else int_valueof(args[1], &job_id);
    
    if((job = jobs_get_by_jid(job_id)) == NULL) {
@@ -115,20 +109,13 @@ void b_bg(char** args, int n_args) {
     Job* job;
     int i = 0;
     int this_id;
-    if(n_args == 1) {
-        this_id = TAIL_ID;
-        if(jobs_is_empty()) {
-           printf("bg: %d : no such job\n", this_id);
-           return ;
-       }
-    }
+    if(n_args == 1) this_id = TAIL_ID;
     else int_valueof(args[1], &this_id);
         
     do {        
         int_valueof(args[i], &this_id);        
         if((job = jobs_get_by_jid(this_id)) == NULL) {
-            printf("bg: %d : no such job\n", this_id);
-            return ;
+            printf("fg: %d : no such job\n", this_id);
         }
         job->status = JOB_BACK;
         
@@ -244,10 +231,14 @@ int exec_job(Job* new_job) {
     if(built_in == NOT_INTERNAL_CMD) {                   
         jobs_lock();
         jobs_add(new_job);
-        jobs_unlock();           
+        jobs_unlock();    
+        
+        printf("Job %d added\n",new_job->pgid);
+        printf("jobs size %d\n", size);
     }
     
-//    jobs_print();
+    jobs_print();
+  
                
     if(new_job->status == JOB_FORE) {                
         if(built_in == NOT_INTERNAL_CMD) put_in_foreground(new_job); 
@@ -276,7 +267,8 @@ int exec_bcmd(char** args, int n_args) {
     } else if(strcmp(args[0], "jobs") == 0) {
         printf("Exe jobs\n");
         b_jobs();
-    } else if(strcmp(args[0], "kill") == 0) {       
+    } else if(strcmp(args[0], "kill") == 0) {
+        printf("num arguments %d\n", n_args);
         b_kill(args, n_args);
     } else if(strcmp(args[0], "exit") == 0) {
         exit_clean();
@@ -298,9 +290,9 @@ void put_in_foreground(Job* job){
     tcsetpgrp(mysh_terminal, job->pgid);
        
     do {
-        //printf("Wait again\n");
+        printf("Wait again\n");
         pid = waitpid(-1, &status, WUNTRACED);
-        //printf("In put foreground: pid %d returned\n", pid);
+        printf("In put foreground: pid %d returned\n", pid);
         
         if(WIFSTOPPED(status)) proc_status = PROC_STOP;
         else proc_status = PROC_COMP;
@@ -309,19 +301,18 @@ void put_in_foreground(Job* job){
         process_update_status(pid, proc_status);
         
         job_status = jobs_check_status(job);          
-        //printf("Job status: %d\n", job_status);      
+        printf("Job status: %d\n", job_status);      
         
     } while(job_status != JOB_COMP && job_status != JOB_STOP);
 
     
     job->status = job_status;
-    
+    job_print(job);
     if(job_status == JOB_COMP) {
         jobs_lock();
         jobs_remove_by_jid(job->id);
         jobs_unlock();                        
     }
-    else job_print(job);
     
     // jobs_unlock();
     tcsetpgrp(mysh_terminal, mysh_pgid);  
@@ -351,7 +342,7 @@ void sigchld_handler(int sig) {
     int proc_status;
     int job_status;
     
-    //printf("In sig child handler\n");
+    printf("In sig child handler\n");
     
     while((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {                 
         

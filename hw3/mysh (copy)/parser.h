@@ -17,8 +17,6 @@
 #include "util.h"
 
 #define MAX_ARG_NUM 30
-#define DIR_IN 1
-#define DIR_OUT 0
 
 char* strip_space(char*);
 

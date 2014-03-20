@@ -44,7 +44,6 @@ typedef struct {
 	int id;
         int status;	
         int process_status;
-        int file;
 	char* path;
         pid_t pgid;
         Process* f_process;  //Process List for job
@@ -52,7 +51,7 @@ typedef struct {
 } Job;
 
 
-Job* job_create(char*, Process*, int, int);
+Job* job_create(char*, Process*, int);
 Job* job_createc(int);
 void job_free(Job*);
 void job_setpgid(Job*, pid_t);

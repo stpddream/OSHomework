@@ -1,4 +1,4 @@
-#include "util.h"
+xc#include "util.h"
 
 /**
  * Mod function that computes the "positive" remainder for negative n1
@@ -54,9 +54,9 @@ int cmd_compare(char** a, char** b) {
  * @return substring
  */
 char* substring(char* str, int start, int end) {    
-      char* n_str = (char*)malloc(sizeof(char)*(end - start + 1));
+      char* n_str = (char*)malloc(sizeof(char)*(end - start + 2));
       strncpy(n_str, str + start, end - start);    
-      n_str[end - start] = '\0'; //append \0 for safety reason
+      n_str[end - start + 1] = '\0';
       return n_str;
 }
 

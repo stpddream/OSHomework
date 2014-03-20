@@ -11,7 +11,7 @@ Job* job_createc(int id) {
 /**
  * Constructor for Job 
  */
-Job* job_create(char* path, Process* process_head, int status, int file) {
+Job* job_create(char* path, Process* process_head, int status) {
     Job* new_job = (Job*)malloc(sizeof(Job));
     new_job->id = id_edge++;
     new_job->status = status;
@@ -21,7 +21,6 @@ Job* job_create(char* path, Process* process_head, int status, int file) {
     }   
     new_job->f_process = process_head;
     new_job->pgid = -1;
-    new_job->file = file;
     return new_job;
 }
 
@@ -32,9 +31,9 @@ void job_setpgid(Job* job, pid_t pid) {
 
 
 
+
 void job_print(Job* job) {
     printf("[%d] ", job->id);  
-    if(job->id == tail->job->id) printf("+");    
     if(job->status == JOB_BACK) printf("Running");
     else if (job->status == JOB_STOP) printf("Stopped");
     else if (job->status == JOB_COMP) printf("Done");
@@ -57,7 +56,7 @@ void job_free(Job* j){
 int jobs_init() {
     //Init Dummy Node
     head = (JobNode*)malloc(sizeof(JobNode));
-    head->job = job_create(NULL, NULL, -1, -1); //Dummy Node
+    head->job = job_create(NULL, NULL, -1); //Dummy Node
     tail = head;
     size = 0;
     id_edge = 0;
@@ -145,7 +144,7 @@ int jobs_is_empty() {
  * @return 
  */
 Job* jobs_get_by_jid(int jid) {
-    
+
     if(jid == TAIL_ID) return tail->job;
 
     JobNode* current = head->next;
@@ -218,7 +217,8 @@ int jobs_check_status(Job* job) {
 
 
 
-void jobs_print() {    
+void jobs_print() {
+    printf("Printing: \n");
     JobNode* current = head->next;    
     while(current != NULL) {        
         job_print(current->job);

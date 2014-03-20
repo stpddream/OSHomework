@@ -38,7 +38,9 @@ int parse_args(char* line, char** commands) {
 }
 
 int parse_process(char* line, char** processes) {
-        
+    
+    printf("line is %s\n", line);
+    
     int i = 0;
     char* tok;
     tok = strtok(line, "|");
@@ -51,25 +53,6 @@ int parse_process(char* line, char** processes) {
     }
   
     return i;    
-}
-
-int parse_redirection(char* line, char* file, int dir) {
-  
-    int i = 0;
-    while(line[i] != '\0') {
-        if(line[i] == '>') {
-            dir = DIR_OUT;
-            file = strip_space(substring(line, i + 1, strlen(line)));
-            return 1;
-        }
-        else if(line[i] == '<') {
-            dir = DIR_IN;        
-            file = strip_space(substring(line, i + 1, strlen(line)));
-            return 1;
-        }
-    }
-    return 0;
-    
 }
 
 

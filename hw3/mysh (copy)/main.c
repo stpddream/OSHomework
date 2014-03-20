@@ -45,7 +45,7 @@ void init_mysh(){
      /***** Block Signals *****/
     sigset_t block_mask;
 
-    sigaddset(&block_mask, SIGINT);
+   // sigaddset(&block_mask, SIGINT);
     sigaddset(&block_mask, SIGTSTP);
     sigaddset(&block_mask, SIGTERM);
     sigaddset(&block_mask, SIGQUIT);
@@ -62,7 +62,7 @@ void init_mysh(){
     if(sigaction(SIGCHLD, &action, 0) == -1){
         perror("Signal Error");
     }
-    sigaddset(&block_mask, SIGINT);
+   // sigaddset(&block_mask, SIGINT);
     sigaddset(&block_mask, SIGTSTP);
     sigaddset(&block_mask, SIGTERM);
     sigaddset(&block_mask, SIGQUIT);
@@ -79,6 +79,11 @@ void init_mysh(){
     tcgetattr(mysh_terminal, &mysh_tmodes);
     
     sigaddset(&chld_mask, SIGCHLD);
+
+    
+
+    
+    
 }
 
         
@@ -115,8 +120,8 @@ int main(int argc, char** argv) {
     int n_cmd, n_args;
     commands = malloc(MAX_CMD*sizeof(char*));
     while(1) {       
-        printf("TERMINAL >>  ");
-        if((line = readline("")) == NULL) {
+        printf("Next cmd: ");
+        if((line = readline(">>>>")) == NULL) {
             perror("IO Error\n");
             return 1;
         }
@@ -146,10 +151,9 @@ int main(int argc, char** argv) {
                 
                 args = (char**)malloc(sizeof(char*)*MAX_ARG_LEN);
                 Process* process = (Process*)malloc(sizeof(Process));
-                                
-                n_args = parse_space(proc_cmds[j], args);
                 
-
+                n_args = parse_space(proc_cmds[j], args);
+                            
                 process->args = args;                
                 process->n_args = n_args;
                 process->next = NULL;
@@ -158,13 +162,13 @@ int main(int argc, char** argv) {
                 prev = process;                                                                        
             }            
             Job* job = job_create(job_line, dummy->next, 
-                                  ((job_line[0] == '&') ? JOB_BACK: JOB_FORE),
-                                  -1); 
+                                  ((job_line[0] == '&') ? JOB_BACK: JOB_FORE)); 
             free(dummy);
             exec_job(job);                       
         }
     }
-   return 0;    
+   return 0; 
+    
 }
 
 
