@@ -25,7 +25,7 @@
 
 
 int mod(int, int);
-void print_cmd(char**);
+void print_cmd(char**, int);
 int cmd_compare(char**, char**);
 char* substring(char*, int, int);
 int int_valueof(char*, int*);

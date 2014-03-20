@@ -13,23 +13,29 @@
 
 #include <signal.h>
 #include <string.h>
+#include <termios.h>
 #include "cmd_history.h"
 #include "jobs.h"
 #include "util.h"
 
 #define NOT_INTERNAL_CMD -2
 
-
+extern int mysh_terminal;
+extern pid_t mysh_pgid;
+extern struct termios mysh_tmodes;
+extern sigset_t chld_mask;
 int save_flag;
 
 int exec_sh(char**, int, char*);
 int exec_bcmd(char**, int);
-int b_exit();
+void b_exit();
 int b_history();
 
-
-void signal_wrapper(int signum, void*  handler);
-void sigchld_handler(int sig);
-void sigtstp_handler(int sig);
+void put_in_foreground(pid_t);
+void signal_wrapper(int, void*);
+void sigchld_handler(int);
+void sigtstp_handler(int);
+void jobs_lock();
+void jobs_unlock();
 
 #endif	/* COMMAND_H */

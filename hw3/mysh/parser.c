@@ -43,10 +43,10 @@ int parse_space(char* cmd_str, char** args){
     char* tok;
     tok = strtok(cmd_str, " \t\n");
     while(tok!=NULL){
-        args[i] = malloc(strlen(tok)*sizeof(char));
-        strcpy(args[i++], tok);
+        args[i++] = tok;
         tok = strtok(NULL, " \t\n");
     }
+    args[i] = NULL;
     return i;
 }
 

@@ -16,9 +16,9 @@ int mod(int n1, int n2) {
  * Print out a command
  * @param args
  */
-void print_cmd(char** args) {
-    int i = 0;   
-    while(args[i] != NULL) {
+void print_cmd(char** args,int n_args) {
+    int i;   
+    for(i = 0; i < n_args; i++) {
         printf("%s ", args[i++]);
     }   
 }
@@ -97,6 +97,6 @@ extern void clean_up();
  * Exit program and do clean up
  */
 void exit_clean() {
-    clean_up();
+    //clean_up();
     exit(0);
 }

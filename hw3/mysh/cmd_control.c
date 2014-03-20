@@ -2,31 +2,9 @@
 
 /* ===== Built in functions ===== */
 
-extern HistoryList* hist_list;
-/*
-int b_history() {
-    int i;
-    for(i = 1; i <= hist_list->size; i++) {     
-        int id = histlst_get_id(hist_list, i);
-        printf(" %d ", id);
-        print_cmd(histlst_get(hist_list, id));
-        printf("\n");
-    }
-    return 0;
+void b_exit() {
+    exit_clean();
 }
-
-int b_repeat_cmd(int n) {
-    char** args = histlst_get_recent(hist_list, n);
-    if(args == NULL) {
-        printf("Error: Event not found\n");       
-        exit(1);
-    }
-    char* path = args[0];
-    exec_sh(path, args);
-    return 0;
-}
-*/
-
 
 void b_jobs() {
     jobs_print();
@@ -75,7 +53,9 @@ void b_kill(char** cur_args, int n_args) {
             } else {
                 //send a sigterm signal to terminate the job and remove from list
                 kill(job->pid, (kill_flag ? SIGKILL : SIGTERM));
+                jobs_lock();
                 jobs_remove_by_pid(job->pid);
+                jobs_unlock();
             }
         }
     }
@@ -90,15 +70,19 @@ void b_fg(char** args, int n_args){
    Job* job;   
    int job_id;
    if(n_args == 1) job_id = TAIL_ID;
-   else int_valueof(args[0], &job_id);
+   else int_valueof(args[1], &job_id);
    
    if((job = jobs_get_by_jid(job_id)) == NULL) {
-            printf("fg: %d : no such job\n", job_id);
+       printf("fg: %d : no such job\n", job_id);
+       return ;
    }
    
    job->status = JOB_FORE;
    kill(job->pid, SIGCONT);
+   put_in_foreground(job->pid);
+
 }
+
 
 /**
  * 
@@ -107,16 +91,16 @@ void b_bg(char** args, int n_args) {
     Job* job;
     int i = 0;
     int this_id;
-    if(n_args == 0) this_id = TAIL_ID;
-    else int_valueof(args[0], &this_id);
+    if(n_args == 1) this_id = TAIL_ID;
+    else int_valueof(args[1], &this_id);
         
-    do {
-        
+    do {        
         int_valueof(args[i], &this_id);        
         if((job = jobs_get_by_jid(this_id)) == NULL) {
             printf("fg: %d : no such job\n", this_id);
         }
         job->status = JOB_BACK;
+        job_print(job);
         kill(job->pid, SIGCONT);
         i++;
     } while(i < n_args);
@@ -128,14 +112,12 @@ void b_bg(char** args, int n_args) {
 
 int exec_sh(char** args, int n_args, char* origin) {
     pid_t pid;
-    sigset_t mask;
     
     Job* new_job = job_create((origin[0] == '&') ? JOB_BACK: JOB_FORE, origin, -1);
-
+    
     //if an empty argument, free the new_job node and return
 
-    if(exec_bcmd(args, n_args) == NOT_INTERNAL_CMD) {
-        sigemptyset(&mask);
+    if(exec_bcmd(args, n_args) == NOT_INTERNAL_CMD) {    
         /* check for fork() error */
         if((pid = fork()) < 0) {
             perror("fork failed");
@@ -144,8 +126,7 @@ int exec_sh(char** args, int n_args, char* origin) {
         /*if child, set its group id to pid*/ 
         else if (pid == 0 && setpgid(0, 0) != -1) {
             /****** In Child ******/
-            if(execvp(args[0], args) == -1) {
-                printf("%s\n", args[0]);
+            if(execvp(args[0], args) == -1) {      
                 perror("Exec failed");
                 exit(EXIT_FAILURE);
             }
@@ -153,10 +134,12 @@ int exec_sh(char** args, int n_args, char* origin) {
         } else {
             /***** In Parent *****/
             new_job->pid = pid;
+            jobs_lock();
             jobs_add(new_job);
+            jobs_unlock();
                 
-            if(new_job->status == JOB_FORE) { 
-               sigsuspend(&mask);
+            if(new_job->status == JOB_FORE) {                
+                put_in_foreground(pid); 
             } else if(new_job->status == JOB_BACK) {
                printf("[%d]\t%d\n", new_job->id, pid);  /* if background, print job info,  handle SITCHLD signal */
             }
@@ -175,94 +158,82 @@ int exec_sh(char** args, int n_args, char* origin) {
 int exec_bcmd(char** args, int n_args) {
     
     if(strcmp(args[0], "bg") == 0) {
-        b_bg(args, n_args);
-    }     
+        b_bg(args, n_args);     
+    } 
     else if(strcmp(args[0], "jobs") == 0) {
+        b_jobs();    
+    } else if(strcmp(args[0], "fg") == 0) {
+        b_fg(args, n_args);
+    } else if(strcmp(args[0], "jobs") == 0) {
+        printf("Exe jobs\n");
         b_jobs();
+    } else if(strcmp(args[0], "kill") == 0) {
+        printf("num arguments %d\n", n_args);
+        b_kill(args, n_args);
+    } else if(strcmp(args[0], "exit") == 0) {
+        exit_clean();
     }
-   
-        /*
-    if(strcmp(path, "history") == 0) {
-        b_history();
-        return 0;
-    }
-    else if(path[0] == '!') {
-        //History shortcuts
-                  
-        if(strcmp(path, "!!") == 0) {
-            b_repeat_cmd(1);
-            return 0;
-        }
-        else if(strncmp(path, "!-", strlen("!-")) == 0) {
-            //Match "!-n", nth most recent command
-            
-            char* num = substring(path, 2, 3);  
-            int n;
-            if(int_valueof(num, &n) != 0) return -1;
-            b_repeat_cmd(n);
-            free(num); //Free memory
-            return 0;
-        }
-        else {
-            //Match "!n", nth command            
-            char* num = substring(path, 1, 2);
-            int n;
-            if(int_valueof(num, &n) != 0) return -1;
-            printf("offset %d", hist_list->offset);
-            b_repeat_cmd(hist_list->size - n + hist_list->offset + 1);
-            free(num);
-            return 0;            
-        }
-        
-    }
-         */
-    
-    //TODO:
-    /*
-     
-     Add support for bg, fg, jobs, kill command
-     if(bg) send SIG_CONT to job
-     if(fg) ifsuspend, SIG_CONT and wait for job
-     if(jobs) //iterate through joblist and print jobs
-     if(kill) //remove job from list
-         mutex_lock()
-         sigprocmask(SIGCHLD);
-         job_remove()
-         mutex_unlock()
-     
-     */
-    
-    
-    
-    
-    return -2;
+    else return NOT_INTERNAL_CMD;
+    return 0;
+
 }
+
+
+/*** Helper Functions ***/
+
+void put_in_foreground(pid_t pid){
+    int status;
+    Job* job;
+    
+    tcsetpgrp(mysh_terminal, pid);
+    waitpid(pid, &status, WUNTRACED);
+        
+    if(WIFSTOPPED(status)) {
+        if((job = get_fg_job()) != NULL) {
+            job->status = JOB_SUSP;    
+        }        
+    }
+    else {
+        jobs_lock();
+        jobs_remove_by_pid(pid);
+        jobs_unlock();
+    }
+        
+    tcsetpgrp(mysh_terminal, mysh_pgid);  
+    tcsetattr(mysh_terminal, TCSADRAIN, &mysh_tmodes);  
+}
+
+
 
 /* ===== Signal Handler ===== */
 
-void signal_wrapper(int signum, void* handler){
+void signal_wrapper(int signum, void* handler) {
     struct sigaction action;
     action.sa_handler = handler;
     action.sa_flags = SA_RESTART | SA_NOCLDSTOP;
-    if(sigaction(signum, &action, 0) == -1){
+    if(sigaction(signum, &action, 0) == -1) {
         perror("Signal Error");
     }
 }
 
 //TODO: Add signal handlers
 //Functionality see design doc
+
 void sigchld_handler(int sig){
     pid_t pid;
     int status;
-    while((pid = waitpid(-1, &status, WNOHANG | WUNTRACED))>0){
+    while((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {      
+        Job* job = jobs_get_by_pid(pid);
+        job->status = JOB_DONE;
+        job_print(job);
         jobs_remove_by_pid(pid);
     }
 }
 
-void sigtstp_handler(int sig){
-    Job* job;
-    if((job = get_fg_job()) != NULL){
-        job->status = JOB_SUSP;
-        kill(-job->pid, SIGSTOP);
-    }
+void jobs_lock() {
+    sigprocmask(SIG_BLOCK, &chld_mask, NULL);
+}
+
+void jobs_unlock() {
+    sigprocmask(SIG_UNBLOCK, &chld_mask, NULL);
 }

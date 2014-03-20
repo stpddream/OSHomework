@@ -23,6 +23,18 @@ Job* job_create(int status, char* path, pid_t pid) {
     return new_job;
 }
 
+
+void job_print(Job* job) {
+    printf("[%d] ", job->id);
+    if(job->status == JOB_BACK) printf("Running");
+    else if (job->status == JOB_SUSP) printf("Stopped");
+    else if (job->status == JOB_DONE) printf("Done");
+    printf("\t%s", job->path + 1);     
+    if(job->path[0] == '&') printf(" &");
+    printf("\n");
+}
+
+
 void job_free(Job* j){
     if(j->path != NULL) free(j->path);
     free(j);
@@ -142,23 +154,11 @@ Job* jobs_get_by_pid(pid_t pid){
 }
 
 
-void job_print(Job* job) {
-    printf("[%d] ", job->id);
-    if(job->status == JOB_BACK) printf("Running");
-    else if (job->status == JOB_SUSP) printf("Stopped");
-     
-}
 
 void jobs_print() {
-    ListNode* current = head->next;
-    
-    while(current != NULL) {
-        printf("[%d] ", current->job->id);
-        if(current->job->status == JOB_BACK) printf("Running");
-        else if (current->job->status == JOB_SUSP) printf("Stopped");
-        printf("\t%s", current->job->path+1);
-        if(current->job->path[0] == '&') printf(" &\n");
-        else printf("\n");
+    ListNode* current = head->next;    
+    while(current != NULL) {        
+        job_print(current->job);
         current = current->next;
     }
 }

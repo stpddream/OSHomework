@@ -18,6 +18,7 @@
 #define JOB_BACK 0
 #define JOB_FORE 1
 #define JOB_SUSP 2
+#define JOB_DONE 3
 
 #define TAIL_ID -2
 
@@ -53,6 +54,7 @@ Job* jobs_get_by_pid(pid_t);
 
 void print_jobs();
 void jobs_print();
+void job_print(Job*);
 
 Job* get_fg_job();
 
