@@ -128,8 +128,7 @@ int main(int argc, char** argv) {
              
         //further parse each commands and execute the commands
         
-        int i; 
-        int j;
+        int i, j;
         for(i = 0; i < n_cmd; i++) {    
             job_line = (char*)malloc(sizeof(char)*strlen(commands[i]));        
             proc_cmds = (char**)malloc(sizeof(char*)*MAX_CMD);
