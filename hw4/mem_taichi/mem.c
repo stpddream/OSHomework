@@ -58,7 +58,7 @@ void *Mem_Alloc(int size) {
     //Alloc Space
     
     //Not enough space for split
-    if(max_size >= size + HEADER_SIZE) {  
+    if(max_size >= size + HEADER_SIZE + 8) {  
         
         choice->status = MEM_OCCUPIED;
         MemRecord* cur_next = choice->next;
@@ -96,7 +96,6 @@ int Mem_Free(void *ptr, int coalesce){
 }
 
 void Mem_Dump() {
-    
     
     MemRecord* current = head;
     
