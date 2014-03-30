@@ -1,7 +1,11 @@
 #include "mem_util.h"
 
-int round_to(int val, int base) {
-    return ((val / base) + 1) * base;
+int round_to(int val, int base) {   
+    return (val / base) * base + base;   
+}
+
+int round_to_eight(int val) {
+    return (((val - 1) >> 3) << 3) + 8;
 }
 
 
@@ -34,4 +38,8 @@ MemRecord* coalesce_block(MemRecord *ptr){
         return ptr->prev;
     }
     return ptr;
+}
+
+char* p_status(int status) {
+    return (status == MEM_FREE) ? "free" : "occupied";
 }

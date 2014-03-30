@@ -23,7 +23,6 @@ int Mem_Init(int sizeOfRegion) {
 
     head->mem_loc = head->data;
 
-
     head->next = NULL;
     head->prev = NULL;
     head->size = real_size;
@@ -37,7 +36,7 @@ int Mem_Init(int sizeOfRegion) {
 void *Mem_Alloc(int size) {
     
     //Traverse the memory list    
-    size = round_to(size, 8);
+    size = round_to_eight(size);
     MemRecord* current = head;
     MemRecord* choice = NULL;
     int max_size = -1;
@@ -59,18 +58,19 @@ void *Mem_Alloc(int size) {
     //Alloc Space
     
     //Not enough space for split
-    if(max_size >= size + HEADER_SIZE) {   
+    if(max_size >= size + HEADER_SIZE) {  
         
         choice->status = MEM_OCCUPIED;
         MemRecord* cur_next = choice->next;
         MemRecord* next_record = choice->data + size;
+        
         next_record->size = choice->size - HEADER_SIZE - size;
         choice->size = size;
-          
+                        
         next_record->next = cur_next;
         next_record->prev = choice;
         next_record->status = MEM_FREE;
-        next_record->next->prev = next_record;
+        if(next_record->next != NULL) next_record->next->prev = next_record;
         choice->next = next_record;        
     }
     choice->status = MEM_OCCUPIED;

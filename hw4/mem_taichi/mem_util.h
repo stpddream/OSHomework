@@ -18,6 +18,7 @@
         void* mem_loc;
         struct MemRecord_Node* next;
         struct MemRecord_Node* prev;
+        char data[1];
     } MemRecord;    
 
 
@@ -25,9 +26,11 @@ extern MemRecord* head;
 extern int memSize;
  
 int round_to(int val, int base);
+int round_to_eight(int val);
 MemRecord* get_block(void*);
 int is_valid_addr(void*);
 MemRecord* coalesce_block(MemRecord*);
+char* p_status(int status);
 
 #endif	/* UTIL_H */
 
