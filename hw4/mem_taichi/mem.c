@@ -2,6 +2,7 @@
 
 
 int initflg;    //Whether Mem_Init has been called
+int memSize;
 
 int Mem_Init(int sizeOfRegion) {
     
@@ -19,7 +20,10 @@ int Mem_Init(int sizeOfRegion) {
         m_error = E_NO_SPACE;
         return -1;
     }
+
     head->mem_loc = head->data;
+
+
     head->next = NULL;
     head->prev = NULL;
     head->size = real_size;
@@ -74,7 +78,22 @@ void *Mem_Alloc(int size) {
           
 }
 
-int Mem_Free(void *ptr, int coalesce);
+int Mem_Free(void *ptr, int coalesce){
+    //check if the pointer is a valid address
+    if(is_valid_addr(ptr)){
+        //get the block of address, mark it free
+        MemRecord* block = get_block(ptr);
+        block->status = MEM_FREE;
+         
+        //coalesce the previous and next block
+        if(coalesce){
+            coalesce_block(block);
+        }
+        return 0;
+    } else{
+        return -1; // return failure
+    }
+}
 
 void Mem_Dump() {
     

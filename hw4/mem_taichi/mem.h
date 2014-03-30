@@ -4,8 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
-#include "mem_record.h"
-#include "util.h"
+#include "mem_util.h"
 
 
 #define E_NO_SPACE            1
@@ -20,6 +19,7 @@
 
 
 extern int m_error;
+extern int memSize;
 
 MemRecord* head;
 int initflg;

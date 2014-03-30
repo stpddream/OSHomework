@@ -1,10 +1,10 @@
 CFLAGS = -g -Wall 
 CC = gcc
-
+OBJS = main.o mem.o mem_util.o
 All:	mem_taichi
 
-mem_taichi:	main.o mem.o util.o 
-	$(CC) $(CFLAGS) -o mem_taichi main.o mem.o util.o 
+mem_taichi:	$(OBJS) 
+	$(CC) $(CFLAGS) -o mem_taichi $(OBJS)
 
 main.o: main.c mem.h
 	$(CC) $(CFLAGS) -c main.c
@@ -13,8 +13,8 @@ main.o: main.c mem.h
 mem.o: mem.c mem.h
 	$(CC) $(CFLAGS) -c mem.c
 
-util.o: util.c util.h
-	$(CC) $(CFLAGS) -c util.c
+util.o: mem_util.c mem_util.h
+	$(CC) $(CFLAGS) -c mem_util.c
 
 clean:
 	rm *.o mem_taichi
