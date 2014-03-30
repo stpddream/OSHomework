@@ -1,6 +1,7 @@
 #ifndef __MEM_H_
 #define __MEM_H_
 
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include "mem_record.h"

@@ -15,7 +15,7 @@ extern "C" {
 #define MEM_OCCUPIED 1
 #define MEM_FREE 0
     
-#define HEADER_SIZE sizeof(MemRecord)
+#define HEADER_SIZE 20
     
     typedef struct MemRecord_Node {
         int size;
@@ -23,6 +23,7 @@ extern "C" {
         void* mem_loc;
         struct MemRecord_Node* next;
         struct MemRecord_Node* prev;
+        char data[1];      
     } MemRecord;    
     
     

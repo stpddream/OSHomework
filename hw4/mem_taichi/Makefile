@@ -8,6 +8,7 @@ mem_taichi:	main.o mem.o util.o
 
 main.o: main.c mem.h
 	$(CC) $(CFLAGS) -c main.c
+
 	
 mem.o: mem.c mem.h
 	$(CC) $(CFLAGS) -c mem.c

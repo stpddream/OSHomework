@@ -19,7 +19,7 @@ int Mem_Init(int sizeOfRegion) {
         m_error = E_NO_SPACE;
         return -1;
     }
-    head->mem_loc = head + sizeof(MemRecord);
+    head->mem_loc = head->data;
     head->next = NULL;
     head->prev = NULL;
     head->size = real_size;
@@ -56,21 +56,41 @@ void *Mem_Alloc(int size) {
     
     //Not enough space for split
     if(max_size >= size + HEADER_SIZE) {   
+        
         choice->status = MEM_OCCUPIED;
         MemRecord* cur_next = choice->next;
-        MemRecord* next_record = choice->next;
-        next_record->mem_loc = next_record + HEADER_SIZE;
+        MemRecord* next_record = choice->data + size;
+        next_record->size = choice->size - HEADER_SIZE - size;
+        choice->size = size;
+          
         next_record->next = cur_next;
         next_record->prev = choice;
         next_record->status = MEM_FREE;
         next_record->next->prev = next_record;
         choice->next = next_record;        
     }
+    choice->status = MEM_OCCUPIED;
     return choice->mem_loc;
-    
-        
+          
 }
 
 int Mem_Free(void *ptr, int coalesce);
 
-void Mem_Dump();
+void Mem_Dump() {
+    
+    
+    MemRecord* current = head;
+    
+     while(current != NULL) {
+        
+         printf("=== Block ===\n");
+         printf("Status: %s\n", p_status(current->status));
+         printf("Size: %d\n", current->size);
+         printf("=============>\n");
+        
+        current = current->next;
+    }
+    
+    
+    
+}

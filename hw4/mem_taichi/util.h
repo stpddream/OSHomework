@@ -8,8 +8,10 @@
 #ifndef UTIL_H
 #define	UTIL_H
 
-int round_to(int val, int base);
+#include "mem.h"
 
+int round_to(int val, int base);
+char* p_status(int status);
 
 #endif	/* UTIL_H */
 
