@@ -12,15 +12,23 @@
 #define MEM_FREE 0
     
 #define HEADER_SIZE sizeof(MemRecord)
-    typedef struct MemRecord_Node {
-        int size;
-        int status;
-        void* mem_loc;
-        struct MemRecord_Node* next;
-        struct MemRecord_Node* prev;
-        char data[1];
-    } MemRecord;    
 
+
+typedef struct MemRecord_Node {
+    int status;
+    void* mem_loc;
+    struct MemRecord_Node* next;
+    struct MemRecord_Node* prev;
+    struct MemRecord_Node* nextFree;
+    char data[1];
+} MemRecord;    
+
+
+typedef struct ListInfo_Node {
+    MemRecord* head;
+    MemRecord* head_free;
+    int MemSize;
+}ListInfo;
 
 extern MemRecord* head;  
 extern int memSize;
