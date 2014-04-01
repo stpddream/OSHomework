@@ -1,12 +1,19 @@
 
 #include <stdio.h>
 #include "mem.h"
+#include "test_mem.h"
 
 int m_error;
 
 int main(int argc, char** argv) {
-    printf("Init Memory\n");
-        
+    
+    
+    printf("Starting test\n");
+    //check_for_eight_byte();
+    
+    
+    
+    /*
     Mem_Init(4096);
     
     Mem_Dump();
@@ -16,7 +23,7 @@ int main(int argc, char** argv) {
     printf("In mem alloc\n");
     Mem_Alloc(500);   
     Mem_Dump();
-    
+    */
     
     return 0;
 }

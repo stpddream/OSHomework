@@ -28,7 +28,7 @@ typedef struct ListInfo_Node {
     MemRecord* head;
     MemRecord* head_free;
     int MemSize;
-}ListInfo;
+} MemHead;
 
 extern MemRecord* head;  
 extern int memSize;

@@ -22,7 +22,7 @@ extern int m_error;
 extern int memSize;
 
 MemRecord* head;
-int initflg;
+
 
 
 int Mem_Init(int sizeOfRegion);

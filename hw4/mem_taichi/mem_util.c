@@ -43,3 +43,4 @@ MemRecord* coalesce_block(MemRecord *ptr){
 char* p_status(int status) {
     return (status == MEM_FREE) ? "free" : "occupied";
 }
+

@@ -7,6 +7,10 @@
 
 #ifndef TEST_H
 #define	TEST_H
+
+#include "mem_util.h"
+#include <stdio.h>
+
 int check_for_eight_byte();
 int simple_8_byte_alloc();
 int aligned_alloc();
