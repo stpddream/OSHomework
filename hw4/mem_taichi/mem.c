@@ -26,7 +26,7 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->head->next = NULL;
     mem_head->head->prev = NULL;
     mem_head->head_free = mem_head->head;
-    mem_head->head_free->prevFree = NULL;
+   
     mem_head->head_free->nextFree = NULL;
    
     return 0;
@@ -149,7 +149,6 @@ void Mem_Dump() {
     while(current != NULL){
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));
-         printf("Size: %d\n", current->size);
          printf("=============>\n");
         
         current = current->nextFree;

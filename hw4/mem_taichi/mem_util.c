@@ -46,3 +46,28 @@ char* p_status(int status) {
     return (status == MEM_FREE) ? "free" : "occupied";
 }
 
+char* p_merror(int m_error) {
+    
+    switch(m_error) {
+        case E_NO_SPACE:
+            return "No space!!!!!\n";
+            break;
+        
+        case E_CORRUPT_FREESPACE:
+            return "Corrupt free space error!!!!!\n";
+            break;
+        case E_PADDING_OVERWRITTEN:
+            return "Padding Overwritten error!!!!!\n";
+            break;
+        case E_BAD_ARGS:
+            return "Bad arguments error\n";
+            break;
+        case E_BAD_POINTER:
+            return "Bad pointer error!!!!!!\n";
+            break;
+        default:
+            printf("To do or not to do....\n");
+    }
+   
+}
+
