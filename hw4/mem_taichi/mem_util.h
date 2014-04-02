@@ -14,11 +14,10 @@
 #define MEM_FREE 0
     
 #define HEADER_SIZE 20
-#define DAZONGGUAN_SIZE 20
+#define DAZONGGUAN_SIZE 32
 
 typedef struct MemRecord_Node {
-    int status;
-    void* mem_loc;
+    int status; 
     struct MemRecord_Node* next;
     struct MemRecord_Node* prev;       
     struct MemRecord_Node* nextFree;

@@ -13,7 +13,7 @@ int Mem_Init(int sizeOfRegion) {
     }
     
     
-    size_t alloc_size = ((sizeOfRegion / MIN_BLOCK_SIZE) + 1) * HEADER_SIZE + sizeOfRegion;
+    size_t alloc_size = round_to(sizeOfRegion, MIN_BLOCK_SIZE) / MIN_BLOCK_SIZE * HEADER_SIZE + sizeOfRegion;
     
     size_t real_size = round_to(alloc_size + DAZONGGUAN_SIZE, getpagesize());    //round to page size
     
@@ -28,6 +28,9 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->mem_alloc = 0;
     mem_head->mem_request = sizeOfRegion;
     mem_head->mem_size = real_size;
+    
+    
+    printf("Size of initial %d", mem_head->mem_size);
 
 
     //Set up first block   
@@ -35,8 +38,19 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->head->status = MEM_FREE;
     mem_head->head->next = NULL;
     mem_head->head->prev = NULL;
+    mem_head->head->mem_loc = mem_head->head->data;
     mem_head->head_free = mem_head->head;
     mem_head->head_free->nextFree = NULL;
+    
+    printf("size of pointer %d\n", sizeof(MemHead));
+    printf("size of head %ld\n", (char*)mem_head->head - (char*)mem_head);
+    printf("size of small head %ld\n", (char*)mem_head->head->mem_loc - (char*)mem_head->head);
+
+    printf("End address %p", END_ADDR);
+    printf("First address %p", mem_head->head->mem_loc);
+    
+    
+    
    
     return 0;
     
@@ -143,7 +157,7 @@ int Mem_Free(void *ptr, int coalesce){
 void Mem_Dump() {
     
     MemRecord* current = mem_head->head;
-    printf("/*********************MEMORY LIST************************/");
+    printf("/*********************MEMORY LIST************************/\n");
     while(current != NULL) {
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));
@@ -154,7 +168,7 @@ void Mem_Dump() {
     }  
     
     current = mem_head->head_free;
-    printf("/*********************FREE LIST************************/");
+    printf("/*********************FREE LIST************************/\n");
     while(current != NULL){
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));

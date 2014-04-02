@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "mem.h"
 #include "test_mem.h"
 
@@ -10,8 +11,9 @@ int main(int argc, char** argv) {
     Mem_Init(8192);
     
     
-    printf("Starting test\n");
-    //check_for_eight_byte();
+    printf("============ Starting test =============\n");
+        
+    check_for_eight_byte();
     
     
     

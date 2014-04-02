@@ -1,20 +1,27 @@
 #include "test_mem.h"
+
+/* Test 01 Check for Eight byte Alignment */
 int check_for_eight_byte() {
-    int result = 0;
     printf("==== Check for eight byte test ====\n");
     
-    Mem_Alloc(200);
+    Mem_Dump();
+    void* p = Mem_Alloc(200);
+    Mem_Dump();
+    printf("%p", p);
+    Mem_Free(p, 1);
     
-    printf("End of Test\n");
-    return result;
+    end_test();
+    
+    return 0;
 }
 
+/* Test 02 Simple Eight Byte */
 int simple_8_byte_alloc() {
     int result = 0;
     printf("==== Simple eight byte alloc test ====\n");
-    
-    printf("End of Test\n");
-
+    void* pt = Mem_Alloc(8);
+    Mem_Dump();
+    Mem_Free(pt, 1);
     return result;
 
 }
@@ -234,3 +241,6 @@ int check_memory_written_after_allocation(){
     return result;   
 }
 
+void end_test() {    
+    printf("========== End of Test ==========\n");
+}
