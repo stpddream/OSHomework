@@ -8,6 +8,7 @@
 #ifndef TEST_H
 #define	TEST_H
 
+#include "mem.h"
 #include "mem_util.h"
 #include <stdio.h>
 

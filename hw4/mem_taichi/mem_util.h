@@ -27,11 +27,11 @@ typedef struct MemRecord_Node {
 typedef struct ListInfo_Node {
     MemRecord* head;
     MemRecord* head_free;
-    int MemSize;
-    int MemAlloc;
+    int memSize;
+    int memAlloc;
 } MemHead;
 
-extern MemRecord* mem_head;  
+extern MemHead* mem_head;  
  
 int round_to(int val, int base);
 int round_to_eight(int val);
