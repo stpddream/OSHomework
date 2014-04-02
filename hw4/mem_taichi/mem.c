@@ -38,20 +38,9 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->head->status = MEM_FREE;
     mem_head->head->next = NULL;
     mem_head->head->prev = NULL;
-    mem_head->head->mem_loc = mem_head->head->data;
     mem_head->head_free = mem_head->head;
     mem_head->head_free->nextFree = NULL;
     
-    printf("size of pointer %d\n", sizeof(MemHead));
-    printf("size of head %ld\n", (char*)mem_head->head - (char*)mem_head);
-    printf("size of small head %ld\n", (char*)mem_head->head->mem_loc - (char*)mem_head->head);
-
-    printf("End address %p", END_ADDR);
-    printf("First address %p", mem_head->head->mem_loc);
-    
-    
-    
-   
     return 0;
     
 }

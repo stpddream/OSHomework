@@ -15,7 +15,7 @@
 #define MIN_BLOCK_SIZE        8
 
 #define END_ADDR ((char*)mem_head + mem_head->mem_size)
-#define BLOCK_SIZE ((current->next == NULL) ? END_ADDR : (char*)(current->next)) - (char*)current->mem_loc
+#define BLOCK_SIZE ((current->next == NULL) ? END_ADDR : (char*)(current->next)) - (char*)current->data
 
 
 extern int m_error;
