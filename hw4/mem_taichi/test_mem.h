@@ -36,6 +36,7 @@ int check_memory_written_after_allocation();
 
 
 void end_test();
+void action(char* action);
 
 #endif	/* TEST_H */
 

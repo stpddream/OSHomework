@@ -24,9 +24,19 @@ int check_for_eight_byte() {
 int simple_8_byte_alloc() {
     int result = 0;
     printf("==== Simple eight byte alloc test ====\n");
+    
+    action("Initial");
+    Mem_Dump();
+    
+    action("Alloc pt");
     void* pt = Mem_Alloc(8);
     Mem_Dump();
+    
+    action("Free pt");
     Mem_Free(pt, 1);
+    Mem_Dump();
+    
+    end_test();
     return result;
 
 }
@@ -35,17 +45,22 @@ int simple_8_byte_alloc() {
 /* Test 03 Aligned Alloc*/
 int aligned_alloc() {
  
+    action("alloc pt1");
     void* pt1 = Mem_Alloc(8);
     Mem_Dump();
+    
+    action("alloc pt2");
     void* pt2 = Mem_Alloc(16);
     Mem_Dump();
+    
+    action("alloc pt3");
     void* pt3 = Mem_Alloc(24);
     Mem_Dump();
     
+    
     Mem_Free(pt1, 1);
     Mem_Free(pt2, 1);
-    Mem_Free(pt3, 1);
-            
+    Mem_Free(pt3, 1);            
     
     
     return 0;
@@ -55,19 +70,28 @@ int aligned_alloc() {
 
 /* Test 04 Odd Size Allocation */
 int odd_sized_alloc() {
+    
+    action("alloc pt1");
     void* pt1 = Mem_Alloc(2222);
     Mem_Dump();
+    
+    action("alloc pt2");
     void* pt2 = Mem_Alloc(3333);
     Mem_Dump();
+    
+    action("alloc pt3");
     void* pt3 = Mem_Alloc(1);
     Mem_Dump();
+    
+    action("alloc pt4");
     void* pt4 = Mem_Alloc(88);
+    Mem_Dump();
     
     Mem_Free(pt1, 1);
     Mem_Free(pt2, 1);
     Mem_Free(pt3, 1);
     Mem_Free(pt4, 1);
-    Mem_Dump();
+//    Mem_Dump();
     
     return 0;
     
@@ -144,12 +168,6 @@ int simple_alloc_free() {
     return 0;
     
 }
-
-
-
-
-
-
 
 
 
@@ -285,4 +303,10 @@ int check_memory_written_after_allocation(){
 
 void end_test() {    
     printf("========== End of Test ==========\n");
+}
+
+void action(char* action) {
+  
+    printf("|------> %s <------|\n", action);
+  
 }

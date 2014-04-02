@@ -28,10 +28,8 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->mem_alloc = 0;
     mem_head->mem_request = sizeOfRegion;
     mem_head->mem_size = real_size;
-    
-    printf("Size of initial %d", mem_head->mem_size);
-
-
+  
+    printf("Initial Size %d\n", mem_head->mem_size);
     //Set up first block   
     mem_head->head = (MemRecord*)((char*)mem_head + DAZONGGUAN_SIZE);
     mem_head->head->status = MEM_FREE;
@@ -106,14 +104,12 @@ void *Mem_Alloc(int size) {
 int Mem_Free(void *ptr, int coalesce){
     if(ptr == NULL) return 0;
     //check if the pointer is a valid address
-    if(is_valid_addr(ptr)){
-        
-        printf("hahahah\n");
+    if(is_valid_addr(ptr)){             
         
         //get the header of the requested block
         MemRecord* current = get_block(ptr);
         if(current->status == MEM_OCCUPIED) mem_head->mem_alloc -= BLOCK_SIZE; 
-        printf("ioioioi\n");
+     
         //if coalesce, coalesce the previous and next block and update the link
         if(coalesce){            
             current = coalesce_block(current);
@@ -121,8 +117,6 @@ int Mem_Free(void *ptr, int coalesce){
         //if it is already a free block, return success
         if(current->status == MEM_FREE) return 0;
 
-        
-        printf("hohohoh\n");
         //otherwise, set the status to be free, update the free list
         current->status = MEM_FREE;
          
