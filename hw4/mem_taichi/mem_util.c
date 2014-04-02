@@ -15,7 +15,7 @@ MemRecord* get_block(void *ptr){
 }
 
 int is_valid_addr(void* ptr){
-    if((char* )ptr > (char* )head && (char* )ptr < (char* )head+memSize){
+    if((char* )ptr > (char* )mem_head && (char* )ptr < (char* )mem_head+memSize){
         return (ptr == (get_block(ptr))->mem_loc); //check if ptr corresponds to the mem_loc in the header
     }
     return 0; //return false

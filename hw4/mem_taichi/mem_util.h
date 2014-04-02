@@ -20,6 +20,7 @@ typedef struct MemRecord_Node {
     struct MemRecord_Node* next;
     struct MemRecord_Node* prev;
     struct MemRecord_Node* nextFree;
+    struct MemRecord_Node* prevFree;
     char data[1];
 } MemRecord;    
 
@@ -30,7 +31,7 @@ typedef struct ListInfo_Node {
     int MemSize;
 } MemHead;
 
-extern MemRecord* head;  
+extern MemRecord* mem_head;  
 extern int memSize;
  
 int round_to(int val, int base);

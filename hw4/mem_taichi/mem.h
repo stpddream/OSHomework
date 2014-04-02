@@ -13,7 +13,9 @@
 #define E_BAD_ARGS            4
 #define E_BAD_POINTER         5
 
+#define MIN_BLOCK_SIZE
 
+#define BLOCK_SIZE current->next - current->mem_loc
 
 
 
@@ -21,7 +23,7 @@
 extern int m_error;
 extern int memSize;
 
-MemRecord* head;
+MemHead* mem_head;
 
 
 
