@@ -8,7 +8,7 @@ int m_error;
 
 int main(int argc, char** argv) {
     
-<<<<<<< HEAD
+
     Mem_Init(8192);
     
     
