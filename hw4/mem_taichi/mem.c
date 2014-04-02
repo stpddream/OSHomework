@@ -29,7 +29,6 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->mem_request = sizeOfRegion;
     mem_head->mem_size = real_size;
     
-    
     printf("Size of initial %d", mem_head->mem_size);
 
 
@@ -40,14 +39,6 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->head->prev = NULL;
     mem_head->head_free = mem_head->head;
     mem_head->head_free->nextFree = NULL;
-    
-
-    printf("size of pointer %d\n", sizeof(MemHead));
-    printf("size of head %ld\n", (char*)mem_head->head - (char*)mem_head);
-    //printf("size of small head %ld\n", (char*)mem_head->head->mem_loc - (char*)mem_head->head);
-
-    printf("End address %p", END_ADDR);
-    //printf("First address %p", mem_head->head->mem_loc);
     
     return 0;
     
@@ -116,16 +107,22 @@ int Mem_Free(void *ptr, int coalesce){
     if(ptr == NULL) return 0;
     //check if the pointer is a valid address
     if(is_valid_addr(ptr)){
+        
+        printf("hahahah\n");
+        
         //get the header of the requested block
         MemRecord* current = get_block(ptr);
         if(current->status == MEM_OCCUPIED) mem_head->mem_alloc -= BLOCK_SIZE; 
+        printf("ioioioi\n");
         //if coalesce, coalesce the previous and next block and update the link
-        if(coalesce){
+        if(coalesce){            
             current = coalesce_block(current);
         }  
         //if it is already a free block, return success
         if(current->status == MEM_FREE) return 0;
 
+        
+        printf("hohohoh\n");
         //otherwise, set the status to be free, update the free list
         current->status = MEM_FREE;
          

@@ -1,7 +1,7 @@
 #include "mem_util.h"
 
 int round_to(int val, int base) {   
-    return (val / base) * base + base;   
+    return ((val - 1) / base) * base + base;   
 }
 
 int round_to_eight(int val) {
@@ -26,16 +26,26 @@ int is_valid_addr(void* ptr){
 MemRecord* coalesce_block(MemRecord *ptr){
     //coalesce the current node with its next if the next exists and is free 
     if(ptr->next && ptr->next->status == MEM_FREE){
+        printf("any??\n");
         ptr->nextFree = ptr->next->nextFree;
+        printf("hohohoisisis\n");
+       
         ptr->next = ptr->next->next;
-        ptr->next->prev = ptr;
+        if(ptr->next) ptr->next->prev = ptr;
+        printf("ioioioihahaha\n");
+     
     }
     
     //coalesce the current node with its previous node if the previous exists and is free
     if(ptr->prev && ptr->prev->status == MEM_FREE){
+        
+        printf("here???\n");
         ptr->prev->nextFree = ptr->nextFree; 
         ptr->prev->next = ptr->next;
-        ptr->next->prev = ptr->prev;
+        if(ptr->next) ptr->next->prev = ptr->prev;
+        printf("which\n");
+      
+        
         return ptr->prev;
     }
 

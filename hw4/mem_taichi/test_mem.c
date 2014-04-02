@@ -5,10 +5,15 @@ int check_for_eight_byte() {
     printf("==== Check for eight byte test ====\n");
     
     Mem_Dump();
+    printf("Alloc p\n");
     void* p = Mem_Alloc(200);
     Mem_Dump();
-    printf("%p", p);
+    printf("Address: %p\n", p);
+    
+    printf("Free p\n");
     Mem_Free(p, 1);
+    
+    Mem_Dump();
     
     end_test();
     
