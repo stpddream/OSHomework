@@ -109,14 +109,22 @@ int Mem_Free(void *ptr, int coalesce){
     if(ptr == NULL) return 0;
     //check if the pointer is a valid address
     if(is_valid_addr(ptr)){             
-        
+        int cflag = 0;
+
         //get the header of the requested block
         MemRecord* current = get_block(ptr);
         if(current->status == MEM_OCCUPIED) mem_head->mem_alloc -= BLOCK_SIZE; 
      
         //if coalesce, coalesce the previous and next block and update the link
         if(coalesce){            
+            int sizeBefore, sizeAfter;
+            MemRecord* tmp = current;
+
+            sizeBefore = BLOCK_SIZE;
             current = coalesce_block(current);
+            sizeAfter = BLOCK_SIZE;
+            
+            cflag = (sizeAfter - sizeBefore == 0 || tmp != current);
         }  
         //if it is already a free block, return success
         if(current->status == MEM_FREE) return 0;
@@ -131,12 +139,12 @@ int Mem_Free(void *ptr, int coalesce){
         }
         //update the free list link if prevFree is not NULL
         if(prevFree){
-            if(!coalesce) current->nextFree = prevFree->nextFree;
+            if(!coalesce || cflag) current->nextFree = prevFree->nextFree;
             prevFree->nextFree = current;
         }else{
             //if there is no previous free node
             //then the current node is the head of the free list
-            if(!coalesce) current->nextFree = mem_head->head_free;
+            if(!coalesce || cflag) current->nextFree = mem_head->head_free;
             mem_head->head_free = current;
         }
 
