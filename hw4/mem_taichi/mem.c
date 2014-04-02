@@ -93,36 +93,65 @@ void *Mem_Alloc(int size) {
 }
 
 int Mem_Free(void *ptr, int coalesce){
+    if(ptr == NULL) return 0;
     //check if the pointer is a valid address
     if(is_valid_addr(ptr)){
-        //get the block of address, mark it free
+        //get the header of the requested block
         MemRecord* block = get_block(ptr);
+       
+        //if coalesce, coalesce the previous and next block and update the link
+        if(coalesce){
+            block = coalesce_block(block);
+        }  
+        //if it is already a free block, return success
+        if(block->status == MEM_FREE) return 0;
+
+        //otherwise, set the status to be free, update the free list
         block->status = MEM_FREE;
          
-        //coalesce the previous and next block
-        if(coalesce){
-            coalesce_block(block);
+        //traverse backwards to find the previous free node
+        MemRecord* prevFree = block->prev;
+        while(prevFree && prevFree->status != MEM_FREE){
+            prevFree = prevFree->prev;
         }
+        //update the free list link if prevFree is not NULL
+        if(prevFree){
+            if(block->nextFree == NULL) block->nextFree = prevFree->nextFree;
+            prevFree->nextFree = block;
+        }else{
+            //if there is no previous free node
+            //then the current node is the head of the free list
+            if(block->nextFree == NULL) block->nextFree = mem_head->head_free;
+            mem_head->head_free = block;
+        }
+
         return 0;
     } else{
-        return -1; // return failure
+        return -1; // return failure, if given an invalid pointer
     }
 }
 
 void Mem_Dump() {
     
-    MemRecord* current = mem_head;
-    
-     while(current != NULL) {
-        
+    MemRecord* current = mem_head->head;
+    printf("/*********************MEMORY LIST************************/");
+    while(current != NULL) {
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));
          printf("Size: %d\n", BLOCK_SIZE);
          printf("=============>\n");
         
         current = current->next;
+    }  
+    
+    current = mem_head->head_free;
+    printf("/*********************FREE LIST************************/");
+    while(current != NULL){
+         printf("=== Block ===\n");
+         printf("Status: %s\n", p_status(current->status));
+         printf("Size: %d\n", current->size);
+         printf("=============>\n");
+        
+        current = current->nextFree;
     }
-    
-    
-    
 }
