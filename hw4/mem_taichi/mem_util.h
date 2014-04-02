@@ -19,8 +19,7 @@ typedef struct MemRecord_Node {
     void* mem_loc;
     struct MemRecord_Node* next;
     struct MemRecord_Node* prev;
-    struct MemRecord_Node* nextFree;
-    struct MemRecord_Node* prevFree;
+    struct MemRecord_Node* nextFree;   
     char data[1];
 } MemRecord;    
 
