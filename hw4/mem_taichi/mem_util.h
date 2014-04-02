@@ -13,11 +13,12 @@
 #define MEM_OCCUPIED 1
 #define MEM_FREE 0
     
-#define HEADER_SIZE 20
+
+#define HEADER_SIZE 28
 #define DAZONGGUAN_SIZE 32
 
 typedef struct MemRecord_Node {
-    int status; 
+    int status;
     struct MemRecord_Node* next;
     struct MemRecord_Node* prev;       
     struct MemRecord_Node* nextFree;
@@ -41,7 +42,6 @@ MemRecord* get_block(void*);
 int is_valid_addr(void*);
 MemRecord* coalesce_block(MemRecord*);
 char* p_status(int status);
-
 char* p_merror(int m_error);
 
 #endif	/* UTIL_H */

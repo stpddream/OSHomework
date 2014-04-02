@@ -111,7 +111,7 @@ void *Mem_Alloc(int size) {
     }
     choice->nextFree = NULL;
     choice->status = MEM_OCCUPIED;
-    return choice->mem_loc;
+    return (void*)choice->data;
           
 }
 
@@ -120,32 +120,32 @@ int Mem_Free(void *ptr, int coalesce){
     //check if the pointer is a valid address
     if(is_valid_addr(ptr)){
         //get the header of the requested block
-        MemRecord* block = get_block(ptr);
-       
+        MemRecord* current = get_block(ptr);
+        if(current->status == MEM_OCCUPIED) mem_head->mem_alloc -= BLOCK_SIZE; 
         //if coalesce, coalesce the previous and next block and update the link
         if(coalesce){
-            block = coalesce_block(block);
+            current = coalesce_block(current);
         }  
         //if it is already a free block, return success
-        if(block->status == MEM_FREE) return 0;
+        if(current->status == MEM_FREE) return 0;
 
         //otherwise, set the status to be free, update the free list
-        block->status = MEM_FREE;
+        current->status = MEM_FREE;
          
         //traverse backwards to find the previous free node
-        MemRecord* prevFree = block->prev;
+        MemRecord* prevFree = current->prev;
         while(prevFree && prevFree->status != MEM_FREE){
             prevFree = prevFree->prev;
         }
         //update the free list link if prevFree is not NULL
         if(prevFree){
-            if(block->nextFree == NULL) block->nextFree = prevFree->nextFree;
-            prevFree->nextFree = block;
+            if(current->nextFree == NULL) current->nextFree = prevFree->nextFree;
+            prevFree->nextFree = current;
         }else{
             //if there is no previous free node
             //then the current node is the head of the free list
-            if(block->nextFree == NULL) block->nextFree = mem_head->head_free;
-            mem_head->head_free = block;
+            if(current->nextFree == NULL) current->nextFree = mem_head->head_free;
+            mem_head->head_free = current;
         }
 
         return 0;

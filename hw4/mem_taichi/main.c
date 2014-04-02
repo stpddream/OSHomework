@@ -8,6 +8,7 @@ int m_error;
 
 int main(int argc, char** argv) {
     
+<<<<<<< HEAD
     Mem_Init(8192);
     
     
@@ -29,5 +30,9 @@ int main(int argc, char** argv) {
     Mem_Dump();
     */
     
+ 
+    //printf("Starting test\n");
+    //odd_sized_alloc_free();   
+
     return 0;
 }

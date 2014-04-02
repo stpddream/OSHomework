@@ -14,8 +14,9 @@
 
 #define TEST_SUCCESS 0
 #define TEST_FAIL -1
-#define TOTAL_MEMORY 1024
+#define TOTAL_MEMORY 8192
 
+extern int m_error;
 int check_for_eight_byte();
 int simple_8_byte_alloc();
 int aligned_alloc();
@@ -25,7 +26,7 @@ int worst_fit_alloc();
 int coalesce_of_space();
 int simple_alloc_free();
 int aligned_alloc_free();
-int odd_sized_alloc();
+int odd_sized_alloc_free();
 int init_size_one_page();
 int init_size_round_one_page();
 int no_space_left_allocate();
