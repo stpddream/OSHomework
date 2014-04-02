@@ -155,8 +155,7 @@ void Mem_Dump() {
     printf(" === Block(Status, Size) ===\n");
     printf("[**MEMORY LIST**]\n");
     while(current != NULL) {
-        printf("\t");
-        printf("(%s, %ld)==>>", p_status(current->status), BLOCK_SIZE);
+        printf("(%s, %ld)==>>  ", p_status(current->status), BLOCK_SIZE);
         current = current->next;
     }
     printf("\n\n");
@@ -164,7 +163,6 @@ void Mem_Dump() {
     current = mem_head->head_free;
     printf("[**FREE LIST**]\n");
     while(current != NULL) {
-        printf("\t");
         printf("(%s, %ld)==>> ", p_status(current->status), BLOCK_SIZE);
         current = current->nextFree;
     }
