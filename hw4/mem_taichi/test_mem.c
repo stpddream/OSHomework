@@ -97,6 +97,7 @@ int odd_sized_alloc() {
     Mem_Free(pt2, 1);
     Mem_Free(pt3, 1);
     Mem_Free(pt4, 1);
+//    Mem_Dump();
     
     end_test();
     return 0;
@@ -105,13 +106,13 @@ int odd_sized_alloc() {
 
 
 
-/* Test 05 */
+/* Test 06 */
 int bad_args_to_mem_init() {
     
-    printf("==== Bad Args to Mem Test ====\n");
 
+    printf("==== Bad Args to Mem Test ====\n");
     Mem_Destroy();
-    
+   
     //Re mem init
     Mem_Init(-200);
     printf("Error: %s", p_merror(m_error));
@@ -126,35 +127,24 @@ int bad_args_to_mem_init() {
 
 
 
-/* Test 06: worstfit allocation */
+/* Test 07: Coalesce free space */
 int worst_fit_alloc() {
     
+
     printf("==== Worst Fit Allocation Test ====\n");
 
     action("alloc pt1");
+
     void* pt1 = Mem_Alloc(4096);
-    Mem_Dump();    
-    
-    action("alloc pt2");
     void* pt2 = Mem_Alloc(8);
-    Mem_Dump();
-    
-    action("alloc pt3");
-    void* pt3 = Mem_Alloc(512);        
-    Mem_Dump();
-    
-    action("free pt1, pt3");
-    
+    void* pt3 = Mem_Alloc(512);
+        
     Mem_Free(pt1, 0);
     Mem_Free(pt3, 0);
     
     Mem_Dump();
-    
-    action("alloc pt4");        
+        
     void* pt4 = Mem_Alloc(128);
-    
-    Mem_Dump();
-    
     
     Mem_Free(pt4, 0);    
     Mem_Free(pt2, 0);
@@ -162,7 +152,9 @@ int worst_fit_alloc() {
     end_test();
     
     return 0;
-      
+    
+    
+    
 }
 
 
@@ -171,6 +163,7 @@ int worst_fit_alloc() {
 /* Test 07: Coalesce free space */
 int coalesce_of_space() {
     
+
     printf("==== Coalesce free space Test ====\n");
     
     action("alloc pt1, pt2, pt3, pt4, pt5");
@@ -215,10 +208,9 @@ int simple_alloc_free() {
 
     
     action("alloc pt to 1");
+
     void* pt = Mem_Alloc(1);
     Mem_Dump();
-    
-    action("free pt no coal");
     Mem_Free(pt, 0);
     Mem_Dump();
     
@@ -234,7 +226,7 @@ int aligned_alloc_free(){
     int result = 0;
     printf("==== Initialize and round up to one page test ====\n");
     
-    printf("TEST 9: Malloc ptr1(8), ptr2(32), ptr3(16), ptr4(256)\n");
+    action("TEST 9: Malloc ptr1(8), ptr2(32), ptr3(16), ptr4(256)");
     void* test1 = Mem_Alloc(8);
     void* test2 = Mem_Alloc(32);
     void* test3 = Mem_Alloc(16);
@@ -242,24 +234,28 @@ int aligned_alloc_free(){
     
     Mem_Dump();
 
-    printf("Free ptr1\n");
-    Mem_Free(test1, 1);
+    action("Free ptr1, coalesce = False");
+    Mem_Free(test1, 0);
     Mem_Dump();
 
-    printf("Free ptr4(256)\n");
-    Mem_Free(test4, 1);
+    action("Free ptr4(256), coalesce = False");
+    Mem_Free(test4, 0);
     Mem_Dump();
 
-    printf("Free ptr2(32)\n");
-    Mem_Free(test2, 1);
+    action("Free ptr2(32), coalesce = False");
+    Mem_Free(test2, 0);
     Mem_Dump();
 
-    printf("Free ptr3(16)\n");
+    action("Free ptr3(16), coalesce = False");
     Mem_Free(test3, 0);
     Mem_Dump();
      
-
-    printf("%s!\n", (result == TEST_SUCCESS? "TEST SUCCESS" : "TEST FAIL"));
+    action("Coalesce everything");
+    Mem_Free(test1,1);
+    Mem_Free(test2,1);
+    Mem_Free(test3,1);
+    Mem_Free(test4,1);
+    Mem_Dump();
     printf("End of Test\n");
 
     return result;
@@ -267,27 +263,43 @@ int aligned_alloc_free(){
 
 /* TEST 10: odd-sized-allocation and free */
 int odd_sized_alloc_free(){
-    int result = 0;
-    printf("==== Odd sized allocation and free test ====\n");
     
+    int result = 0;
+    printf("==== Initialize and round up to one page test ====\n");
+    
+    action("TEST 9: Malloc ptr1(3), ptr2(119), ptr3(1), ptr4(89), ptr5(37)");
     void* test1 = Mem_Alloc(3);
     void* test2 = Mem_Alloc(119);
     void* test3 = Mem_Alloc(1);
     void* test4 = Mem_Alloc(89);
-    void* test5 = Mem_Alloc(39);
+    void* test5 = Mem_Alloc(37);
     
     Mem_Dump();
-
-    Mem_Free(test2, 1);
-    Mem_Free(test3, 1);
+    
+    action("Free ptr3(1), coalesce = False");
+    Mem_Free(test3, 0);
+    action("Free ptr1(3), coalesce = False");
+    Mem_Free(test1, 0);
+    action("Free ptr5(37), coalesce = True");
     Mem_Free(test5, 1);
-    Mem_Free(test4, 1);
-    Mem_Free(test1, 1);
+    action("Free ptr4(89), coalesce = False");
+    Mem_Free(test4, 0);
+    action("Free ptr2(119), coalesce = True");
+    Mem_Free(test2, 1);
+    
+    Mem_Dump();
+     
+    action("Coalesce everything");
+    Mem_Free(test1,1);
+    Mem_Free(test2,1);
+    Mem_Free(test3,1);
+    Mem_Free(test4,1);
+    Mem_Free(test5,1);
 
     Mem_Dump();
     
     printf("End of Test\n");
-
+    
     return result;
 }
 
@@ -297,12 +309,18 @@ int init_size_one_page(){
     printf("==== Initialize with size of one page test ====\n");
     
     int pagesize = getpagesize();
+    action("Request to Mem_Init(pageSize)");
+    printf("Page Size = %d\n", pagesize);
     Mem_Init(pagesize);
     int real_size = (pagesize/MIN_BLOCK_SIZE+1)*HEADER_SIZE+pagesize;
-    result = (mem_head->mem_size == (real_size/pagesize+1)*pagesize ? TEST_SUCCESS : TEST_FAIL);
+    int desired_size =  (real_size/pagesize+1)*pagesize;
+    printf("Actual Size Requested: %d\n", mem_head->mem_size);
+    printf("Desired Size Requested: %d\n", desired_size);
+
+    result = (mem_head->mem_size == desired_size ? TEST_SUCCESS : TEST_FAIL);
 
     printf("%s!\n", (result == TEST_SUCCESS? "TEST SUCCESS" : "TEST FAIL"));
-    printf("End of Test\n");
+    action("End of Test\n");
 
     return result;
 }
@@ -312,13 +330,20 @@ int init_size_round_one_page(){
     int result = 0;
     printf("==== Initialize and round up to one page test ====\n");
     
+    action("Request to Mem_Init(1024)");
     Mem_Init(1024);
     int real_size = (1024/MIN_BLOCK_SIZE+1)*HEADER_SIZE+1024;
     int pagesize = getpagesize();
-    result = (mem_head->mem_size == (real_size/pagesize+1)*pagesize ? TEST_SUCCESS : TEST_FAIL);
+    int desired_size = (real_size/pagesize+1)*pagesize;
+    
+    printf("Actual Size Requested: %d\n", mem_head->mem_size);
+    printf("Page Size : %d\n", pagesize);
+    printf("Desired Size Requested: %d\n", desired_size);
+
+    result = (mem_head->mem_size == desired_size ? TEST_SUCCESS : TEST_FAIL);
 
     printf("%s!\n", (result == TEST_SUCCESS? "TEST SUCCESS" : "TEST FAIL"));
-    printf("End of Test\n");
+    action("End of Test");
 
     return result;
 }
@@ -330,10 +355,10 @@ int no_space_left_allocate(){
     
     void* request = Mem_Alloc(TOTAL_MEMORY+1);
     result = (request == NULL ? TEST_SUCCESS : TEST_FAIL);
-    printf("Melloc Fail: %s\n", p_merror(m_error)); 
+    printf("Malloc Fail: %s\n", p_merror(m_error)); 
 
     printf("%s!\n", (result == TEST_SUCCESS? "TEST SUCCESS" : "TEST FAIL"));
-    printf("End of Test\n");
+    action("End of Test");
 
     return result;
 }
