@@ -13,8 +13,8 @@
 #define MEM_OCCUPIED 1
 #define MEM_FREE 0
     
-#define HEADER_SIZE 20
-#define DAZONGGUAN_SIZE 20
+#define HEADER_SIZE 28
+#define DAZONGGUAN_SIZE 32
 
 typedef struct MemRecord_Node {
     int status;
