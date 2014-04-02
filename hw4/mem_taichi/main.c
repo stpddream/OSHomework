@@ -18,7 +18,12 @@ int main(int argc, char** argv) {
     //check_for_eight_byte();
     //simple_8_byte_alloc();
     //aligned_alloc();
-    odd_sized_alloc();
+    //odd_sized_alloc();
+    //bad_args_to_mem_init();
+    //worst_fit_alloc();
+    //coalesce_of_space();
+    simple_alloc_free();
+
 
     /*
     Mem_Init(4096);

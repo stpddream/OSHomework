@@ -6,8 +6,8 @@ MemHead* mem_head;
 int Mem_Init(int sizeOfRegion) {
     
     if(mem_head != NULL) return -1;
-    
-    if(sizeOfRegion <= 0) {
+   
+    if(sizeOfRegion <= 0) {   
         m_error = E_BAD_ARGS;
         return -1;
     }
@@ -46,7 +46,7 @@ void *Mem_Alloc(int size) {
     
     //Traverse the memory list    
     size = round_to_eight(size);
-    MemRecord* current = mem_head->head;
+    MemRecord* current = mem_head->head_free;
     MemRecord* prev_free = NULL;
     MemRecord* choice = NULL;
     int max_size = -1;
@@ -57,9 +57,8 @@ void *Mem_Alloc(int size) {
             prev_free = choice;
             choice = current;
         }
-        
-
-        current = current->next;
+       
+        current = current->nextFree;
 
     }
     
@@ -71,7 +70,7 @@ void *Mem_Alloc(int size) {
     //Alloc Space
     
     //Not enough space for split
-    if(max_size >= size + HEADER_SIZE + MIN_BLOCK_SIZE) {  
+    if(max_size >= size + HEADER_SIZE + MIN_BLOCK_SIZE) {            
         
         choice->status = MEM_OCCUPIED;
         MemRecord* cur_next = choice->next;
@@ -85,7 +84,12 @@ void *Mem_Alloc(int size) {
         next_record->nextFree = choice->nextFree;        
         
         if(prev_free != NULL) prev_free->nextFree = next_record;
-        else mem_head->head_free = next_record;
+        else {
+            mem_head->head_free = next_record;
+            printf("modify head\n");
+        }
+        
+
                 
         choice->next = next_record;    
         //choice->prev = remain the same
@@ -165,9 +169,10 @@ void Mem_Dump() {
     printf("-----------------------------------------------------------------\n\n\n");
 }
 
-int Mem_Destroy() {
+int Mem_Destroy() {   
    int size = mem_head->mem_size;
    int result = munmap(mem_head,size); 
+
    mem_head = NULL; //set the head pointer to NULL
    return result;
 }

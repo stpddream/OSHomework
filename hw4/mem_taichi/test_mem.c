@@ -91,7 +91,6 @@ int odd_sized_alloc() {
     Mem_Free(pt2, 1);
     Mem_Free(pt3, 1);
     Mem_Free(pt4, 1);
-//    Mem_Dump();
     
     return 0;
     
@@ -99,8 +98,10 @@ int odd_sized_alloc() {
 
 
 
-/* Test 06 */
+/* Test 05 */
 int bad_args_to_mem_init() {
+    
+    Mem_Destroy();
     
     //Re mem init
     Mem_Init(-200);
@@ -114,27 +115,40 @@ int bad_args_to_mem_init() {
 
 
 
-/* Test 07: Coalesce free space */
+/* Test 06: worstfit allocation */
 int worst_fit_alloc() {
     
+    //action("alloc pt1, pt2, pt3");
+    action("alloc pt1");
     void* pt1 = Mem_Alloc(4096);
+    Mem_Dump();    
+    
+    action("alloc pt2");
     void* pt2 = Mem_Alloc(8);
-    void* pt3 = Mem_Alloc(512);
-        
+    Mem_Dump();
+    
+    action("alloc pt3");
+    void* pt3 = Mem_Alloc(512);        
+    Mem_Dump();
+    
+    action("free pt1, pt3");
+    
     Mem_Free(pt1, 0);
     Mem_Free(pt3, 0);
     
     Mem_Dump();
-        
+    
+    action("alloc pt4");        
     void* pt4 = Mem_Alloc(128);
+    
+    Mem_Dump();
+    
     
     Mem_Free(pt4, 0);    
     Mem_Free(pt2, 0);
     
     return 0;
-    
-    
-    
+      
 }
 
 
@@ -143,8 +157,11 @@ int worst_fit_alloc() {
 /* Test 07: Coalesce free space */
 int coalesce_of_space() {
     
+    action("alloc pt to 8");
     void* pt = Mem_Alloc(8);
     Mem_Dump();
+    
+    action("free pt coalesce");
     Mem_Free(pt, 1);
     Mem_Dump();
     
@@ -160,8 +177,11 @@ int coalesce_of_space() {
 /* Test 08: Simple Allocation and Free */
 int simple_alloc_free() {
     
+    action("alloc pt to 1");
     void* pt = Mem_Alloc(1);
     Mem_Dump();
+    
+    action("free pt no coal");
     Mem_Free(pt, 0);
     Mem_Dump();
     
