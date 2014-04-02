@@ -11,7 +11,7 @@
 #define MEM_OCCUPIED 1
 #define MEM_FREE 0
     
-#define HEADER_SIZE sizeof(MemRecord)
+#define HEADER_SIZE 20
 
 
 typedef struct MemRecord_Node {
@@ -41,4 +41,3 @@ MemRecord* coalesce_block(MemRecord*);
 char* p_status(int status);
 
 #endif	/* UTIL_H */
-

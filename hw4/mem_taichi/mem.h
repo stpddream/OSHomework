@@ -12,16 +12,13 @@
 #define E_PADDING_OVERWRITTEN 3
 #define E_BAD_ARGS            4
 #define E_BAD_POINTER         5
-#define E_INVALID_FREE        -1
-
-
-
-
+#define MIN_BLOCK_SIZE        8
+#define BLOCK_SIZE current->next - current->mem_loc
 
 extern int m_error;
 extern int memSize;
 
-MemRecord* head;
+MemHead* mem_head;
 
 
 
