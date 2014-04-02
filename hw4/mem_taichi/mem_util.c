@@ -28,7 +28,7 @@ MemRecord* coalesce_block(MemRecord *ptr){
     if(ptr->next && ptr->next->status == MEM_FREE){
         printf("any??\n");
         ptr->nextFree = ptr->next->nextFree;
-        printf("hohohoisisis\n");
+        printf("hohohoisisis %d\n", ptr->nextFree == NULL);
        
         ptr->next = ptr->next->next;
         if(ptr->next) ptr->next->prev = ptr;
@@ -37,7 +37,7 @@ MemRecord* coalesce_block(MemRecord *ptr){
     }
     
     //coalesce the current node with its previous node if the previous exists and is free
-    if(ptr->prev && ptr->prev->status == MEM_FREE){
+    if(ptr->prev && ptr->prev->status == MEM_FREE) {
         
         printf("here???\n");
         ptr->prev->nextFree = ptr->nextFree; 

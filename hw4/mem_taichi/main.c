@@ -15,9 +15,9 @@ int main(int argc, char** argv) {
     
     printf("============ Starting test =============\n");
         
-    check_for_eight_byte();
+    //check_for_eight_byte();
     
-    
+    simple_8_byte_alloc();
     
     /*
     Mem_Init(4096);
