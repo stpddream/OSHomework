@@ -15,6 +15,7 @@
 #define MIN_BLOCK_SIZE        8
 #define BLOCK_SIZE (void*)(current->next) - current->mem_loc
 
+
 extern int m_error;
 extern int memSize;
 

@@ -29,8 +29,8 @@ typedef struct MemRecord_Node {
 typedef struct ListInfo_Node {
     MemRecord* head;
     MemRecord* head_free;
-    int MemSize;
-    int MemAlloc;
+    int memSize;
+    int memAlloc;
 } MemHead;
 
 extern MemHead* mem_head;  
