@@ -67,7 +67,8 @@ char* p_merror(int m_error) {
             break;
         default:
             printf("To do or not to do....\n");
+            break;
     }
-   
+    return "";
 }
 

@@ -9,8 +9,10 @@ int main(int argc, char** argv) {
     
     
     printf("Starting test\n");
+    //Mem_Init(TOTAL_MEMORY);
+
     //check_for_eight_byte();
-    
+    //check_memory_written_after_allocation(); 
     
     
     /*

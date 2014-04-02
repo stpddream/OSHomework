@@ -41,7 +41,6 @@ MemRecord* get_block(void*);
 int is_valid_addr(void*);
 MemRecord* coalesce_block(MemRecord*);
 char* p_status(int status);
-
 char* p_merror(int m_error);
 
 #endif	/* UTIL_H */

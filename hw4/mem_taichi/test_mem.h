@@ -14,7 +14,7 @@
 
 #define TEST_SUCCESS 0
 #define TEST_FAIL -1
-#define TOTAL_MEMORY 1024
+#define TOTAL_MEMORY 8192
 
 int check_for_eight_byte();
 int simple_8_byte_alloc();
