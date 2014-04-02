@@ -44,10 +44,10 @@ int Mem_Init(int sizeOfRegion) {
     
     printf("size of pointer %d\n", sizeof(MemHead));
     printf("size of head %ld\n", (char*)mem_head->head - (char*)mem_head);
-    printf("size of small head %ld\n", (char*)mem_head->head->mem_loc - (char*)mem_head->head);
+    //printf("size of small head %ld\n", (char*)mem_head->head->mem_loc - (char*)mem_head->head);
 
     printf("End address %p", END_ADDR);
-    printf("First address %p", mem_head->head->mem_loc);
+    //printf("First address %p", mem_head->head->mem_loc);
     
     
     
