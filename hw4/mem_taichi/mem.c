@@ -44,6 +44,12 @@ int Mem_Init(int sizeOfRegion) {
 
 void *Mem_Alloc(int size) {
     
+    if(size > mem_head->mem_request - mem_head->mem_alloc) {
+        m_error = E_NO_SPACE;
+        return NULL;
+    }
+    
+    
     //Traverse the memory list    
     size = round_to_eight(size);
     MemRecord* current = mem_head->head_free;
@@ -52,7 +58,7 @@ void *Mem_Alloc(int size) {
     int max_size = -1;
     while(current != NULL) {
         
-        if(BLOCK_SIZE > size && BLOCK_SIZE > max_size) {
+        if(BLOCK_SIZE > size && BLOCK_SIZE > max_size) {                 
             max_size = BLOCK_SIZE;
             prev_free = choice;
             choice = current;
@@ -63,6 +69,7 @@ void *Mem_Alloc(int size) {
     }
     
     if(max_size == -1) {
+        printf("No space!!!\n");
         m_error = E_NO_SPACE;
         return NULL;
     }
@@ -85,8 +92,7 @@ void *Mem_Alloc(int size) {
         
         if(prev_free != NULL) prev_free->nextFree = next_record;
         else {
-            mem_head->head_free = next_record;
-            printf("modify head\n");
+            mem_head->head_free = next_record;         
         }
         
 
@@ -101,6 +107,7 @@ void *Mem_Alloc(int size) {
     }
     choice->nextFree = NULL;
     choice->status = MEM_OCCUPIED;
+    mem_head->mem_alloc++;
     return (void*)choice->data;
           
 }

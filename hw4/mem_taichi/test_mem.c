@@ -44,6 +44,9 @@ int simple_8_byte_alloc() {
 
 /* Test 03 Aligned Alloc*/
 int aligned_alloc() {
+    
+    printf("==== Alligned Allocation Test ====\n");
+
  
     action("alloc pt1");
     void* pt1 = Mem_Alloc(8);
@@ -71,6 +74,9 @@ int aligned_alloc() {
 /* Test 04 Odd Size Allocation */
 int odd_sized_alloc() {
     
+    printf("==== Odd Size Allocation Test ====\n");
+
+    
     action("alloc pt1");
     void* pt1 = Mem_Alloc(2222);
     Mem_Dump();
@@ -92,6 +98,7 @@ int odd_sized_alloc() {
     Mem_Free(pt3, 1);
     Mem_Free(pt4, 1);
     
+    end_test();
     return 0;
     
 }
@@ -101,6 +108,8 @@ int odd_sized_alloc() {
 /* Test 05 */
 int bad_args_to_mem_init() {
     
+    printf("==== Bad Args to Mem Test ====\n");
+
     Mem_Destroy();
     
     //Re mem init
@@ -108,6 +117,8 @@ int bad_args_to_mem_init() {
     printf("Error: %s", p_merror(m_error));
     Mem_Init(0);
     printf("Error: %s", p_merror(m_error));
+    
+    end_test();
     
     return 0;
 }
@@ -118,7 +129,8 @@ int bad_args_to_mem_init() {
 /* Test 06: worstfit allocation */
 int worst_fit_alloc() {
     
-    //action("alloc pt1, pt2, pt3");
+    printf("==== Worst Fit Allocation Test ====\n");
+
     action("alloc pt1");
     void* pt1 = Mem_Alloc(4096);
     Mem_Dump();    
@@ -147,6 +159,8 @@ int worst_fit_alloc() {
     Mem_Free(pt4, 0);    
     Mem_Free(pt2, 0);
     
+    end_test();
+    
     return 0;
       
 }
@@ -157,14 +171,34 @@ int worst_fit_alloc() {
 /* Test 07: Coalesce free space */
 int coalesce_of_space() {
     
-    action("alloc pt to 8");
-    void* pt = Mem_Alloc(8);
+    printf("==== Coalesce free space Test ====\n");
+    
+    action("alloc pt1, pt2, pt3, pt4, pt5");
+    void* pt1 = Mem_Alloc(8);        
+    void* pt2 = Mem_Alloc(10);
+    void* pt3 = Mem_Alloc(20);
+    void* pt4 = Mem_Alloc(40);
+    void* pt5 = Mem_Alloc(23);
     Mem_Dump();
     
-    action("free pt coalesce");
-    Mem_Free(pt, 1);
+    action("free pt 2, pt 4");
+    Mem_Free(pt2, 1);
+    Mem_Free(pt4, 1);
     Mem_Dump();
     
+    action("free 3 coal!");
+    Mem_Free(pt3, 1);
+    Mem_Dump();
+    
+    action("free 1 no coal");
+    Mem_Free(pt1, 0);
+    Mem_Dump();
+    
+    //Clean up
+    Mem_Free(pt5, 1);
+    Mem_Free(pt1, 1);
+    
+    end_test();
     return 0;
     
 }
@@ -176,6 +210,9 @@ int coalesce_of_space() {
 
 /* Test 08: Simple Allocation and Free */
 int simple_alloc_free() {
+    
+    printf("==== Simple Allocation and Free Test ====\n");
+
     
     action("alloc pt to 1");
     void* pt = Mem_Alloc(1);
@@ -309,32 +346,31 @@ int free_null(){
     result = (Mem_Free(NULL, 0) == 0 ? TEST_SUCCESS : TEST_FAIL);
     
     printf("%s!\n", (result == TEST_SUCCESS? "TEST SUCCESS" : "TEST FAIL"));
-    printf("End of Test\n");
+    
+    end_test();
     return result;
 }
 
 /* TEST 15: check that memory can be written to an allocation*/
 int check_memory_written_after_allocation(){
      int result = 0;
-    printf("==== No space left allocation test ====\n");
+    printf("==== Check Memory writte after allocation test ====\n");
     
+    action("alloc testInt to integer size");
     int* testInt = Mem_Alloc(sizeof(int));
-    testInt[0] = 1;
+    testInt[0] = 32767;
     printf("Wrote Integer: %d\n", testInt[0]);
-    Mem_Dump();
+    Mem_Dump();    
     Mem_Free(testInt, 1);
    
-    printf("End of Test\n");
-
+    end_test();
     return result;   
 }
 
 void end_test() {    
-    printf("========== End of Test ==========\n");
+    printf("========== End of Test ==========\n\n\n");
 }
 
 void action(char* action) {
-  
     printf("|------> %s <------|\n", action);
-  
 }
