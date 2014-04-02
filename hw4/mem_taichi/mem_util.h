@@ -14,7 +14,7 @@
 #define MEM_FREE 0
     
 #define HEADER_SIZE 20
-
+#define DAZONGGUAN_SIZE 20
 
 typedef struct MemRecord_Node {
     int status;
@@ -26,11 +26,12 @@ typedef struct MemRecord_Node {
 } MemRecord;    
 
 
-typedef struct ListInfo_Node {
+typedef struct {
     MemRecord* head;
     MemRecord* head_free;
-    int memSize;
-    int memAlloc;
+    int mem_size;
+    int mem_request;
+    int mem_alloc;
 } MemHead;
 
 extern MemHead* mem_head;  

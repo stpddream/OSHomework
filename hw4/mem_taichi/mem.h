@@ -17,10 +17,6 @@
 
 
 extern int m_error;
-extern int memSize;
-
-MemHead* mem_head;
-
 
 
 int Mem_Init(int sizeOfRegion);

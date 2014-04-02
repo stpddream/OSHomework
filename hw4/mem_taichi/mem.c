@@ -12,16 +12,26 @@ int Mem_Init(int sizeOfRegion) {
         return -1;
     }
     
-    size_t real_size = round_to(sizeOfRegion + HEADER_SIZE, getpagesize());    //round to page size
+    
+    size_t alloc_size = ((sizeOfRegion / MIN_BLOCK_SIZE) + 1) * HEADER_SIZE + sizeOfRegion;
+    
+    size_t real_size = round_to(alloc_size + DAZONGGUAN_SIZE, getpagesize());    //round to page size
     
     if((mem_head = mmap(NULL, real_size, PROT_READ | PROT_WRITE, 
             MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)) == MAP_FAILED) {
         m_error = E_NO_SPACE;
         return -1;
     }
+    
+    
+    //Set up DA ZONG GUAN header
+    mem_head->mem_alloc = 0;
+    mem_head->mem_request = sizeOfRegion;
+    mem_head->mem_size = real_size;
 
 
-    mem_head->head = (MemRecord*)mem_head;
+    //Set up first block   
+    mem_head->head = (MemRecord*)((char*)mem_head + DAZONGGUAN_SIZE);
     mem_head->head->status = MEM_FREE;
     mem_head->head->next = NULL;
     mem_head->head->prev = NULL;
@@ -137,7 +147,7 @@ void Mem_Dump() {
     while(current != NULL) {
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));
-         printf("Size: %d\n", 0);
+         printf("Size: %ld\n", BLOCK_SIZE);
          printf("=============>\n");
         
         current = current->next;
@@ -149,7 +159,7 @@ void Mem_Dump() {
          printf("=== Block ===\n");
          printf("Status: %s\n", p_status(current->status));
 
-         printf("Size: %d\n", 0);
+         printf("Size: %ld\n", BLOCK_SIZE);
          printf("=============>\n");
         
         current = current->nextFree;
