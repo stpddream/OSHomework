@@ -34,7 +34,7 @@ int free_null();
 int check_memory_written_after_allocation();
 
 
-
+void start_test(char* str);
 void end_test();
 void action(char* action);
 

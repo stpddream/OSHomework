@@ -5,16 +5,18 @@ MemHead* mem_head;
 
 int Mem_Init(int sizeOfRegion) {
     
+    //If already init memory
     if(mem_head != NULL) return -1;
    
+    //Invalid size 
     if(sizeOfRegion <= 0) {   
         m_error = E_BAD_ARGS;
         return -1;
     }
     
-    
+
+    //Calculate actual space needed 
     size_t alloc_size = round_to(sizeOfRegion, MIN_BLOCK_SIZE) / MIN_BLOCK_SIZE * HEADER_SIZE + sizeOfRegion;
-    
     size_t real_size = round_to(alloc_size + DAZONGGUAN_SIZE, getpagesize());    //round to page size
     
     if((mem_head = mmap(NULL, real_size, PROT_READ | PROT_WRITE, 
@@ -28,9 +30,8 @@ int Mem_Init(int sizeOfRegion) {
     mem_head->mem_alloc = 0;
     mem_head->mem_request = sizeOfRegion;
     mem_head->mem_size = real_size;
-  
-    printf("Initial Size %d\n", mem_head->mem_size);
-    //Set up first block   
+    
+    //Set up first block 
     mem_head->head = (MemRecord*)((char*)mem_head + DAZONGGUAN_SIZE);
     mem_head->head->status = MEM_FREE;
     mem_head->head->next = NULL;
@@ -44,20 +45,22 @@ int Mem_Init(int sizeOfRegion) {
 
 void *Mem_Alloc(int size) {
     
+    //Not enough memory
     if(size > mem_head->mem_request - mem_head->mem_alloc) {
         m_error = E_NO_SPACE;
         return NULL;
     }
     
     
-    //Traverse the memory list    
+    //Traverse the free list of memories
     size = round_to_eight(size);
     MemRecord* current = mem_head->head_free;
-    MemRecord* prev_free = NULL;
-    MemRecord* choice = NULL;
+    MemRecord* prev_free = NULL;     //Choice's previous free block 
+    MemRecord* choice = NULL;    //Memory block selected to alloc
     int max_size = -1;
     while(current != NULL) {
         
+        //If block has enough free space, update max size and block
         if(BLOCK_SIZE > size && BLOCK_SIZE > max_size) {                 
             max_size = BLOCK_SIZE;
             prev_free = choice;
@@ -65,18 +68,16 @@ void *Mem_Alloc(int size) {
         }
        
         current = current->nextFree;
-
     }
     
+    //No block has enough memory to alloc
     if(max_size == -1) {
         printf("No space!!!\n");
         m_error = E_NO_SPACE;
         return NULL;
     }
     
-    //Alloc Space
-    
-    //Not enough space for split
+    //If need to split
     if(max_size >= size + HEADER_SIZE + MIN_BLOCK_SIZE) {            
         
         choice->status = MEM_OCCUPIED;
@@ -94,20 +95,21 @@ void *Mem_Alloc(int size) {
         else {
             mem_head->head_free = next_record;         
         }
-        
-
-                
+                        
         choice->next = next_record;    
         //choice->prev = remain the same
     }
+    
+    //No need to split
     else {        
+        //Check if need to update head of free list
         if(prev_free == NULL) {
             mem_head->head_free = choice->nextFree;
         }        
     }
     choice->nextFree = NULL;
     choice->status = MEM_OCCUPIED;
-    mem_head->mem_alloc++;
+    mem_head->mem_alloc += size;
     return (void*)choice->data;
           
 }
@@ -164,24 +166,21 @@ int Mem_Free(void *ptr, int coalesce){
 void Mem_Dump() {
     
     MemRecord* current = mem_head->head;
-    printf("<======DUMP BEGIN=====>\n");
-    printf(" === Block(Status, Size) ===\n");
-    printf("[**MEMORY LIST**]\n");
+
+    printf("[** MEMORY LIST **]\n");
     while(current != NULL) {
-        printf("(%s, %ld)==>>  ", p_status(current->status), BLOCK_SIZE);
+        printf("(%s, %ld)-->>  ", p_status(current->status), BLOCK_SIZE);
         current = current->next;
     }
     printf("\n\n");
     
     current = mem_head->head_free;
-    printf("[**FREE LIST**]\n");
+    printf("[** FREE LIST **]\n");
     while(current != NULL) {
-        printf("(%s, %ld)==>> ", p_status(current->status), BLOCK_SIZE);
+        printf("(%s, %ld)-->> ", p_status(current->status), BLOCK_SIZE);
         current = current->nextFree;
     }
-    printf("\n");
-    printf("<=====DUMP FINISHED=====>\n\n\n");
-    printf("-----------------------------------------------------------------\n\n\n");
+    printf("\n\n\n");
 }
 
 int Mem_Destroy() {   
