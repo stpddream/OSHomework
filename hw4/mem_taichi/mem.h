@@ -29,6 +29,8 @@ int Mem_Free(void *ptr, int coalesce);
 
 void Mem_Dump();
 
+int Mem_Destroy();
+
 #endif
 
 

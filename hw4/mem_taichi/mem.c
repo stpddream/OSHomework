@@ -168,3 +168,10 @@ void Mem_Dump() {
         current = current->nextFree;
     }
 }
+
+int Mem_Destroy() {
+   int size = mem_head->mem_size;
+   int result = munmap(mem_head,size); 
+   mem_head = NULL; //set the head pointer to NULL
+   return result;
+}
