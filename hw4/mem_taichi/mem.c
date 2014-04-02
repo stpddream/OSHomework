@@ -151,27 +151,26 @@ int Mem_Free(void *ptr, int coalesce){
 void Mem_Dump() {
     
     MemRecord* current = mem_head->head;
-    printf("/*********************MEMORY LIST************************/\n");
+    printf("<======DUMP BEGIN=====>\n");
+    printf(" === Block(Status, Size) ===\n");
+    printf("[**MEMORY LIST**]\n");
     while(current != NULL) {
-         printf("=== Block ===\n");
-         printf("Status: %s\n", p_status(current->status));
-         printf("Size: %ld\n", BLOCK_SIZE);
-         printf("=============>\n");
-        
+        printf("\t");
+        printf("(%s, %ld)==>>", p_status(current->status), BLOCK_SIZE);
         current = current->next;
-    }  
+    }
+    printf("\n\n");
     
     current = mem_head->head_free;
-    printf("/*********************FREE LIST************************/\n");
-    while(current != NULL){
-         printf("=== Block ===\n");
-         printf("Status: %s\n", p_status(current->status));
-
-         printf("Size: %ld\n", BLOCK_SIZE);
-         printf("=============>\n");
-        
+    printf("[**FREE LIST**]\n");
+    while(current != NULL) {
+        printf("\t");
+        printf("(%s, %ld)==>> ", p_status(current->status), BLOCK_SIZE);
         current = current->nextFree;
     }
+    printf("\n");
+    printf("<=====DUMP FINISHED=====>\n\n\n");
+    printf("-----------------------------------------------------------------\n\n\n");
 }
 
 int Mem_Destroy() {
