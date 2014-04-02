@@ -177,20 +177,28 @@ int aligned_alloc_free(){
     int result = 0;
     printf("==== Initialize and round up to one page test ====\n");
     
+    printf("TEST 9: Malloc ptr1(8), ptr2(32), ptr3(16), ptr4(256)\n");
     void* test1 = Mem_Alloc(8);
     void* test2 = Mem_Alloc(32);
     void* test3 = Mem_Alloc(16);
     void* test4 = Mem_Alloc(256);
-    void* test5 = Mem_Alloc(8);
     
     Mem_Dump();
 
+    printf("Free ptr1\n");
     Mem_Free(test1, 1);
-    Mem_Free(test5, 1);
-    Mem_Free(test4, 1);
-    Mem_Free(test2, 1);
-    Mem_Free(test3, 1);
+    Mem_Dump();
 
+    printf("Free ptr4(256)\n");
+    Mem_Free(test4, 1);
+    Mem_Dump();
+
+    printf("Free ptr2(32)\n");
+    Mem_Free(test2, 1);
+    Mem_Dump();
+
+    printf("Free ptr3(16)\n");
+    Mem_Free(test3, 0);
     Mem_Dump();
      
 
