@@ -133,12 +133,12 @@ int Mem_Free(void *ptr, int coalesce){
         }
         //update the free list link if prevFree is not NULL
         if(prevFree){
-            if(current->nextFree == NULL) current->nextFree = prevFree->nextFree;
+            if(!coalesce) current->nextFree = prevFree->nextFree;
             prevFree->nextFree = current;
         }else{
             //if there is no previous free node
             //then the current node is the head of the free list
-            if(current->nextFree == NULL) current->nextFree = mem_head->head_free;
+            if(!coalesce) current->nextFree = mem_head->head_free;
             mem_head->head_free = current;
         }
 
