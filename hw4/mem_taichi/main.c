@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "mem.h"
 #include "test_mem.h"
 

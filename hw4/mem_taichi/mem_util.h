@@ -13,6 +13,7 @@
 #define MEM_OCCUPIED 1
 #define MEM_FREE 0
     
+
 #define HEADER_SIZE 28
 #define DAZONGGUAN_SIZE 32
 
