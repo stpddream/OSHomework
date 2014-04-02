@@ -22,4 +22,4 @@ test_mem.o: test_mem.c test_mem.h
 	
 
 clean:
-	rm *.o mem_taichi .*.sw*
+	rm -f *.o mem_taichi .*.sw* 

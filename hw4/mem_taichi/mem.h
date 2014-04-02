@@ -13,14 +13,10 @@
 #define E_BAD_ARGS            4
 #define E_BAD_POINTER         5
 #define MIN_BLOCK_SIZE        8
-#define BLOCK_SIZE (void*)(current->next) - current->mem_loc
+#define BLOCK_SIZE (void*)(current->next) - (void*)current->data
 
 
 extern int m_error;
-extern int memSize;
-
-MemHead* mem_head;
-
 
 
 int Mem_Init(int sizeOfRegion);

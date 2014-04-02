@@ -7,25 +7,40 @@ int m_error;
 
 int main(int argc, char** argv) {
     
-    
-    printf("Starting test\n");
-    //Mem_Init(TOTAL_MEMORY);
+    Mem_Init(TOTAL_MEMORY);
+    //MemHead m;
+    //MemRecord r;
 
-    //check_for_eight_byte();
-    //check_memory_written_after_allocation(); 
+    printf("size = %ld\n", sizeof(MemHead));
+    typedef struct{
+        void* a;
+        void* b;
+        void* c;
+        int d;
+        char e[1];
+    }Dummy;
+
+    //Dummy d;
+
+    Dummy* dtest = malloc(sizeof(Dummy));
+    void* haha = (void*)dtest->e; 
+    *((int*)haha) = 5;
+    int* content = (int*)dtest->e;
+    printf("ahoahohaohao %d", *content);
+
+
+    Dummy* heihei = (Dummy*)dtest->e;
+    heihei->d = 2223;
+
+    Dummy* bigcontent = (Dummy*)dtest->e;
+
+    printf("ioioioioio %d", bigcontent->d);
+
+    printf("%ld\n", (char*)dtest - (char*)dtest->e);
     
-    
-    /*
-    Mem_Init(4096);
-    
-    Mem_Dump();
-    
-    printf("Before\n");
-    Mem_Alloc(8);
-    printf("In mem alloc\n");
-    Mem_Alloc(500);   
-    Mem_Dump();
-    */
-    
+ 
+    //printf("Starting test\n");
+    //odd_sized_alloc_free();   
+
     return 0;
 }

@@ -16,8 +16,8 @@ MemRecord* get_block(void *ptr){
 
 /* checks if a given pointer is a valided malloced block */
 int is_valid_addr(void* ptr){
-    if((char* )ptr > (char* )mem_head->head && (char* )ptr < (char* )mem_head->head+mem_head->memSize){
-        return (ptr == (get_block(ptr))->mem_loc); //check if ptr corresponds to the mem_loc in the header
+    if((char* )ptr > (char* )mem_head->head && (char* )ptr < (char* )mem_head->head+mem_head->mem_size){
+        return (ptr == (void*)(get_block(ptr))->data); //check if ptr corresponds to the mem_loc in the header
     }
     return 0; //return false
 }
