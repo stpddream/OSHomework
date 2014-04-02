@@ -1,0 +1,67 @@
+Name:       Xinan Li(Jacy), Fangyu Xiong (Panda)
+Class:      CS355 Operating System
+Assignment: hw04
+Due: April 01, 2014
+
+-------------------------------------------------
+How to compile:
+    -cd into the right directory: mem_taichi
+    % make
+    
+    No extra steps are needed to be done for compilation
+-------------------------------------------------
+How to run it:
+    % ./mem_taichi
+-------------------------------------------------
+Files:
+    main.c
+    mem.c mem.h
+    mem_util.c mem_util.h
+    mem_test.c mem_test.h
+-------------------------------------------------
+Data Structure:
+|-----------------------|-----------------------------------------------|----------
+|MemHead:               | MemRecord:            |                       | 
+| MemRecord* head       |  int status           |                       |
+| MemRecord* head_free  |  MemRecord* next      |                       | ....
+| int mem_size          |  MemRecord* prev      | SOME MALLOCED MEMORY  |
+| int mem_request       |  MemRecord* nextFree  |                       |
+| int mem_alloc         |  char data[1]         |                       |
+|-----------------------|-----------------------------------------------|----------
+
+The basic data structure used for memory management is a doubly linked list.
+For the linked list we firstly store some global variable about the list in a type defined header - MemHead, which contains the head of the ordered doubly linked list (for all segmented memory), and the head of the ordered singly linked list for all the Free blocks. In addition, we also store the mem_size for the actual size mapped (maximum possible size the linked list will use), mem_request for the requested sizeOfRegion, and mem_alloc for the current allocated memory (initialized to be 0). The size of MemHead is 32 bit.
+
+The actual node structure for the linked list is a type defined structure - MemRecord, which stores the next, prev pointer for the next and previous memory segment in the linked list. MemRecord also contains a nextFree pointer for the free list, which points to the next free segment in the list. Status is an integer which indicates if the current segment is occupied(malloced) for not. data acts as a pointer to the beginning of the allocated memory. The size of MemRecord is 32 bit. (Yet we type defined the header size to be 28 so that data, the 29th bit will be the start of the malloced memory). Note that we did not store the size of the malloced block but the size of the malloced memory can be calculated as the 
+        next - data
+which is substracting the beginning of the next header with the beginning of the current allocated memory.
+-------------------------------------------------
+Efficiency:
+Mem_Init():
+    Mem_Init(): O(1), calculated the actual memory needed and call mmap() to initialize the memory
+    Mem_Alloc(): search through the free list to find the worst fit, which is linear efficiency, where n is the length of the free list
+    Mem_Free():  since we are keeping an ordered singly free list, when coalesce is not called, or called but the current block is not merging with its next block for whatever reason, we would need to update the link from the previous free block to current (newly freed block), which will cost O(n) to search through the list to find the prevFree. Otherwise Mem_Free() is O(1). Since accessing the node is O(1) and updating the links are O(1) as well.
+-------------------------------------------------
+Testing:
+Small test cases (functions) are written for the following situations,
+The result can be checked by the reading the printed info
+
+1. check for 8-byte alignment
+2. simple 8-byte allocation
+3. a few aligned allocations
+4. several odd-sized allocations
+5. bad args to Mem_Init()
+6. worstt allocation
+7. coalesce of free space
+8. simple allocation and free
+9. aligned allocation and free
+10. odd-sized allocation and free
+11. initialize with size of 1 page
+12. initialize and round up to 1 page
+13. no space left to allocate
+14. try to free a NULL pointer
+15. check that memory can be written to after allocation
+
+Note: Mem_Destroy() is implemented in mem.c for testing purpose so that we could re-initialize the Memory by unmapping the current memory and call Mem_Init() again.
+-------------------------------------------------
+No known Bugs found
