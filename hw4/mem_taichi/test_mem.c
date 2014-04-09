@@ -408,7 +408,14 @@ int check_memory_written_after_allocation(){
     printf(">>>>> Wrote Integer: %d\n", testInt[0]);
     Mem_Dump();    
     Mem_Free(testInt, 1);
-   
+
+    action("alloc char array(string) to testCharArr");
+    char* testCharArr = (char* )Mem_Alloc(10*sizeof(char));
+    testCharArr = "Aloha";
+    printf(">>>>> Wrote Aloha: %s\n", testCharArr);
+    Mem_Dump();    
+    Mem_Free(testInt, 1);
+     
     end_test();
     return result;   
 }
