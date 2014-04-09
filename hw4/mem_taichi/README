@@ -6,12 +6,16 @@ Due: April 01, 2014
 -------------------------------------------------
 How to compile:
     -cd into the right directory: mem_taichi
-    % make
+    % gcc -Wall -fpic -c mem.c 
+    % gcc -Wall -fpic -c mem_util.c
+    % gcc -o libmem.so mem.o mem_util.o -shared
+    % gcc -o test main.c test_mem.c -L. -lmem
+    % export LD_LIBRARY_PATH = $LD_LIBRARY_PATH:.
     
     No extra steps are needed to be done for compilation
 -------------------------------------------------
 How to run it:
-    % ./mem_taichi
+    % ./test
 -------------------------------------------------
 Files:
     main.c
