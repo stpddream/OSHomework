@@ -6,7 +6,7 @@ All:	defrag
 defrag: defrag.o
 	$(CC) $(CFLAGS) defrag.o -o defrag
 
-defrag.o: defrag.c 
+defrag.o: defrag.c defrag.h 
 	$(CC) $(CFLAGS) -c defrag.c
 
 clean:

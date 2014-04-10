@@ -1,87 +1,63 @@
-#include <stdio.h>
+#include "defrag.h"
 
-#define SUPER_ITEMS 6
-#define BLOCK_BASE 1024
-#define INODE_ITEMS 25
-#define N_DBLOCKS 10
-#define N_IBLOCKS 4
+Superblock sb;
+FILE* fp;
+int inode_begin, inode_end;
 
-typedef struct{
-  int size;
-  int inode_offset;
-  int data_offset;
-  int swap_offset;
-  int free_inode;
-  int free_iblock;
-}Superblock;
-
-typedef struct{
-  int next_inode;
-  int protect;
-  int nlink;
-  int size;
-  int uid;
-  int gid;
-  int ctime;
-  int mtime;
-  int atime;
-  int dblocks[N_DBLOCKS];
-  int iblocks[N_IBLOCKS];
-  int i2block;
-  int i3block;
-} iNode;
 
 int main(int argc, char** argv) {
     
-    FILE* fp;
     fp = fopen("datafile-frag", "r");
     
     fseek(fp, 512, SEEK_SET); //Skip the first 512 byte
+    fread(&sb, sizeof(Superblock), 1, fp); //read the superblock
     
-    //int super_block[SUPER_ITEMS];    
-    Superblock sb;
-    fread(&sb, sizeof(Superblock), 1, fp);
-    printf("size = %d\n", sb.size);
-    printf("inode offset = %d\n", sb.inode_offset); 
-    printf("data offset = %d\n", sb.data_offset);
-    printf("swap offset = %d\n", sb.swap_offset);
-    printf("free inode index = %d\n", sb.free_inode);
-    printf("free iblock index = %d\n", sb.free_iblock);
-   
-    printf("size of inode = %ld\n", sizeof(iNode)); 
-    printf("number of iNodes = %d\n", (int)(sb.size/sizeof(iNode)*4));
-    /*inode free_head;
-    fseek(fp, sb.free_inode*sb.size, SEEK_CUR);
-    fread(&free_head, sizeof(inode), 1, fp);
-    */
-     
-    /*
-    int i;
-    for(i = 0; i < SUPER_ITEMS; i++) {
-        printf("%d\n", super_block[i]);
+    // set the begining and end location of the iNode chunck
+    inode_begin = 1024+sb.inode_offset*sb.size;
+    inode_end = 1024+sb.data_offset*sb.size;
+    
+    int i, tmp, curNode;
+    printf("printing inode list ... \n");
+    for(i = 0, curNode = inode_begin; (tmp = next_inode(curNode)) != -1; curNode = tmp, i++) {
+      printf("curNode [%d]\t %d \t %s\n", i, curNode, (isFreeNode(curNode)? "free": "occupied"));
     }
+   
+    printf("printing occupied inode list ... \n");
+    for(i = 0, curNode = inode_begin; (tmp = next_occupied_inode(curNode)) != -1; curNode = tmp, i++) {
+      printf("curNode [%d]\t %d\n", i, curNode);
+    } 
     
-    int block_size = super_block[0];
-    int inode_pt = BLOCK_BASE + super_block[1];
-    int data_pos = BLOCK_BASE + super_block[3];
-    
-    
-  //  do {
-        int inode[INODE_ITEMS];
-        fread((void*)inode, sizeof(int), INODE_ITEMS, fp);*/
-        
-        
-
-        
-        
-    //} while();
-        
-    
-    
-    
-    
-    
-    return 0;
-    
-    
+    return 0;    
 }
+
+/* return true if the current inode is free
+ * false otherwise */
+int isFreeNode(int curNode){
+  iNode cur;
+  fseek(fp, curNode, SEEK_SET);
+  fread(&cur, sizeof(iNode), 1, fp);
+  return (cur.nlink == 0 ? TRUE : FALSE);
+}
+
+/* find the next inode in the list,
+ * return -1 when there is no nextNode (curNode is the tail */
+int next_inode(int curNode){
+  int nextNode = curNode + INODE_SIZE;
+  if(nextNode > inode_begin && nextNode < inode_end){
+    //check if the current inode address is valid 
+    int nextBlock = (nextNode/BLOCK_SIZE+1)*BLOCK_SIZE;
+    if(nextBlock-nextNode < INODE_SIZE) {
+      nextNode = nextBlock;
+    }
+    return nextNode;
+  }
+  return -1;
+}
+
+/* find the next occupied inode in the list
+ * return -1 when there is no next occupied node */
+int next_occupied_inode(int curNode){
+  while((curNode = next_inode(curNode)) != -1 && isFreeNode(curNode));
+  return curNode;
+}
+
