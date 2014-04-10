@@ -24,3 +24,4 @@ bin/
 nbproject/
 out/
 hw4/mem_taichi/mem_taichi
+defrag
