@@ -25,10 +25,21 @@ int main(int argc, char** argv) {
     
     
   //  do {
-        int inode[INODE_ITEMS];
-        fread((void*)inode, sizeof(int), INODE_ITEMS, fp);
+    
+    int inode[INODE_ITEMS];/*
+    fread((void*)inode, sizeof(int), INODE_ITEMS, fp);
+    int i = 0;
+    for(i = 0; i < 4; i++) {
+        fread((void*)inode, sizeof(int), INODE_ITEMS, fp);       
+        printf("----- next inode -----\n");        
+    }*/
+    printf("free head\n");
         
-        
+    fseek(fp, BLOCK_BASE + inode_pt + 14, SEEK_SET); 
+    fread((void*)inode, sizeof(int), INODE_ITEMS, fp);       
+    for(i = 0; i < INODE_ITEMS; i++) {
+        printf("%d\n", inode[i]);
+    }
 
         
         
