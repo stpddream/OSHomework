@@ -9,6 +9,7 @@ int in_idx_w;
 
 int main(int argc, char** argv) {
     int i, tmp, cur_node;
+
     iNode inode;
     //open the read and write files
     fp_r = fopen("datafile-frag", "r");
@@ -55,25 +56,10 @@ int main(int argc, char** argv) {
 
     
     printf("\n\n");
-    /*
-    for(i = 0; i < 20; i++){
-        int inode_addr = 1024+i*100;
-        get_inode_by_addr(inode_addr, &inode);
-        printf("curNode[%d]\t %d\t %s\t", i, inode_addr, (is_free_inode(inode_addr)? "free   ": "occupied"));
-        print_inode(&inode);
-    }
-    
-    iNode freehead, tmpfree;
-    get_inode_by_index(sb.free_inode, &freehead);
-    tmpfree = freehead;
-    
-    while(tmpfree.next_inode != -1) {
-      printf("freenode idx: %d\n", tmpfree.next_inode);
-      get_inode_by_index(tmpfree.next_inode, &tmpfree);
-    }*/
 
     //close both file
     fclose(fp_r);
     fclose(fp_w);
     return 0;    
+
 }
