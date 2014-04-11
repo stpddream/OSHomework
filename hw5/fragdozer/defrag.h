@@ -9,7 +9,7 @@
 #define BLOCK_SIZE sb.size
 #define TRUE 1
 #define FALSE 0
-
+#define INODE_ADDR_BY_IDX(idx) 1024+INODE_SIZE*idx
 typedef struct{
   int size;
   int inode_offset;
@@ -35,6 +35,9 @@ typedef struct{
   int i3block;
 } iNode;
 
-int isFreeNode(int);
+int get_inode_by_addr(int, iNode*);
+int get_inode_by_index(int, iNode*);
+int is_free_inode(int);
 int next_inode(int);
 int next_occupied_inode(int);
+void print_inode(iNode*);
