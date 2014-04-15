@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#ifndef DOZER_H
+#define DOZER_H
+
+
 #define TRUE 1
 #define FALSE 0
 #define SUPER_ITEMS 6
@@ -13,9 +18,20 @@
 #define INODE_SIZE sizeof(iNode)
 #define BLOCK_SIZE sb.size
 #define INODE_ADDR_BY_IDX(idx) 1024+INODE_SIZE*idx
+
+//Convert Data Index to Data Address
+#define DATA_ADDR(IDX) BLOCK_BASE + sb.data_offset * BLOCK_SIZE + IDX * BLOCK_SIZE
+
+
 #define DATA_POS BLOCK_BASE + sb.data_offset + index * BLOCK_SIZE
-#define DATA_IDX(INDEX) BLOCK_BASE + sb.data_offset + INDEX * BLOCK_SIZE
+#define DATA_IDX(PT) BLOCK_BASE + sb.data_offset * BLOCK_SIZE + PT
+
+
+
 #define ADDR_IDX(IDX, OFFSET) DATA_IDX(IDX) + OFFSET * sizeof(int)
+
+
+#define DATA_ADDR_O(IDX, OFFSET) DATA_ADDR(IDX) + OFFSET * sizeof(int)
 #define N_INDIR_PT BLOCK_SIZE / sizeof(int)
 
 #define MIN(A, B) (A > B) ? A : B
@@ -59,11 +75,18 @@ void doze(iNode* inode);
 int write_addr(int pos, int addr);
 int deref(int index);
 char* read_data(int index);
-int copy_data(int from_idx, int to_idx);
+int copy_datai(int from_idx, int to_idx);
+int write_addri(int base_idx, int item, int addr);
+int fseeki(FILE* stream, long idx);
+int fseekio(FILE* stream, long idx, int item);
+int read_int(FILE* stream, long idx, int item);
+
+
 int write_data(int index, char* data);
 int get_inode_by_addr(int, iNode*);
 int get_inode_by_index(int, iNode*);
 int is_free_inode(int);
 int next_inode(int);
 int next_occupied_inode(int);
-void print_inode(iNode*);
+
+#endif

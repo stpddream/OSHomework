@@ -1,17 +1,19 @@
 CFLAGS = -g -Wall 
 CC = gcc
-$OBJS = defrag.o
+OBJS = defrag.o dozer.o util.o
 All:	defrag
 	
-defrag: defrag.o dozer.o
-	$(CC) $(CFLAGS) defrag.o dozer.o -o defrag
+defrag: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o defrag
 
-defrag.o: defrag.c dozer.h
-
+defrag.o: defrag.c dozer.h util.h
 	$(CC) $(CFLAGS) -c defrag.c
 
 dozer.o: dozer.c dozer.h
 	$(CC) $(CFLAGS) -c dozer.c
+	
+util.o: util.c util.h
+	$(CC) $(CFLAGS) -c util.c
 
 
 clean:
