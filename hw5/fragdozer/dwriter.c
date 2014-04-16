@@ -32,15 +32,28 @@ void dw_flush(){
 /* this function copies the data from the reader buffer with the given address
  * to the writer buffer */
 int dw_write2buf(int chunk_addr){
+  int i;
   //if the buffer is full, flush the buffer
   if(buffer_ptr_w == BUFFER_SIZE_W){
     dw_flush();
   }
   //copy the datablock from read buffer to writer buffer
-  for(int i = 0; i < BLOCK_SIZE; i++){
+  for(i = 0; i < BLOCK_SIZE; i++){
     buffer_w[buffer_ptr_w++] = buffer_r[chunk_addr+i]; 
   }
-  return 0;
+  data_idx_w++;
+  return data_idx_w;
 }
 
-
+int dw_write_arr(int* arr){
+  if(buffer_ptr_w == BUFFER_SIZE_W){
+    dw_flush();
+  }
+  
+  for(i = 0; i < N_INDIR_PTR; i++){
+   memcpy(buffer_w+buffer_ptr_w, &arr[i], sizeof(int));
+   buffer_ptr_w += sizeof(int); 
+  }
+  data_idx_w++;
+  return data_idx_w;
+}
