@@ -17,8 +17,7 @@ void doze(iNode* inode) {
     //Process direct blocks
     for(i = 0; i < N_DBLOCKS; i++) {
         //printf("Original data at %d ----> ", DATA_ADDR(inode->dblocks[i]));
-        copy_datai(inode->dblocks[i], data_idx_w);             
-        inode->dblocks[i] = data_idx_w++;       
+        inode->dblocks[i] = copy_datai(inode->dblocks[i]);                     
         //printf("Write to data %d\n", DATA_ADDR(inode->dblocks[i]));      
         if((remain -= BLOCK_SIZE) <= 0) return ;
     }
@@ -27,12 +26,18 @@ void doze(iNode* inode) {
   
     //Process indirect blocks        
     for(i = 0; i < N_IBLOCKS; i++) {    //For each indirect block
-                
+       
+        int indir_data[N_INDIR_PT];
+        
+        int m;
+        for(m = 0; m < N_INDIR_PT; m++) indir_data[m] = 0;
+        
         //Keep tract of old block pointer
-        int old_iblock = inode->iblocks[i];
+        //int old_iblock = inode->iblocks[i];
         
         printf("Indirect block was at %d ---->", DATA_ADDR(old_iblock));
-        inode->iblocks[i] = data_idx_w++;    //Relocate indirect block pos
+        //inode->iblocks[i] = data_idx_w++;    //Relocate indirect block pos
+        
         printf("Moved to %d\n", DATA_ADDR(inode->iblocks[i]));
         
         for(j = 0; j < N_INDIR_PT; j++) {
@@ -42,11 +47,9 @@ void doze(iNode* inode) {
             int data_idx = read_int(fp_r, old_iblock, j); //Get data block address
             
             //printf("Original data at %d ----> Write to data %d\n", data_idx, data_idx_w);      
-            copy_datai(data_idx, data_idx_w);
+            indir_data[j] = copy_datai(data_idx);
             
-            //Record addr at indirect block                                
-            write_addri(inode->iblocks[i], j, data_idx_w);
-                        
+            //Record addr at indirect block                         
             data_idx_w++;
             
             if((remain -= BLOCK_SIZE) <= 0) {
@@ -55,6 +58,9 @@ void doze(iNode* inode) {
                 return ;            
             }
         }
+        
+        
+        
     }                    
     
     printf("Start writing double indirect blocks\n");
@@ -124,17 +130,15 @@ void doze(iNode* inode) {
 
 
 /**
- * Copy data from position from_idx to to_idx (in data seg index)
- * @param from_idx
- * @param to_idx
+ * Copy data from position from_idx (in data seg index)
+ * @param idx
  * @return 
  */
-int copy_datai(int from_idx, int to_idx) {
-    char* data = read_data(DATA_ADDR(from_idx));
-    write_data(DATA_ADDR(to_idx), data);
-    //printf("Copy data from %d --> to %d\n", DATA_ADDR(from_idx), DATA_ADDR(to_idx));
+int copy_datai(int idx) {
+    int data_idx_buf = dr_read_block(idx);
+    dw_write2buf(data_idx_buf);
     
-    free(data);        //Why can't I free it here???
+    //printf("Copy data from %d --> to %d\n", DATA_ADDR(from_idx), DATA_ADDR(to_idx));
     return 0;
 }
 

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "dwriter.h"
+
 
 #ifndef DOZER_H
 #define DOZER_H
@@ -16,6 +18,8 @@
 #define INODE_ITEMS 25
 #define N_DBLOCKS 10
 #define N_IBLOCKS 4
+
+
 #define INODE_SIZE sizeof(iNode)
 #define BLOCK_SIZE sb.size
 

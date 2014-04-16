@@ -1,3 +1,6 @@
+
+#include "dwriter.h"
+
 /* initializes the writer buffer */
 int dw_init_buffer(){
   if((buffer_w = (char*)malloc(BUFFER_SIZE_W*sizeof(char)))!=NULL){
@@ -28,7 +31,7 @@ void dw_flush(){
 
 /* this function copies the data from the reader buffer with the given address
  * to the writer buffer */
-void write2buf(int chunk_addr){
+int dw_write2buf(int chunk_addr){
   //if the buffer is full, flush the buffer
   if(buffer_ptr_w == BUFFER_SIZE_W){
     dw_flush();
@@ -37,6 +40,7 @@ void write2buf(int chunk_addr){
   for(int i = 0; i < BLOCK_SIZE; i++){
     buffer_w[buffer_ptr_w++] = buffer_r[chunk_addr+i]; 
   }
+  return 0;
 }
 
 

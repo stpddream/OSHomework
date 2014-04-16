@@ -11,5 +11,5 @@ extern int data_addr_w;
 int dw_init_buffer();
 int dw_close();
 void dw_flush();
-void write2buf(int chunk_addr);
+int dw_write2buf(int chunk_addr);
 
