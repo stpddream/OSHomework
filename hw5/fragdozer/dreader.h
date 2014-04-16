@@ -1,3 +1,4 @@
+
 /* 
  * File:   dreader.h
  * Author: Panda & Jacy
@@ -17,6 +18,7 @@
 extern char* buffer_r;
 extern FILE* fp_r;
 extern int chunk_id;
+
 
 int dr_init_buffer();
 int dr_close();
