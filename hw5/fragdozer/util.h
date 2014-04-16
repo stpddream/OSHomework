@@ -12,7 +12,7 @@
 #define FLEX_BUF_FLAG -1
 #define DEFAULT_BUF_FLAG 1
 
-#include "dozer.h"
+#include "filesys.h"
 #include <unistd.h>
 
 

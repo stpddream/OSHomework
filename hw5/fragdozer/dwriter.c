@@ -1,4 +1,3 @@
-
 #include "dwriter.h"
 
 /* initializes the writer buffer */

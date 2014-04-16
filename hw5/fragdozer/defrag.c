@@ -1,7 +1,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "dozer.h"
-#include "util.h"
+//#include "util.h"
 
 
 
@@ -9,7 +9,7 @@ int inode_begin, inode_end;
 Superblock sb;
 FILE* fp_w;
 FILE* fp_r;
-int data_idx_w;
+
 int in_idx_w;
 
 int main(int argc, char** argv) {

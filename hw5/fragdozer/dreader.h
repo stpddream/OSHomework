@@ -13,7 +13,7 @@
 #define CHUNK_ADDR(IDX) DATA_BEGIN + IDX * BUFFER_SIZE_R
 
 
-#include "dozer.h"
+#include "filesys.h"
 
 extern char* buffer_r;
 extern FILE* fp_r;

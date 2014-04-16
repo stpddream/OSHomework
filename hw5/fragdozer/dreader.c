@@ -23,13 +23,14 @@ int find_datablock(int data_idx) {
 
 
 /**
- * 
+ * Read chunk from buffer
  * @param idx
  * @return 
  */
 int dr_read_buf(int idx) {
     int this_chunk;
     if((this_chunk = find_chunk(idx)) != chunk_id) {
+        chunk_id = this_chunk;
         load_chunk(this_chunk);
     }
     return find_datablock(idx);    
