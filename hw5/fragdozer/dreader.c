@@ -78,3 +78,21 @@ int load_chunk(int idx) {
 int dr_close() {
     free(buffer_r);
 }
+
+int init_inode_arr(){
+  char tmp_inode_buf[DATA_BEGIN-INODE_BEGIN];
+  fseek(fp_r, INODE_BEGIN,SEEK_SET);
+  fread(tmp_inode_buf, DATA_BEGIN-INODE_BEGIN,1,fp_r);
+
+  if((inode_arr = (iNode*)malloc((DATA_BEGIN-INODE_BEGIN)*sizeof(char)))!= NULL){
+    iNode cur_node;
+    int tmp_buf_ptr, i;
+    for(i = 0, tmp_buf_ptr = 0; tmp_buf_ptr < DATA_BEGIN-INODE_BEGIN; tmp_buf_ptr+=sizeof(iNode), i++){
+      memcpy(&cur_node, tmp_inode_buf+tmp_buf_ptr, sizeof(iNode));
+      inode_arr[i] = cur_node;
+    }
+    return 0;
+  }else{
+    return -1;
+  }
+}

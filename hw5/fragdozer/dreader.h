@@ -18,7 +18,7 @@
 extern char* buffer_r;
 extern FILE* fp_r;
 extern int chunk_id;
-
+extern iNode* inode_arr;
 
 int dr_init_buffer();
 int dr_close();
