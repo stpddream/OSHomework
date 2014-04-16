@@ -63,7 +63,7 @@ void doze(iNode* inode) {
     int first_idx = inode->i2block;
     int first_iblo_idx = data_idx_w++;     
     for(i = 0; i < N_INDIR_PT; i++) {            
-        int sec_idx = read_int(fp_r, first_idx, i); // deref(DATA_ADDR_O(first_idx, i));
+        int sec_idx = read_int(fp_r, first_idx, i);
         int second_iblo_idx = data_idx_w++;
                                     
         for(j = 0; j < N_INDIR_PT; j++) {                    
