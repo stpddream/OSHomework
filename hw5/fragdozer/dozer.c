@@ -185,48 +185,6 @@ int read_int(FILE* stream, long idx, int item) {
 }
 
 
-//////////// Low Level Disk Operation Functions //////////////
-
-/**
- * Low Level Function to read data from byte position byte_pos in disk image
- * @param pos
- * @return 
- */
-char* read_data(int byte_pos) {
-    fseek(fp_r, byte_pos, SEEK_SET);    
-    char* data = (char*)malloc(BLOCK_SIZE);    
-    fread(data, BLOCK_SIZE, 1, fp_r);
-    
-    return data;    
-}
-
-/**
- * Low Level Function to write data to byte position byte_pos in disk image
- * @param byte_pos
- * @param data
- * @return 
- */
-int write_data(int byte_pos, char* data) {
-    fseek(fp_r, byte_pos, SEEK_SET);    
-    fwrite(data, BLOCK_SIZE, 1, fp_r);
-    return 0;
-}
-
-
-/**
- * Low Level Function to write address into position pos (in bytes) in file fp_w
- * @param pos
- * @param addr
- * @return 
- */
-int write_addr(int byte_pos, int addr) {
-    fseek(fp_w, byte_pos, SEEK_SET);
-    fwrite(&addr, sizeof(int), 1, fp_w);
-    return 0;
-}
-
-
-
 
 ////////// Inode Helper Functions ////////////
 

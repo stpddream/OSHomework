@@ -11,6 +11,7 @@
 #define SUPER_ITEMS 6
 #define BOOT_SIZE 512
 #define BLOCK_BASE 1024
+#define DATA_BEGIN BLOCK_BASE + sb.data_offset * BLOCK_SIZE
 
 #define INODE_ITEMS 25
 #define N_DBLOCKS 10
