@@ -19,6 +19,12 @@ void print_inode(iNode* inode, int detail){
     }
 }
 
-
+void printUsage(){
+  printf("defrag:\t performs defragmentation on a Disk File by compacting all the blocks of a file in sequential order on disk\n");  
+  printf("Usage:\n");
+  printf("\t./defrag [OPTIONS] <fragemented disk file>\n");
+  printf("Description:\n");
+  printf("\t -h display help manual\n");
+}
 
 
