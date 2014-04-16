@@ -1,0 +1,36 @@
+Name:       Xinan Li(Jacy), Fangyu Xiong (Panda)
+Class:      CS355 Operating System
+Assignment: hw05
+Due: April 15, 2014
+
+-------------------------------------------------
+How to compile:
+    -cd into the right directory: fragdozer
+    % Make
+    No extra steps are needed to be done for compilation
+-------------------------------------------------
+How to run it:
+    % ./defrag <datafile name>
+    or
+    % ./defrag -h
+-------------------------------------------------
+Files:
+    defrag.c
+    dozer.c dozer.h
+    util.c util.h
+-------------------------------------------------
+
+This defragmenter firstly reads the superblock to obtain datablock and inode information.
+Next, the defragmenter starts reading the inode and delve into the datablocks each inode points to, in sequential order. Note that this program writes each data block to a new 'datafile-defrag' as we read the data blocks in the 'datafile-frag'. So when each inode are being read, the direct datablocks are seeked and read first, written into the new defrag file in the sequential order. The indirect data-block are read and being pushed into the defrag file. Each pointer in the indirect data-block will then be read and written, and so on so forth for the double indirect block and triple indriect block. As the blocks are copied over to the new defrag file, the links in the inode will also be updated simultaneously. 
+Therefore, for each inode, its defragmented datablock will look like
+--------------------------------------------------------------------------------------------------------------------------------------------
+|                     |                         |                      |                        |
+| direct data blocks  | indirect data block     | indirect data blocks | indrect data block[1]  | ..... 
+|                     | (the block that stores  | (actual file content |                        | double - indirect - blocks
+|                     |  all the index of blocks| pointed by previous  |                        | triple - double - indirect -blocks
+|                     |                         | indirect block       |                        |
+--------------------------------------------------------------------------------------------------------------------------------------------- 
+The order of the inode list will remain the same, swap file and the free-nodes will be copied directly over to the new defrag file. The freeblock list will be updated to the first free blcok in the data section.
+
+-------------------------------------------------
+No known Bugs found
