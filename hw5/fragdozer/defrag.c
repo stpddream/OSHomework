@@ -1,5 +1,5 @@
-
 #include <string.h>
+#include <unistd.h>
 #include "dozer.h"
 #include "util.h"
 
@@ -13,12 +13,34 @@ int data_idx_w;
 int in_idx_w;
 
 int main(int argc, char** argv) {
-    int i, tmp, cur_node;
+    int i, tmp, cur_node, opt;
+    char filename[100];
+    if(argc == 1){
+      printUsage();
+      exit(0);
+    }
+
+    while((opt = getopt(argc, argv, "h"))!=-1){
+      if(opt == 'h'){
+        printUsage();
+      }else{
+        printf("Please type -h to see usage\n");
+      }
+      exit(0);
+    }
+    
+    for(i = 1; i < argc; i++){
+      if(argv[i][0]!='-'){
+        strcpy(filename, argv[i]);
+        break;
+      }
+    }
+    
 
 
     iNode* inode;
     //open the read and write files
-    fp_r = fopen("datafile-frag", "r");
+    fp_r = fopen(filename, "r");
     fp_w = fopen("datafile-defrag", "w"); 
     data_idx_w = 0;
     

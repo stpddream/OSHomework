@@ -11,7 +11,7 @@
 #include "dozer.h"
 
 void print_inode(iNode* inode, int detail);
-
+void printUsage();
 
 #endif	/* UTIL_H */
 
