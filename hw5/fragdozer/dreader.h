@@ -31,7 +31,7 @@ void load_chunk(int idx);
 
 int dr_read_buf(int idx);
 int dr_read_block(int idx);
-int* dr_read_indir();
+int dr_read_indir(int block_idx, int item_idx);
 
 
 

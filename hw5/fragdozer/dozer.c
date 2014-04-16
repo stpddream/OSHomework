@@ -27,10 +27,8 @@ void doze(iNode* inode) {
     //Process indirect blocks        
     for(i = 0; i < N_IBLOCKS; i++) {    //For each indirect block
        
-        int indir_data[N_INDIR_PT];
-        
-        int m;
-        for(m = 0; m < N_INDIR_PT; m++) indir_data[m] = 0;
+        int indir_data[N_INDIR_PT];        
+        arr_clear(indir_data);
         
         //Keep tract of old block pointer
         //int old_iblock = inode->iblocks[i];
@@ -44,81 +42,77 @@ void doze(iNode* inode) {
             //write data blocks                  
                                     
             //printf("Next address is %ld\n", DATA_ADDR_O(old_iblock, j));            
-            int data_idx = read_int(fp_r, old_iblock, j); //Get data block address
-            
+            int data_idx = dr_read_indir(inode->iblocks[i], j);            
+                                 
             //printf("Original data at %d ----> Write to data %d\n", data_idx, data_idx_w);      
-            indir_data[j] = copy_datai(data_idx);
-            
-            //Record addr at indirect block                         
-            data_idx_w++;
+            indir_data[j] = copy_datai(data_idx);           
             
             if((remain -= BLOCK_SIZE) <= 0) {
                 //Process pointer to indirect blocks
                 printf("Layer: %d; Entry: %d\n", i, j);
                 return ;            
             }
-        }
-        
-        
+        }        
+        inode->iblocks[i] = dw_write_arr(indir_data);
         
     }                    
     
     printf("Start writing double indirect blocks\n");
     
     //Process double indirect blocks    
+    int first_indir_data[N_INDIR_PT];
+    arr_clear(first_indir_data);
     int first_idx = inode->i2block;
-    int first_iblo_idx = data_idx_w++;     
+    
     for(i = 0; i < N_INDIR_PT; i++) {            
-        int sec_idx = read_int(fp_r, first_idx, i);
-        int second_iblo_idx = data_idx_w++;
-                                    
-        for(j = 0; j < N_INDIR_PT; j++) {                    
-            int data_idx = read_int(fp_r, sec_idx, j); 
-            copy_datai(data_idx, data_idx_w);                              
-            write_addri(second_iblo_idx, j, data_idx_w);
-            data_idx_w++;          
+        int sec_idx = dr_read_indir(first_idx, i);
+        int sec_indir_data[N_INDIR_PT];
+        arr_clear(sec_indir_data);        
+                                        
+        for(j = 0; j < N_INDIR_PT; j++) {                        
+            int data_idx = dr_read_indir(sec_idx, j);                                
+            sec_indir_data[j] = copy_datai(data_idx);                                              
                         
             if((remain -= BLOCK_SIZE) <= 0) {                               
-                write_addri(first_iblo_idx, i, second_iblo_idx);
-                inode->i2block = first_iblo_idx;    
+                first_indir_data[i] = dw_write_arr(sec_indir_data);
+                inode->i2block = dw_write_arr(first_indir_data);                               
                 return ;                        
             }
         }    
-        write_addri(first_iblo_idx, i, second_iblo_idx);
+        first_indir_data[i] = dw_write_arr(sec_indir_data);                
     }
-    inode->i2block = first_iblo_idx;    
+    inode->i2block = dw_write_arr(first_indir_data);
     
     //Triple indirect blocks       
     first_idx = inode->i3block;
-    first_iblo_idx = data_idx_w++;
-    
+    arr_clear(first_indir_data);
+     
     for(i = 0; i < N_INDIR_PT; i++) {
-        int sec_idx = read_int(fp_r, first_idx, j); 
-        int second_iblo_idx = data_idx_w++;
-        
+        int sec_idx = dr_read_indir(first_idx, i);
+        int sec_indir_data[N_INDIR_PT];
+        arr_clear(sec_indir_data);        
+                                              
         for(j = 0; j < N_INDIR_PT; j++) {            
-            int third_idx = read_int(fp_r, sec_idx, j); 
-            int third_iblo_idx = data_idx_w++;
+            int third_idx = dr_read_indir(sec_idx, j);
+            int third_indir_data[N_INDIR_PT];
+            arr_clear(third_indir_data);
                                     
             for(k = 0; k < N_INDIR_PT; k++) {                                   
-                int data_idx = read_int(fp_r, third_idx, k);
-                
-                copy_datai(data_idx, data_idx_w);   
-                write_addri(third_iblo_idx, k, data_idx_w);
-                data_idx_w++;
+                int data_idx = dr_read_indir(third_idx, k);                
+                third_indir_data[k] = copy_datai(data_idx);   
                 
                 if((remain -= BLOCK_SIZE) <= 0) {
-                    write_addri(second_iblo_idx, j, third_iblo_idx);
-                    write_addri(first_iblo_idx, i, second_iblo_idx);
-                    inode->i3block = first_iblo_idx; 
+                    sec_indir_data[j] = dw_write_arr(third_indir_data);
+                    first_indir_data[i] = dw_write_arr(sec_indir_data);
+                    inode->i3block = dw_write_arr(first_indir_data);
                     return ;    
                 }
             }
-            write_addri(second_iblo_idx, j, third_iblo_idx);
+            sec_indir_data[j] = dw_write_arr(third_indir_data);
         }
-        write_addri(first_iblo_idx, i, second_iblo_idx);
+        first_indir_data[i] = dw_write_arr(sec_indir_data);
     }
-    inode->i3block = first_iblo_idx; 
+    inode->i3block = dw_write_arr(first_indir_data);
 }
 
 

@@ -22,5 +22,7 @@ void print_inode(iNode* inode, int detail);
 void printUsage();
 size_t getTotalSysMem();
 size_t get_buf_size();
+void arr_clear(int* arr, int size);
+
 #endif	/* UTIL_H */
 

@@ -1,11 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
 
-#include "dwriter.h"
+
 
 
 #ifndef DOZER_H
 #define DOZER_H
+
+#include "dwriter.h"
+#include "dreader.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 #define TRUE 1

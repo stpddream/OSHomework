@@ -42,3 +42,8 @@ size_t get_buf_size(int flag){
     return DEFAULT_BUF_SIZE;
   }
 }
+
+void arr_clear(int* arr, int size) {
+    int i = 0;
+    for(i = 0; i < size; i++) arr[i] = 0;
+}
