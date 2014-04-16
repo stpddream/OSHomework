@@ -92,10 +92,7 @@ int main(int argc, char** argv) {
         
        // printf("addrrrrrr %d haha %d", INODE_ADDR(in_idx_w - 1), in_idx_w - 1);a
         printf("inode offset %d\n", sb.inode_offset);
-
-        
-        
-        //print_inode(inode, 1);      
+                      
         free(inode); //Why cannot I free it herererere???        
         printf("\n\n");
     }
