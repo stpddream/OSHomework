@@ -18,8 +18,12 @@ int main(int argc, char** argv) {
 
     iNode* inode;
     //open the read and write files
-    fp_r = fopen("datafile-frag", "r");
+    //fp_r = fopen("datafile-frag", "r");
+    fp_r = fopen("def", "r");
     fp_w = fopen("datafile-defrag", "w"); 
+    //fp_w = fopen("def", "w");
+
+    
     data_idx_w = 0;
     
     //Copy boot block
@@ -28,7 +32,7 @@ int main(int argc, char** argv) {
     fwrite(boot_block, BOOT_SIZE, 1, fp_w);
     
     fread(&sb, sizeof(Superblock), 1, fp_r); //read the superblock
-    fwrite(&sb, sizeof(Superblock), 1, fp_w);  //Copy Super Block
+ 
     /*
     printf("size = %d\n", sb.size);
     printf("inode offset = %d\n", sb.inode_offset); 
@@ -47,25 +51,31 @@ int main(int argc, char** argv) {
     printf("Inode Region starts: %d\n", inode_begin);
     printf("Data Region starts: %d\n", inode_end);
     printf("Swap Region starts: %d\n", BLOCK_BASE + sb.swap_offset * sb.size);
+    printf("Free block start: %d\n", sb.free_iblock);
     
-    in_idx_w = inode_begin;
+    in_idx_w = 0;
             
     printf("Processing all inodes ... \n");
     for(i = 0, cur_node = inode_begin; (tmp = next_inode(cur_node)) != -1; cur_node = tmp, i++) {
         //printf("curNode [%d]\t %d \t %s\t\n", i, cur_node, (is_free_inode(cur_node)? "free   ": "occupied"));      
-        //if(i != 8) continue;
+        //if(i != 0) continue;
         printf("->%d \t", i);
         inode = (iNode*)malloc(sizeof(iNode)); //why can not be moved outside     
         get_inode_by_addr(cur_node, inode);        
         print_inode(inode, TRUE);
         
         if(!is_free_inode(cur_node)) doze(inode);
-             
-        fseek(fp_w, INODE_ADDR_BY_IDX(in_idx_w++), SEEK_SET);
+        //printf("inode cal %d\n", INODE_ADDR(in_idx_w));             
+        fseek(fp_w, INODE_ADDR(in_idx_w++), SEEK_SET);
         fwrite(inode, INODE_SIZE, 1, fp_w);     
-        free(inode); //Why cannot I free it herererere???
-        //print_inode(&inode);      
         
+       // printf("addrrrrrr %d haha %d", INODE_ADDR(in_idx_w - 1), in_idx_w - 1);a
+        printf("inode offset %d\n", sb.inode_offset);
+
+        
+        
+        //print_inode(inode, 1);      
+        free(inode); //Why cannot I free it herererere???        
         printf("\n\n");
     }
     
@@ -74,6 +84,12 @@ int main(int argc, char** argv) {
     
     printf("\n\n");
 
+    
+    sb.free_iblock = data_idx_w;
+    fseek(fp_w, BOOT_SIZE, SEEK_SET);
+    fwrite(&sb, sizeof(Superblock), 1, fp_w);  //Copy Super Block
+     
+    
     //close both file
     fclose(fp_r);
     fclose(fp_w);

@@ -117,7 +117,7 @@ void doze(iNode* inode) {
 
 
 /*
- * All following functions if ends with a "i", takes in data index as the paramter
+ * All following functions if ends with a "i", takes in data index as the parameter
  * Only low level functions take in byte position
  */
 
@@ -132,7 +132,7 @@ void doze(iNode* inode) {
 int copy_datai(int from_idx, int to_idx) {
     char* data = read_data(DATA_ADDR(from_idx));
     write_data(DATA_ADDR(to_idx), data);
-    printf("Copy data from %d --> to %d\n", DATA_ADDR(from_idx), DATA_ADDR(to_idx));
+    //printf("Copy data from %d --> to %d\n", DATA_ADDR(from_idx), DATA_ADDR(to_idx));
     
     free(data);        //Why can't I free it here???
     return 0;
@@ -225,21 +225,14 @@ int write_addr(int byte_pos, int addr) {
     return 0;
 }
 
-/**
- * Low level function to dereference a position points to a address
- * @param pos
- * @return 
- */
-int deref(int pos) {
-    int data;
-    fseek(fp_r, pos, SEEK_SET);    
-    fread(&data, sizeof(int), 1, fp_r);
-    return data;
-}
 
 
-int get_inode_by_index(int idx, iNode* cur){
-  get_inode_by_addr(INODE_ADDR_BY_IDX(idx), cur);
+
+////////// Inode Helper Functions ////////////
+
+
+int get_inode_by_index(int idx, iNode* cur) {
+  get_inode_by_addr(INODE_ADDR(idx), cur);
   return 0;
 }
 
