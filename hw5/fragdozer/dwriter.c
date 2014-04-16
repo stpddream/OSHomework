@@ -57,3 +57,8 @@ int dw_write_arr(int* arr){
   data_idx_w++;
   return data_idx_w;
 }
+
+int dw_flush_inode_arr(){
+  fseek(fp_w, INODE_BEGIN, SEEK_SET);
+  fwrite(inode_arr, DATA_BEGIN-INODE_BEGIN, 1, fp_w);
+}
