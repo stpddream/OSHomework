@@ -28,16 +28,16 @@ void printUsage(){
 }
 
 size_t getTotalSysMem(){
-  long pages = sysconf(_SC_PHYS_PAGES_);
-  long page_size = sysconf(_SC_PAGE_SIZE);
-  return pages * pagesize;
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size;
 }
 
 size_t get_buf_size(int flag){
-  if(flag == FLEX_BUF_SIZE){
+  if(flag == FLEX_BUF_FLAG){
     //set the buffer size to be one percent of the RAM size
     int buf_size = getTotalSysMem()*0.1;
-    return buf_size*BLOCK_SIZE/BLOCK_SIZE;
+    return buf_size * BLOCK_SIZE/BLOCK_SIZE;
   }else{
     return DEFAULT_BUF_SIZE;
   }

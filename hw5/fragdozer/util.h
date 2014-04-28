@@ -14,8 +14,9 @@
 
 #include "filesys.h"
 #include <unistd.h>
+#include <stdio.h>
 
-
+extern Superblock sb;
 
 
 void print_inode(iNode* inode, int detail);

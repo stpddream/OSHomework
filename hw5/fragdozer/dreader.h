@@ -9,16 +9,19 @@
 #ifndef DREADER_H
 #define	DREADER_H
 
-#define BUFFER_SIZE_R 4096
+#define BUFFER_SIZE_R (512*128)
 #define CHUNK_ADDR(IDX) DATA_BEGIN + IDX * BUFFER_SIZE_R
 
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "filesys.h"
 
 extern char* buffer_r;
 extern FILE* fp_r;
 extern int chunk_id;
 extern iNode* inode_arr;
+extern Superblock sb;
 
 int dr_init_buffer();
 int dr_close();
@@ -27,7 +30,7 @@ int dr_close();
 int find_chunk(int data_idx);
 /* given data blck index, return the location(index) of the data block in buffer_r*/
 int find_datablock(int data_idx);
-void load_chunk(int idx);
+int load_chunk(int idx);
 
 int dr_read_buf(int idx);
 int dr_read_block(int idx);

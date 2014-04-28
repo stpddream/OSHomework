@@ -28,30 +28,23 @@ void doze(iNode* inode) {
     for(i = 0; i < N_IBLOCKS; i++) {    //For each indirect block
        
         int indir_data[N_INDIR_PT];        
-        arr_clear(indir_data);
+        arr_clear(indir_data, N_INDIR_PT);
         
         //Keep tract of old block pointer
-        //int old_iblock = inode->iblocks[i];
-        
-        printf("Indirect block was at %d ---->", DATA_ADDR(old_iblock));
-        //inode->iblocks[i] = data_idx_w++;    //Relocate indirect block pos
-        
-        printf("Moved to %d\n", DATA_ADDR(inode->iblocks[i]));
-        
+                
         for(j = 0; j < N_INDIR_PT; j++) {
             //write data blocks                  
-                                    
-            //printf("Next address is %ld\n", DATA_ADDR_O(old_iblock, j));            
-            int data_idx = dr_read_indir(inode->iblocks[i], j);            
-                                 
-            //printf("Original data at %d ----> Write to data %d\n", data_idx, data_idx_w);      
+                                             
+            int data_idx = dr_read_indir(inode->iblocks[i], j);                                                                 
             indir_data[j] = copy_datai(data_idx);           
             
             if((remain -= BLOCK_SIZE) <= 0) {
                 //Process pointer to indirect blocks
+                inode->iblocks[i] = dw_write_arr(indir_data);
                 printf("Layer: %d; Entry: %d\n", i, j);
                 return ;            
             }
+            printf("0---------0\n");
         }        
         inode->iblocks[i] = dw_write_arr(indir_data);
         
@@ -61,13 +54,13 @@ void doze(iNode* inode) {
     
     //Process double indirect blocks    
     int first_indir_data[N_INDIR_PT];
-    arr_clear(first_indir_data);
+    arr_clear(first_indir_data, N_INDIR_PT);
     int first_idx = inode->i2block;
     
     for(i = 0; i < N_INDIR_PT; i++) {            
         int sec_idx = dr_read_indir(first_idx, i);
         int sec_indir_data[N_INDIR_PT];
-        arr_clear(sec_indir_data);        
+        arr_clear(sec_indir_data, N_INDIR_PT);        
                                         
         for(j = 0; j < N_INDIR_PT; j++) {                        
             int data_idx = dr_read_indir(sec_idx, j);                                
@@ -85,17 +78,17 @@ void doze(iNode* inode) {
     
     //Triple indirect blocks       
     first_idx = inode->i3block;
-    arr_clear(first_indir_data);
+    arr_clear(first_indir_data, N_INDIR_PT);
      
     for(i = 0; i < N_INDIR_PT; i++) {
         int sec_idx = dr_read_indir(first_idx, i);
         int sec_indir_data[N_INDIR_PT];
-        arr_clear(sec_indir_data);        
+        arr_clear(sec_indir_data, N_INDIR_PT);        
                                               
         for(j = 0; j < N_INDIR_PT; j++) {            
             int third_idx = dr_read_indir(sec_idx, j);
             int third_indir_data[N_INDIR_PT];
-            arr_clear(third_indir_data);
+            arr_clear(third_indir_data, N_INDIR_PT);
                                     
             for(k = 0; k < N_INDIR_PT; k++) {                                   
                 int data_idx = dr_read_indir(third_idx, k);                
@@ -130,56 +123,10 @@ void doze(iNode* inode) {
  */
 int copy_datai(int idx) {
     int data_idx_buf = dr_read_block(idx);
-    dw_write2buf(data_idx_buf);
+    int add = dw_write2buf(data_idx_buf);
     
-    //printf("Copy data from %d --> to %d\n", DATA_ADDR(from_idx), DATA_ADDR(to_idx));
-    return 0;
-}
-
-/**
- * Write address into memory at data index idx
- * @param pos
- * @param addr
- * @return 
- */
-int write_addri(int base_idx, int item, int addr) {
-    return write_addr(DATA_ADDR_O(base_idx, item), addr);
-}
-
-
-/**
- * fseek to data index idx
- * @param stream
- * @param idx
- * @return 
- */
-int fseeki(FILE* stream, long idx) {
-    return fseekio(stream, idx, 0);
-}
-
-/**
- * fseek to data index and ith item (integer)
- * @param stream
- * @param idx
- * @param item
- * @return 
- */
-int fseekio(FILE* stream, long idx, int item) {
-    return fseek(stream, DATA_ADDR_O(idx, item), SEEK_SET);
-}
-
-
-/**
- * Read a integer from a file
- * Warning size_t info is ignored
- * @param stream
- * @return 
- */
-int read_int(FILE* stream, long idx, int item) {
-    int data;    
-    fseekio(stream, idx, item);
-    fread(&data, sizeof(int), 1, stream);
-    return data;
+    printf("Copy data from %d --> to %d\n", idx, add);
+    return add;
 }
 
 

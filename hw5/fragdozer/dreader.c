@@ -1,10 +1,13 @@
 #include "dreader.h"
 
 int chunk_id;
+char* buffer_r;
+iNode* inode_arr;
 
 int dr_init_buffer() {
     buffer_r = (char*)malloc(BUFFER_SIZE_R);    
     chunk_id = -1;
+    return 0;
 }
 
 
@@ -13,12 +16,12 @@ int dr_init_buffer() {
  * @param data_idx
  * @return 
  */
-int find_chunk(int data_idx) {
-    return data_idx / BLOCK_SIZE;
+int find_chunk(int data_idx) {            
+    return (data_idx * BLOCK_SIZE) / BUFFER_SIZE_R;
 }
 
 int find_datablock(int data_idx) {
-    return data_idx % BLOCK_SIZE;
+    return (data_idx * BLOCK_SIZE) % BUFFER_SIZE_R;
 }
 
 
@@ -29,7 +32,7 @@ int find_datablock(int data_idx) {
  */
 int dr_read_buf(int idx) {
     int this_chunk;
-    if((this_chunk = find_chunk(idx)) != chunk_id) {
+    if((this_chunk = find_chunk(idx)) != chunk_id) {       
         chunk_id = this_chunk;
         load_chunk(this_chunk);
     }
@@ -53,9 +56,11 @@ int dr_read_block(int idx) {
  * @return 
  */
 int dr_read_indir(int block_idx, int item_idx) {
-    int data_idx = dr_read_buf(block_idx);
+    int data_buf_pos = dr_read_buf(block_idx);
+    printf("Block %d %d %d\n", block_idx, data_buf_pos, item_idx);
     int addr;    
-    memcpy(&addr, buffer_r[data_idx] + item_idx * sizeof(int), sizeof(int));
+    memcpy(&addr, buffer_r + data_buf_pos + item_idx * sizeof(int), sizeof(int));
+    printf("Address is %d\n", addr);
     return addr;    
 }
 
@@ -67,17 +72,19 @@ int dr_read_indir(int block_idx, int item_idx) {
  * @return 0 if success
  */
 int load_chunk(int idx) {
-    fseek(fp_r, CHUNK_ADDR(chunk_idx), SEEK_SET);    
-    fread(buffer_r, BLOCK_SIZE, 1, fp_r);   
+    printf("Memory from %d loaded\n", idx);
+    fseek(fp_r, CHUNK_ADDR(idx), SEEK_SET);    
+    fread(buffer_r, BUFFER_SIZE_R, 1, fp_r);   
     return 0;
 }
 
 /**
- * Close 
+ * Close reader stream
  * @return 
  */
 int dr_close() {
     free(buffer_r);
+    return 0;
 }
 
 int init_inode_arr(){
@@ -85,10 +92,10 @@ int init_inode_arr(){
   fseek(fp_r, INODE_BEGIN,SEEK_SET);
   fread(tmp_inode_buf, DATA_BEGIN-INODE_BEGIN,1,fp_r);
 
-  if((inode_arr = (iNode*)malloc((DATA_BEGIN-INODE_BEGIN)*sizeof(char)))!= NULL){
+  if((inode_arr = (iNode*)malloc((DATA_BEGIN - INODE_BEGIN)*sizeof(char)))!= NULL){
     iNode cur_node;
     int tmp_buf_ptr, i;
-    for(i = 0, tmp_buf_ptr = 0; tmp_buf_ptr < DATA_BEGIN-INODE_BEGIN; tmp_buf_ptr+=sizeof(iNode), i++){
+    for(i = 0, tmp_buf_ptr = 0; tmp_buf_ptr < DATA_BEGIN-INODE_BEGIN; tmp_buf_ptr+=sizeof(iNode), i++){    
       memcpy(&cur_node, tmp_inode_buf+tmp_buf_ptr, sizeof(iNode));
       inode_arr[i] = cur_node;
     }

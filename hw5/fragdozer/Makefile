@@ -18,8 +18,8 @@ util.o: util.c util.h dozer.h
 dreader.o: dreader.c dreader.h dozer.h util.h
 	$(CC) $(CFLAGS) -c dreader.c
 
-dwriter.o: dwriter.h dwriter.h dozer.h util.h
-	$(CC) $(CFLAGS) -c dreader.c
+dwriter.o: dwriter.c dwriter.h dozer.h util.h
+	$(CC) $(CFLAGS) -c dwriter.c
 	  
 
 clean:
