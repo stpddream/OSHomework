@@ -16,6 +16,8 @@
 #define TRUE 1
 #define FALSE 0
 
+#define MIN(A, B) (A > B) ? A : B
+
 /* Display Functions */
 const char *bytbi(int x);
 

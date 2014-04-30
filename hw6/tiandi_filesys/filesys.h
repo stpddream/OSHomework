@@ -14,41 +14,24 @@
 #define TIANDI_FS_ID 6666    /* Magic Number for tiandi filesystem */
 
 /* File System Layout Specification */
-#define BOOT_SIZE 512
-#define SUPERBL_SIZE 512
+#define BOOT_SZ 512
+#define SUPERBL_SZ 512
 #define BLOCK_BASE 1024
-#define DATABL_INODE_RATIO 8    /* Data Block to Inode ratio 8 : 1 */
+#define DATABL_INODE_RATIO 4    /* Data Block to Inode ratio 4 : 1 */
+#define BLOCK_SZ 512
 
 /* Super Block Specification */
-#define SIGN_SIZE 12
+#define SIGN_SZ 12
 
 /* Inode Specification */
-#define INODE_SIZE 128
+#define INODE_SZ 128
 #define N_DBLOCKS 10
 #define N_IBLOCKS 4
-#define FILE_NAME_MAX 14
+#define FILE_NAME_MAX 14    /* Maximum file name length */
 
 
 
 
-#define DATA_BEGIN (BLOCK_BASE + sb.data_offset * BLOCK_SIZE)
-
-#define INODE_ITEMS 25
-#define INODE_BEGIN (BLOCK_BASE + sb.inode_offset * BLOCK_SIZE)
-#define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
-
-#define BLOCK_SIZE sb.size
-
-//Convert Inode Index to Inode Address in bytes
-#define INODE_ADDR(IDX) (BLOCK_BASE + sb.inode_offset * BLOCK_SIZE + INODE_SIZE * IDX)
-
-//Convert Data Index to Data Address
-#define DATA_ADDR(IDX) (BLOCK_BASE + sb.data_offset * BLOCK_SIZE + IDX * BLOCK_SIZE)
-
-#define DATA_ADDR_O(IDX, OFFSET) (DATA_ADDR(IDX) + OFFSET * sizeof(int))
-#define N_INDIR_PT (BLOCK_SIZE / sizeof(int))
-
-#define MIN(A, B) (A > B) ? A : B
 
 typedef struct {    
     char have_fun[20];    
@@ -56,7 +39,7 @@ typedef struct {
 
 typedef struct {
     int system_type;    	/*magic number for file system*/
-    char sign[SIGN_SIZE];    /* file system signature */
+    char sign[SIGN_SZ];    /* file system signature */
 
 
     int size; 		/* size of blocks in bytes */
@@ -77,7 +60,7 @@ typedef struct {
 
 
 typedef struct {
-    int file_type;
+    int file_type;              /* File Type */
     int permission; 		/* file permission field */
     int nlink; 			/* number of links to this file */
     int size; 			/* numer of bytes in file */
@@ -98,6 +81,37 @@ typedef struct {
 
 /* Low Level File System Functions */
 int fs_init(FILE* group, int size);
+int fs_remove_file(int inode_idx);
+
+iNode* fs_get_inode(int inode_idx);
+int fs_alloc_inode();
+int fs_update_inode(int inode_idx, iNode* node);
+
+/* File Manipulation Functions */
+
+/** Seek from offset from the beginning */
+int fl_seek(int inode_idx, int offset);
+int fl_read(int inode_idx, int pos, int bytes, char* data);
+int fl_write(int inode_idx, int pos, int bytes, char* data);
+
+
+
+
+/* Inode Manipulation Functions */
+
+
+/** Consider util *//////////////
+
+
+/** Look for next inode and return inode number */ 
+
+
+//////////////////////////////
+
+
+
+
+
 
 
 #endif	/* FILESYS_H */

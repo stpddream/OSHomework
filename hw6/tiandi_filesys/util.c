@@ -1,4 +1,10 @@
 #include "util.h"
+
+/**
+ * Print a number is binary form
+ * @param x number to print
+ * @return character contains the binary form of a number
+ */
 const char *bytbi(int x)
 {
     static char b[9];

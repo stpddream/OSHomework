@@ -48,9 +48,13 @@ int main(int argc, char** argv) {
     */
     
     FILE* fp;
-    fp = fopen("testfile/disk", "w");
-    init_disk(fp, 512);
+    //fp = fopen("testfile/disk", "w");
+    //init_disk(fp, 512);
+    round_sz(512);
 
+    
+    printf("N_BIT_E_BLOCK: %d", N_BIT_E_BLOCK);
+    
     return (EXIT_SUCCESS);
 }
 
