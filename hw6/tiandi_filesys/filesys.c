@@ -32,9 +32,25 @@ int fs_init(FILE* group, int size) {
     superblock.freeblock_count = n_datablock;
     superblock.ibit_offset = 0;
 //    superblock.abit_offset = 
-    int superblock_offset = BOOT_SIZE;
+    int superblock_offset = BOOT_SZ;
     fseek(group, superblock_offset, SEEK_SET);
     
 }
 
-
+/**
+ * Read data from file
+ * @param inode_idx index of inode for file to read
+ * @param pos starting read position
+ * @param bytes number of bytes to read
+ * @param data 
+ * @return 0 if success
+ */
+int fl_read(int inode_idx, int pos, int bytes, char* data) {
+    
+   
+    //Convert pos to 
+    
+    
+    
+       
+}

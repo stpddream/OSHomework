@@ -19,10 +19,9 @@ int cal_n_inode(int size) {
  */
 int round_sz(int size) {    
     /* 1 byte has 8 bits */
-    /* num_inode_block * 8 + num_data_block * 8 + num_inode_block + num_data_block */    
     int base = GROUP_SIZE_BASE;
     printf("base is %d\n", base);
-    return rnd2sm(size, base);
+    return rnd2sm(size - GRP_HEAD_SZ, base) + GRP_HEAD_SZ;
 }
 
 /**
@@ -34,4 +33,4 @@ int rnd2sm(int val, int base) {
 
 
 
-
+int remain_bytes();
