@@ -16,7 +16,6 @@
 /* File System Layout Specification */
 #define BOOT_SZ 512
 #define SUPERBL_SZ 512
-#define BLOCK_BASE 1024
 #define DATABL_INODE_RATIO 4    /* Data Block to Inode ratio 4 : 1 */
 #define BLOCK_SZ 512
 
@@ -78,6 +77,9 @@ typedef struct {
 } iNode;
 
 
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
+extern Superblock sb;
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
 
 /* Low Level File System Functions */
 int fs_init(FILE* group, int size);

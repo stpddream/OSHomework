@@ -1,5 +1,9 @@
 #include "filesys.h"
 
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
+Superblock sb;
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
+
 /**
  * Init file system on disk
  * Disk file should be already initialized to the correct size
@@ -38,19 +42,29 @@ int fs_init(FILE* group, int size) {
 }
 
 /**
+ * unlink inode, clears all parameters within the given 
+ * @param inode_idx
+ * @return 0 if success
+ */
+int fs_remove_file(int inode_idx){
+    
+}
+
+iNode* fs_get_inode(int inode_idx);
+int fs_alloc_inode();
+int fs_update_inode(int inode_idx, iNode* node);
+
+
+/**
  * Read data from file
  * @param inode_idx index of inode for file to read
  * @param pos starting read position
  * @param bytes number of bytes to read
  * @param data 
- * @return 0 if success
+ * @return number of bytes read
  */
 int fl_read(int inode_idx, int pos, int bytes, char* data) {
     
-   
-    //Convert pos to 
     
     
-    
-       
 }
