@@ -25,20 +25,20 @@
 #define GROUP_SIZE_BASE \
         (P_IBIT_BLOCKS + P_ABIT_BLOCKS + P_INODE_BLOCKS + P_DATA_BLOCKS)
 
+#define GRP_HEAD_SZ (BOOT_SZ+SUPERBL_SZ)
 
-/** blablablabalbal */
-
-#define DATA_BEGIN (BLOCK_BASE + sb.data_offset * BLOCK_SZ)
-
-#define INODE_BEGIN (BLOCK_BASE + sb.inode_offset * BLOCK_SZ)
+#define SUPERBL_BEGIN BOOT_SZ
+#define CONTENT_BEGIN (BOOT_SZ+SUPERBL_SZ)
+#define IBIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.ibit_offset)
+#define ABIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.abit_offset)
+#define INODE_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.inode_offset)
+#define DATA_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.data_offset)
 #define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
 
 //Convert Inode Index to Inode Address in bytes
-#define INODE_ADDR(IDX) (BLOCK_BASE + sb.inode_offset * BLOCK_SZ + INODE_SZ * IDX)
-
+#define INODE_ADDR(IDX) (INODE_BEGIN + INODE_SZ * IDX)
 //Convert Data Index to Data Address
-#define DATA_ADDR(IDX) (BLOCK_BASE + sb.data_offset * BLOCK_SZ + IDX * BLOCK_SZ)
-
+#define DATA_ADDR(IDX) (DATA_BEGIN + BLOCK_SZ * IDX)
 #define DATA_ADDR_O(IDX, OFFSET) (DATA_ADDR(IDX) + OFFSET * sizeof(int))
 #define N_INDIR_PT (BLOCK_SZ / sizeof(int))
 
