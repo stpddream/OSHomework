@@ -17,6 +17,7 @@
 #define TIANDI_FS_ID 6666    /* Magic Number for tiandi filesystem */
 
 /* File System Layout Specification */
+
 #define BOOT_SZ 512             /* Size of Boot block: 512 byets */
 #define SUPERBL_SZ 512          /* Size of Super block: 512 bytes */
 #define DATABL_INODE_RATIO 4    /* Data Block to Inode ratio 4 : 1 */
@@ -81,6 +82,9 @@ typedef struct {
 } iNode;
 
 
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
+extern Superblock sb;
+/*SUPERBLOOOOOOOOOOOOOOOCL*/
 
 /* Low Level File System Functions */
 int fs_init(FILE* group, int size);
