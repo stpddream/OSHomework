@@ -19,8 +19,8 @@
 
 #define P_IBIT_BLOCKS 1
 #define P_ABIT_BLOCKS (N_INODE_E_BLOCK * DATABL_INODE_RATIO)
-#define P_INODE_BLOCKS (N_BIT_E_BLOCK * P_IBIT_BLOCKS)
-#define P_DATA_BLOCKS (N_BIT_E_BLOCK * P_ABIT_BLOCKS)
+#define P_INODE_BLOCKS (N_BIT_E_BLOCK * P_IBIT_BLOCKS / N_INODE_E_BLOCK)
+#define P_DATA_BLOCKS (DATABL_INODE_RATIO * N_INODE_E_BLOCK) * P_INODE_BLOCKS
 
 #define GROUP_SIZE_BASE \
         (P_IBIT_BLOCKS + P_ABIT_BLOCKS + P_INODE_BLOCKS + P_DATA_BLOCKS)
@@ -47,11 +47,11 @@
 
 
 /** Helper Constants */
-#define GRP_HEAD_SZ BOOT_SZ + SUPERBL_SZ
+#define GRP_HEAD_SZ (BOOT_SZ + SUPERBL_SZ)
 
 
 
-int cal_n_inode(int size);
+int cal_n_ibit_blocks(int size);
 int round_sz(int size);
 int rnd2sm(int val, int base);
 

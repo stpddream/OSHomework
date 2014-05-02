@@ -1,6 +1,6 @@
 /* 
  * File:   util.h
- * Author: Sammy Guergachi <sguergachi at gmail.com>
+ * Author: Panda & Jacy
  *
  * Created on April 28, 2014, 8:03 PM
  */
@@ -20,6 +20,9 @@
 
 /* Display Functions */
 const char *bytbi(int x);
+
+/* Clear an array: all item to 0 */
+void arr_clear(char* arr, int size);
 
 #endif	/* UTIL_H */
 
