@@ -48,12 +48,32 @@ int main(int argc, char** argv) {
     */
     
     FILE* fp;
-    //fp = fopen("testfile/disk", "w");
-    //init_disk(fp, 512);
-    round_sz(512);
-
+    fp = fopen("testfile/disk", "a+");
+    init_disk(fp, 20480);
+    int act_size = round_sz(20480);
+        
     
-    printf("N_BIT_E_BLOCK: %d", N_BIT_E_BLOCK);
+    
+    fs_init(fp, 20480);
+    
+    
+    fseek(fp, 0, SEEK_SET);
+    
+    Bootblock bootb;
+    fread(&bootb, sizeof(bootb), 1, fp);
+    
+    printf("Number is %d\n", bootb.fun);
+    printf("%s\n", bootb.have_fun);
+    
+    Superblock superblock;
+   
+    fread(&superblock, sizeof(superblock), 1, fp);
+    
+    
+    
+    
+    
+    
     
     return (EXIT_SUCCESS);
 }

@@ -18,3 +18,13 @@ const char *bytbi(int x)
 
     return b;
 }
+
+/**
+ * Clear an array. Assign all elements to 0
+ */
+void arr_clear(char* arr, int size) {
+    int i;
+    for(i = 0; i < size; i++) {
+        arr[i] = 0;
+    }    
+}

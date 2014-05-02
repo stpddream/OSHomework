@@ -10,21 +10,23 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "filesys_util.h"
+#include "util.h"
+
 
 #define TIANDI_FS_ID 6666    /* Magic Number for tiandi filesystem */
 
 /* File System Layout Specification */
-#define BOOT_SZ 512
-#define SUPERBL_SZ 512
-#define BLOCK_BASE 1024
+#define BOOT_SZ 512             /* Size of Boot block: 512 byets */
+#define SUPERBL_SZ 512          /* Size of Super block: 512 bytes */
 #define DATABL_INODE_RATIO 4    /* Data Block to Inode ratio 4 : 1 */
-#define BLOCK_SZ 512
+#define BLOCK_SZ 512            /* Block size: 512 bytes */
 
 /* Super Block Specification */
 #define SIGN_SZ 12
 
 /* Inode Specification */
-#define INODE_SZ 128
+#define INODE_SZ 128        /* Inodo size: 128 bytes */
 #define N_DBLOCKS 10
 #define N_IBLOCKS 4
 #define FILE_NAME_MAX 14    /* Maximum file name length */
@@ -33,7 +35,8 @@
 
 
 
-typedef struct {    
+typedef struct {  
+    int fun;
     char have_fun[20];    
 } Bootblock;
 
