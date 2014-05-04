@@ -10,6 +10,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "filesys_hd.h"
+#include "filesys_util.h"
+#include "device_hd.h"
 
 /* Boolean Type */
 #define boolean int
@@ -22,7 +25,7 @@
 const char *bytbi(int x);
 
 /* Clear an array: all item to 0 */
-void arr_clear(char* arr, int size);
-
+void arr_on(char* arr, int size);
+void print_ibit(Dev* device);
 #endif	/* UTIL_H */
 

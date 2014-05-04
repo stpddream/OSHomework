@@ -25,15 +25,19 @@
 #define GROUP_SIZE_BASE \
         (P_IBIT_BLOCKS + P_ABIT_BLOCKS + P_INODE_BLOCKS + P_DATA_BLOCKS)
 
-#define GRP_HEAD_SZ (BOOT_SZ+SUPERBL_SZ)
 
+/* Pointer to blocks in file system */
 #define SUPERBL_BEGIN BOOT_SZ
 #define CONTENT_BEGIN (BOOT_SZ+SUPERBL_SZ)
-#define IBIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.ibit_offset)
-#define ABIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.abit_offset)
-#define INODE_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.inode_offset)
-#define DATA_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.data_offset)
+#define IBIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.ibit_offset)
+#define ABIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.abit_offset)
+#define INODE_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.inode_offset)
+#define DATA_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.data_offset)
 #define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
+
+
+#define IBIT_BYTE_ADDR(IDX) (IBIT_BEGIN + IDX)
+#define IBIT_IDX(BYTE, OFFSET) ((BYTE + 1) * 8 - 1 - OFFSET)
 
 //Convert Inode Index to Inode Address in bytes
 #define INODE_ADDR(IDX) (INODE_BEGIN + INODE_SZ * IDX)
@@ -55,8 +59,19 @@ int cal_n_ibit_blocks(int size);
 int round_sz(int size);
 int rnd2sm(int val, int base);
 
+
+
+
+
 //fine!!
 //Calculate actual bytes can be processed
 int get_valid_size(int inode_idx, int pos, int bytes);
+
+
+/* Debug Qu */
+//void superbl_print(Superblock* sb);
+
+
 #endif	/* FILESYS_UTIL_H */
+
 

@@ -6,6 +6,13 @@
  */
 
 /**
+ * Helper class for organizing a single byte bitmap
+ * 
+ */
+
+
+
+/**
  * Low level bitmap functionality
  */
 #ifndef BITMAP_H
