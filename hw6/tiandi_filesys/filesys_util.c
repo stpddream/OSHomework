@@ -31,5 +31,38 @@ int rnd2sm(int val, int base) {
 }
 
 
+/*
+int inode_clr(iNode* node) {
+    node->file_type = 0;
+    node->permission = 0;
+    node->nlink = 0;
+    node->size = 0;
+    node->uid
+    
+}*/
+
+
+/**** Debug Printing ****/
+/*
+void superbl_print(Superblock* sb) {
+    
+    printf("==== Superblock ==== \n");
+    printf("Num of inodes: %d\n", sb.inode_count);
+    printf("Num of data blocks: %d\n", sb.block_count);
+    
+    printf("Num of free inodes: %d\n", sb.freeinode_count);
+    printf("Num of free data blocks: %d\n", sb.freeblock_count);
+  
+    printf("Ibit offset: %d\n", sb.ibit_offset);
+    printf("Abit offset: %d\n", sb.abit_offset);
+    printf("Inode offset: %d\n", sb.inode_offset);
+    printf("Data offset: %d\n", sb.data_offset);
+    
+    printf("Block size: %d\n", sb.block_size);
+    printf("Disk size: %d\n", sb.size);
+    printf("====    ====\n");
+    
+}*/
+
 
 
