@@ -30,6 +30,24 @@ void arr_on(char* arr, int size) {
 }
 
 
+void print_superblock(Superblock* sb) {
+       
+    printf("==== Superblock ==== \n");
+    printf("Num of inodes: %d\n", sb->inode_count);
+    printf("Num of data blocks: %d\n", sb->databl_count);
+    
+    printf("Num of free inodes: %d\n", sb->freeinode_count);
+    printf("Num of free data blocks: %d\n", sb->freeblock_count);
+  
+    printf("Ibit offset: %d\n", sb->ibit_offset);
+    printf("Abit offset: %d\n", sb->abit_offset);
+    printf("Inode offset: %d\n", sb->inode_offset);
+    printf("Data offset: %d\n", sb->data_offset);
+    
+    printf("Block size: %d\n", sb->block_size);
+    printf("Disk size: %d\n", sb->size);
+    printf("====    ====\n");
+}
 
 // Debug functions
 void print_ibit(Dev* device) {

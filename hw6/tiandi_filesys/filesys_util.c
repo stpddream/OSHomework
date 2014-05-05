@@ -75,6 +75,10 @@ int find_data_ptr(iNode* inode, int pos, DataPos* dp){
     return 0;
 }
 
+
+
+
+
 /*
 int inode_clr(iNode* node) {
     node->file_type = 0;
@@ -84,7 +88,6 @@ int inode_clr(iNode* node) {
     node->uid
     
 }*/
-
 
 /**** Debug Printing ****/
 /*

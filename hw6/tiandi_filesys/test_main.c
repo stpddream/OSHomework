@@ -17,6 +17,7 @@
  * 
  */
 int main(int argc, char** argv) {
+    int i;
     FILE* fp;
     fp = fopen("testfile/disk", "w+");    
     Dev* device = dev_create(fp);            
@@ -26,59 +27,28 @@ int main(int argc, char** argv) {
     printf("Number is %d\n", device->bootblock.fun);
     printf("%s\n", device->bootblock.have_fun);
     
-    Superblock sb = device->superblock;
-    
-    printf("==== Superblock ==== \n");
-    printf("Num of inodes: %d\n", sb.inode_count);
-    printf("Num of data blocks: %d\n", sb.block_count);
-    
-    printf("Num of free inodes: %d\n", sb.freeinode_count);
-    printf("Num of free data blocks: %d\n", sb.freeblock_count);
-  
-    printf("Ibit offset: %d\n", sb.ibit_offset);
-    printf("Abit offset: %d\n", sb.abit_offset);
-    printf("Inode offset: %d\n", sb.inode_offset);
-    printf("Data offset: %d\n", sb.data_offset);
-    
-    printf("Block size: %d\n", sb.block_size);
-    printf("Disk size: %d\n", sb.size);
-    printf("====    ====\n");
-    
-    
-    //print_ibit(device);
-
-    int which = fs_alloc_inode(device);
-    printf("which is %d\n", which);
-    
-    //iNode node;
-    //fs_get_inode(&node, which, device);
-    //node.file_type = 3333;
-    
-    int which2 = fs_alloc_inode(device);
-    printf("another which %d\n", which2);
-    
-   
-   
-    fs_dealloc_inode(device, which);
-    
-    //printf("Second print\n");
-    print_ibit(device);
-    
-    
-    
-    
-  //  printf("Allocated: %d\n", which);
-    
-    /*
-    for(i = 0; i < 5; i++) {
+    print_superblock(&device->superblock);
+           
+    for(i = 0; i < device->superblock.inode_count; i++) {
         printf("Allocated: %d\n", fs_alloc_inode(device));
-            print_ibit(device);
-
     }
     
+    for(i = 25; i < 600; i++) {
+        fs_dealloc_inode(device, i);
+    }
+
+    fs_dealloc_inode(device, 3);
+    fs_dealloc_inode(device, 2);
+    print_ibit(device);
+    
+    fs_alloc_inode(device);
+    fs_alloc_inode(device);
+    fs_alloc_inode(device);
+    fs_dealloc_inode(device, 3);
+    printf("Allocted %d\n", fs_alloc_inode(device));
     
     print_ibit(device);
-    */
+    
     
     /*
     printf("\n======== abits ========\n");
@@ -134,12 +104,6 @@ int main(int argc, char** argv) {
     printf("Now is %d\n", another.file_type);
 */
     
-    /*
-    fseek(fp, SUPERBL_BEGIN, SEEK_SET);
-    fread(data, sizeof(data), 1, fp);
-    int i;
-    for(i = 0; i < 1024; i++) printf("%d ", data[i]);
-     */   
     
     
     return (EXIT_SUCCESS);
