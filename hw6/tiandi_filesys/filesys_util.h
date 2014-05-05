@@ -8,7 +8,11 @@
 #ifndef FILESYS_UTIL_H
 #define	FILESYS_UTIL_H
 
+#include "filesys_hd.h"
 #include "filesys.h"
+#include "bitmap.h"
+
+
 
 /* Base of group size, formula as follows */
 /* Base = Proportion of ibit blocks + Proportion of allocation bit blocks + 
@@ -35,7 +39,8 @@
 #define DATA_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.data_offset)
 #define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
 
-
+#define IBIT_ADDR(IDX) (IBIT_BEGIN + IDX)
+#define ABIT_ADDR(IDX) (ABIT_BEGIN + IDX) 
 #define IBIT_BYTE_ADDR(IDX) (IBIT_BEGIN + device->superblock.inode_count / 8 - 1 - IDX)
 #define IBIT_IDX(BYTE, OFFSET) (BYTE * 8 + OFFSET)
 
@@ -49,32 +54,31 @@
 #define DATA_ADDR_O(IDX, OFFSET) (DATA_ADDR(IDX) + OFFSET * sizeof(int))
 #define N_INDIR_PT (BLOCK_SZ / sizeof(int))
 
-
-/****8 blablabalba */
-
-
+#define N_PTR (BLOCK_SZ/sizeof(int))
+#define DBLOCK_SZ (N_DBLOCKS*BLOCK_SZ)
+#define IBLOCK_SZ (N_IBLOCKS*N_PTR*BLOCK_SZ)
+#define I2BLOCK_SZ (N_PTR*N_PTR*BLOCK_SZ)
+#define I3BLOCK_SZ (N_PTR*N_PTR*N_PTR*BLOCK_SZ)
 /** Helper Constants */
 #define GRP_HEAD_SZ (BOOT_SZ + SUPERBL_SZ)
 
+#define DP_DBLOCK 0
+#define DP_IBLOCK 1
+#define DP_I2BLOCK 2
+#define DP_I3BLOCK 3
 
+/****8 blablabalba */
 
 int cal_n_ibit_blocks(int size);
 int round_sz(int size);
 int rnd2sm(int val, int base);
 
-
-
-
-
-//fine!!
-//Calculate actual bytes can be processed
-int get_valid_size(int inode_idx, int pos, int bytes);
-
+int get_valid_size(iNode* inode, int pos, int bytes);
+int find_data_ptr(iNode* inode, int pos, DataPos* dp);
+int calc_pos(Dev* device, iNode* inode, DataPos* dp);
+int find_next_block(DataPos* dp);
+int calc_cur_size(DataPos* dp);
 
 /* Debug Qu */
 //void superbl_print(Superblock* sb);
-
-
 #endif	/* FILESYS_UTIL_H */
-
-

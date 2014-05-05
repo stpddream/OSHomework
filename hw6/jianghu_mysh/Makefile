@@ -1,14 +1,14 @@
 COMPILERFLAGS = -g -Wall 
 CC = gcc
 CFLAGS = $(COMPILERFLAGS)
-OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o
+OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o commands.o
 
 All:	shell
 
 shell:	$(OBJS)
 	$(CC) $(CFLAGS) -o mysh $(OBJS) -lreadline
 
-main.o: main.c parser.h cmd_control.h cmd_history.h util.h jobs.h
+main.o: main.c parser.h cmd_control.h cmd_history.h util.h jobs.h commands.h
 	$(CC) $(CFLAGS) -c main.c
 
 cmd_conrtol.o:  cmd_control.c cmd_control.h
@@ -16,6 +16,9 @@ cmd_conrtol.o:  cmd_control.c cmd_control.h
 
 cmd_history.o:  cmd_history.c cmd_history.h util.h
 	$(CC) $(CFLAGS) -c cmd_history.c
+	
+commands.o: commands.c commands.h
+	$(CC) $(CFLAGS) -c commands.c
 
 parser.o:	parser.c parser.h
 	$(CC) $(CFLAGS) -c parser.c
@@ -28,4 +31,4 @@ util.o: util.c util.h
 
 
 clean:
-	rm *.o mysh
+	rm -rf *.o mysh

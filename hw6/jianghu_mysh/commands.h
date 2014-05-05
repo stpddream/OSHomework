@@ -11,6 +11,9 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 /**
  * Linux command more
  * @param 

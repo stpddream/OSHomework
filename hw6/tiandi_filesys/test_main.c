@@ -20,9 +20,7 @@ extern FileTable filetable;
  * 
  */
 int main(int argc, char** argv) {
-       
     int i;
-   
     FILE* fp;
     fp = fopen("testfile/disk", "w+");    
     Dev* device = dev_create(fp);            
