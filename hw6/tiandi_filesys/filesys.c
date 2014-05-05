@@ -97,6 +97,37 @@ int fs_init(Dev* device, int size) {
  * @return 0 if success
  */
 
+
+int fs_remove_file(Dev* device, int inode_idx){
+    int i, j, k, abit_idx, dblock_start;
+    int dblock[N_PTR];
+    int dblock2[N_PTR];
+    int dblock3[N_PTR];
+    DataPos dp;
+    iNode inode;
+    char inode_block[INODE_SZ];
+
+    
+    //turn off the bit in the inode bitmap
+    ibit_off(device, inode_idx);
+    
+    //get the inode
+    dev_read(&inode, INODE_SZ, INODE_ADDR(inode_idx), device);
+    
+    //clear all the inode data bits
+    /////////////////////TODO
+    
+    //clear all the bits in the inode
+    memcpy(&inode_block, &inode, INODE_SZ);
+    for(i = 0; i < INODE_SZ; i++){
+        inode_block[i] = 0;
+    }
+    
+    dev_write(inode_block, INODE_SZ, INODE_ADDR(inode_idx), device);
+    
+    return 0;
+}
+
 /*
 int fs_remove_file(Dev* device, int inode_idx) {
     // turn off the bit in the inode bitmap
