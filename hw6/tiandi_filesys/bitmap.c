@@ -62,7 +62,7 @@ int bm_get_free(char* map) {
 /**
  * Check if offset is on
  */
-boolean bm_is_on(char* map, int offset) {
+int bm_is_on(char* map, int offset) {
     return ((*map) >> offset & 1) == 1;
 }
 

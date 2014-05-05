@@ -79,6 +79,13 @@ typedef struct {
     char name[FILE_NAME_MAX];       /* file name */
 } iNode;
 
+typedef struct{
+    //indicator showing if the position is within the direct blocks, indirect blocks
+    //double indirect or triple indirect
+    int size_range;
+    int layers[4];
+    int offset;
+}DataPos;
 
 #endif	/* FILESYS_HD_H */
 

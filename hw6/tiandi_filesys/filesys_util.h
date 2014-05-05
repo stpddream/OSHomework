@@ -61,28 +61,22 @@
 /** Helper Constants */
 #define GRP_HEAD_SZ (BOOT_SZ + SUPERBL_SZ)
 
-
-typedef struct{
-    int layers[4];
-    int offset;
-}DataPos;
+#define DP_DBLOCK 0
+#define DP_IBLOCK 1
+#define DP_I2BLOCK 2
+#define DP_I3BLOCK 3
 
 /****8 blablabalba */
-
-
 
 int cal_n_ibit_blocks(int size);
 int round_sz(int size);
 int rnd2sm(int val, int base);
 
-
-
-
-
-//fine!!
-//Calculate actual bytes can be processed
-int get_valid_size(int inode_idx, int pos, int bytes);
+int get_valid_size(iNode* inode, int pos, int bytes);
 int find_data_ptr(iNode* inode, int pos, DataPos* dp);
+int calc_pos(Dev* device, iNode* inode, DataPos* dp);
+int find_next_block(DataPos* dp);
+int calc_cur_size(DataPos* dp);
 
 /* Debug Qu */
 //void superbl_print(Superblock* sb);
