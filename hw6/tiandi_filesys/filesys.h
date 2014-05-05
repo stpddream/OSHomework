@@ -41,6 +41,9 @@ int fs_alloc_inode(Dev* device);
 int fs_dealloc_inode(Dev* device, int inode_idx);
 int fs_update_inode(iNode* node, int inode_idx, Dev* device);
 
+
+int fs_alloc_databl(Dev* device);
+
 /* File Manipulation Functions */
 /** Seek from offset from the beginning */
 int fl_seek(int inode_idx, int offset);

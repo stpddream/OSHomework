@@ -51,9 +51,12 @@ typedef struct {
 
     // Counts
     int inode_count;  	/* Number of total inodes */
-    int block_count;  	/* Number of total data blocks */
+    int databl_count;  	/* Number of total data blocks */
     int freeinode_count;	/* Number of free inodes */
     int freeblock_count; 	/* Number of total free data blocks */
+    
+    int inode_alloc_hd;    /* Head of inode allocated, in bytes */
+    int data_alloc_hd;    /* Head of data block allocated, in bytes */
 
 } Superblock;
 
