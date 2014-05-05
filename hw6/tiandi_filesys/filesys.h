@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "filesys_util.h"
 
 #define TIANDI_FS_ID 6666    /* Magic Number for tiandi filesystem */
 
@@ -83,7 +83,7 @@ extern Superblock sb;
 
 /* Low Level File System Functions */
 int fs_init(FILE* group, int size);
-int fs_remove_file(int inode_idx);
+int fs_remove_file(int inode_idx, int dev_id);
 
 iNode* fs_get_inode(int inode_idx);
 int fs_alloc_inode();

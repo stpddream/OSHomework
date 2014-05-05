@@ -9,6 +9,7 @@
 #define	FILESYS_UTIL_H
 
 #include "filesys.h"
+#include "bitmap.h"
 
 /* Base of group size, formula as follows */
 /* Base = Proportion of ibit blocks + Proportion of allocation bit blocks + 
@@ -35,6 +36,9 @@
 #define DATA_BEGIN (CONTENT_BEGIN + BLOCK_SZ*sb.data_offset)
 #define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
 
+#define IBIT_ADDR(IDX) (IBIT_BEGIN + IDX)
+#define ABIT_ADDR(IDX) (ABIT_BEGIN + IDX) 
+
 //Convert Inode Index to Inode Address in bytes
 #define INODE_ADDR(IDX) (INODE_BEGIN + INODE_SZ * IDX)
 //Convert Data Index to Data Address
@@ -42,6 +46,16 @@
 #define DATA_ADDR_O(IDX, OFFSET) (DATA_ADDR(IDX) + OFFSET * sizeof(int))
 #define N_INDIR_PT (BLOCK_SZ / sizeof(int))
 
+#define N_PTR (BLOCK_SZ/sizeof(int))
+#define DBLOCK_SZ (N_DBLOCKS*BLOCK_SZ)
+#define IBLOCK_SZ (N_IBLOCKS*N_PTR*BLOCK_SZ)
+#define I2BLOCK_SZ (N_PTR*N_PTR*BLOCK_SZ)
+#define I3BLOCK_SZ (N_PTR*N_PTR*N_PTR*BLOCK_SZ)
+
+typedef struct{
+    int layers[4];
+    int offset;
+}DataPos;
 
 int cal_n_inode(int size);
 int round_sz(int size);
@@ -50,5 +64,7 @@ int rnd2sm(int val, int base);
 //fine!!
 //Calculate actual bytes can be processed
 int get_valid_size(int inode_idx, int pos, int bytes);
+DataPos find_data_ptr(iNode* inode, int pos);
+
 #endif	/* FILESYS_UTIL_H */
 
