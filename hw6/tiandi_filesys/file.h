@@ -9,6 +9,14 @@
 #define	FILE_H
 
 #include <stdio.h>
+#include <time.h>
+#include "filesys_hd.h"
+
+
+#define FT_FILE 1
+#define FT_DIR 2
+#define FT_MOUNT 3
+
 
 int f_open(const char* path, const char* mode);
 int f_read();
