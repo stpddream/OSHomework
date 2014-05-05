@@ -26,3 +26,18 @@ void ibit_test(Dev* device) {
     
     
 }
+
+void file_table_test() {
+    ft_init();
+    int i;
+    for(i = 0; i < 10; i++) printf("fd: %d %d \n", ft_put(i, 0), file_table.size);
+    
+    
+    ft_remove(5);
+    ft_remove(7);
+    ft_remove(3);
+    
+    printf("Current size is %d\n", file_table.size);
+    
+    printf("Printing right now\n");
+}

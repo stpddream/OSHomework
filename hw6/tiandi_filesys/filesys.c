@@ -316,7 +316,7 @@ int fs_alloc_databl(Dev* device) {
 }
 
 
-int fs_dealloc_daabl(Dev* device, int databl_idx) {
+int fs_dealloc_databl(Dev* device, int databl_idx) {
     printf("data block freed idx %d\n", databl_idx);
     device->superblock.freeblock_count++;
     return abit_on(device, databl_idx);
@@ -331,20 +331,16 @@ int fs_dealloc_daabl(Dev* device, int databl_idx) {
  * @param data 
  * @return number of bytes read
  */
-int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
+int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
     int valid_bytes, read_bytes, n_bytes, data_pos;
     
     //get inode
     FILE* fp = device->phys_data;
-    iNode inode;
-    
-    dev_read(&inode, INODE_SZ, pos, device);
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(&inode, pos, &dp) == 0) { // if the given position is invalid 
-        return 0;
-    } else 
+    if(find_data_ptr(&inode, pos, &dp) == 0) return 0; // if the given position is invalid 
+    else 
     {
         // total bytes to read
         valid_bytes = get_valid_size(&inode, pos, bytes);
@@ -368,20 +364,19 @@ int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
     }
 }
 
-int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data){
+int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
     int valid_bytes, write_bytes, n_bytes, data_pos;
     
     //get inode
     FILE* fp = device->phys_data;
-    iNode inode;
-    dev_read(&inode, INODE_SZ, pos, device);
+
+
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(&inode, pos, &dp) == 0) // if the given position is invalid
-    {
-        return 0;
-    }else 
+    // if the given position is invalid
+    if(find_data_ptr(&inode, pos, &dp) == 0) return 0;
+    else 
     {
         // total bytes to read
         valid_bytes = get_valid_size(&inode, pos, bytes);

@@ -12,6 +12,7 @@
 #include <string.h>
 #include "filesys_hd.h"
 #include "filesys_util.h"
+#include "tables_hd.h"
 #include "device_hd.h"
 
 /* Boolean Type */

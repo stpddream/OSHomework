@@ -13,8 +13,10 @@
 #include "device_ctrl.h"
 #include "filesys_util.h"
 #include "file_table.h"
+#include "file.h"
 
-extern FileTable filetable;
+
+extern FileTable file_table;
 
 /*
  * 
@@ -30,25 +32,13 @@ int main(int argc, char** argv) {
     printf("Number is %d\n", device->bootblock.fun);
     printf("%s\n", device->bootblock.have_fun);    
     print_superblock(&device->superblock);
+   
+    f_open("super.h", "r");
     
-    ft_init();
-    for(i = 0; i < 10; i++) printf("fd: %d %d \n", ft_put(i, 0), filetable.size);
-    
-    
-    ft_remove(5);
-    ft_remove(7);
-    ft_remove(3);
-    
-    printf("Current size is %d\n", filetable.size);
-    
-    printf("Printing right now\n");
+//   int i = 127;
+//    f_write();
+
     //print_filetable();
-    
-    
-    
-    
-         
-    
     
     /*
     printf("\n======== abits ========\n");

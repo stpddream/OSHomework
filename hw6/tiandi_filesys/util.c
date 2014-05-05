@@ -1,5 +1,4 @@
 #include "util.h"
-#include "file_table.h"
 
 /**
  * Print a number is binary form
@@ -62,13 +61,13 @@ void print_ibit(Dev* device) {
 }
 
 
-extern FileTable filetable;
+extern FileTable file_table;
 void print_filetable() {
     
     int i;
     for(i = 0; i < MAX_N_FILE_OPEN; i++) {
-        if(filetable.entries[i] != NULL) {
-            printf("%d\n", filetable.entries[i]->inode_idx);
+        if(file_table.entries[i] != NULL) {
+            printf("%d\n", file_table.entries[i]->inode_idx);
         }
     }
     
