@@ -12,6 +12,9 @@
 #include "util.h"
 #include "device_ctrl.h"
 #include "filesys_util.h"
+#include "file_table.h"
+
+extern FileTable filetable;
 
 /*
  * 
@@ -27,29 +30,26 @@ int main(int argc, char** argv) {
     fs_init(device, 20480);
   
     printf("Number is %d\n", device->bootblock.fun);
-    printf("%s\n", device->bootblock.have_fun);
-    
+    printf("%s\n", device->bootblock.have_fun);    
     print_superblock(&device->superblock);
-           
-    for(i = 0; i < device->superblock.inode_count; i++) {
-        printf("Allocated: %d\n", fs_alloc_inode(device));
-    }
     
-    for(i = 25; i < 600; i++) {
-        fs_dealloc_inode(device, i);
-    }
-
-    fs_dealloc_inode(device, 3);
-    fs_dealloc_inode(device, 2);
-    print_ibit(device);
+    ft_init();
+    for(i = 0; i < 10; i++) printf("fd: %d %d \n", ft_put(i, 0), filetable.size);
     
-    fs_alloc_inode(device);
-    fs_alloc_inode(device);
-    fs_alloc_inode(device);
-    fs_dealloc_inode(device, 3);
-    printf("Allocted %d\n", fs_alloc_inode(device));
     
-    print_ibit(device);
+    ft_remove(5);
+    ft_remove(7);
+    ft_remove(3);
+    
+    printf("Current size is %d\n", filetable.size);
+    
+    printf("Printing right now\n");
+    print_filetable();
+    
+    
+    
+    
+         
     
     
     /*
@@ -92,21 +92,7 @@ int main(int argc, char** argv) {
         fs_get_inode(&another, 0, fp);
         printf("Now is %d\n", another.file_type);
     }*/
-   /*
-    iNode sm_node;
-    fs_get_inode(&sm_node, 0, fp);
    
-    printf("File type is %d\n", sm_node.file_type);
-    sm_node.file_type = 50;
-    
-    fs_update_inode(&sm_node, 0, fp);
-  
-    iNode another;
-    fs_get_inode(&another, 0, fp);
-    printf("Now is %d\n", another.file_type);
-*/
-    
-    
     
     return (EXIT_SUCCESS);
 }
