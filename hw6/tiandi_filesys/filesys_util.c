@@ -134,16 +134,27 @@ int calc_cur_size(DataPos* dp){
     return size;
 }
 
+int find_next_block(Dev* device, iNode* inode, DataPos* dp, int flag){
+    int addr;
+    int data_ptrs[N_PTR];
 
-
-int find_next_block(DataPos* dp){
     if(dp->size_range == DP_DBLOCK){
         if(dp->layers[0] == N_DBLOCKS-1){
             dp->size_range = DP_IBLOCK;
             dp->layers[0] = 0;
             dp->layers[1] = 0;
+            if(flag){ // if writing
+                // alloc a new data block for indirect block ptrs
+                inode->iblocks[dp->layers[0]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(inode->iblocks[dp->layers[0]]);
+                //read data block as a list of int pointers
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
         }else{
             dp->layers[0]++;
+            if(flag) inode->dblocks[dp->layers[0]] = fs_alloc_databl(device);;
         }
     }else if(dp->size_range == DP_IBLOCK){
         if(dp->layers[0] == N_IBLOCKS-1 && dp->layers[1] == N_PTR-1){
@@ -151,11 +162,44 @@ int find_next_block(DataPos* dp){
             dp->layers[0] = 0;
             dp->layers[1] = 0;
             dp->layers[2] = 0;
+            
+            if(flag){ // if writing
+                // alloc a new data block for double indirect block ptr
+                inode->i2block= fs_alloc_databl(device);
+                addr = DATA_ADDR(inode->i2block);
+                //read data block as a list of int pointers
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         }else if (dp->layers[1] == N_PTR-1){
             dp->layers[0]++;
             dp->layers[1] = 0;
+            
+            if(flag){ // if writing
+                // alloc a new data block for indirect block ptrs
+                inode->iblocks[dp->layers[0]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(inode->iblocks[dp->layers[0]]);
+                //read data block as a list of int pointers
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         } else {
             dp->layers[1]++;
+            
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->iblocks[dp->layers[0]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         }   
     }else if(dp->size_range == DP_I2BLOCK){
         if(dp->layers[1] == N_PTR-1 && dp->layers[2] == N_PTR-1){
@@ -164,22 +208,95 @@ int find_next_block(DataPos* dp){
             dp->layers[1] = 0;
             dp->layers[2] = 0;
             dp->layers[3] = 0;
+            
+            if(flag){ // if writing
+                inode->i2block = fs_alloc_databl(device);
+                addr = DATA_ADDR(inode->i3block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[0]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         }else if (dp->layers[2] == N_PTR-1){
             dp->layers[1]++;
             dp->layers[2] = 0;
+                        
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->i2block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         } else {
             dp->layers[2]++;
+            
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->i2block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
         }           
     }else if(dp->size_range == DP_I3BLOCK){
         if(dp->layers[3] == N_PTR-1 && dp->layers[2] == N_PTR-1){
             dp->layers[1]++;
             dp->layers[2] = 0;
             dp->layers[3] = 0;
+            
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->i3block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[1]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[2]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[3]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         } else if (dp->layers[3] == N_PTR-1){
             dp->layers[2]++;
             dp->layers[3] = 0;
+            
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->i3block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[2]] = fs_alloc_databl(device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[2]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[3]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
+            
         } else {
             dp->layers[3]++;
+                                
+            if(flag){ // if writing
+                addr = DATA_ADDR(inode->i3block);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[1]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                addr = DATA_ADDR(data_ptrs[dp->layers[2]]);
+                dev_read(data_ptrs, BLOCK_SZ, addr, device);
+                data_ptrs[dp->layers[3]] = fs_alloc_databl(device);
+                dev_write(data_ptrs, BLOCK_SZ, addr, device);
+            }
         }              
     }
     dp->offset = 0;
