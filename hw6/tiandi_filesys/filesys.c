@@ -37,7 +37,7 @@ int fs_init(Dev* device, int size) {
     device->superblock.inode_count = n_inodes;
     device->superblock.freeinode_count = n_inodes;
     device->superblock.freeblock_count = n_datablocks;
-    device->superblock.block_count = n_datablocks;
+    device->superblock.databl_count = n_datablocks;
     
     /** offsets **/
     device->superblock.ibit_offset = 0;
@@ -46,6 +46,8 @@ int fs_init(Dev* device, int size) {
     device->superblock.data_offset = superb.inode_offset + n_inode_blocks;
     device->superblock.swap_offset = -1; //Invalid    
     device->superblock.size = act_size;
+    device->superblock.inode_alloc_hd = 0;
+    device->superblock.data_alloc_hd = 0;
     
        
     fseek(device->phys_data, SUPERBL_BEGIN, SEEK_SET);
@@ -119,7 +121,7 @@ int fs_get_inode(iNode* node, int inode_idx, Dev* device) {
 int fs_alloc_inode(Dev* device) {
     if(device->superblock.freeinode_count <= 0) return -1;
     
-    int bcnt;
+    int bcnt = device->superblock.inode_alloc_hd;
     int offset;
     char byte; 
     
@@ -127,20 +129,27 @@ int fs_alloc_inode(Dev* device) {
     while(bcnt <= (device->superblock.inode_count / 8)) {
       dev_read(&byte, sizeof(char), IBIT_BYTE_ADDR(bcnt), device);
       if(byte != 0) break;
-      bcnt++;
+      bcnt = (bcnt + 1) % (device->superblock.inode_count / 8);
     }
+        
+    
     offset = bm_get_free(&byte);
     printf("byte addr %d\n", IBIT_BYTE_ADDR(bcnt));
     printf("inode size %d\n", INODE_SZ);
     printf("ibit begin %d\n", IBIT_BEGIN);
     
-    ibit_off(device, IBIT_IDX(bcnt, offset));    
+    int inode_idx = IBIT_IDX(bcnt, offset);
+    
+    ibit_off(device, inode_idx);    
     printf("byte: %s; offset: %d\n", bytbi(byte), offset);
-    return IBIT_IDX(bcnt, offset);
+    device->superblock.freeblock_count--;
+    device->superblock.inode_alloc_hd = bcnt;
+    return inode_idx;
 }
 
 int fs_dealloc_inode(Dev* device, int inode_idx) {
     printf("inode idx %d\n", inode_idx);
+    device->superblock.freeblock_count++;    
     return ibit_on(device, inode_idx);
 }
 
@@ -151,6 +160,35 @@ int fs_update_inode(iNode* node, int inode_idx, Dev* device) {
     fseek(device->phys_data, INODE_ADDR(inode_idx), SEEK_SET);
     fwrite(node, INODE_SZ, 1, device->phys_data);
     return 0;
+}
+
+int fs_alloc_databl(Dev* device) {
+    if(device->superblock.freeblock_count <= 0) return -1;
+    
+    int bcnt = device->superblock.data_alloc_hd;
+    int offset;
+    char byte; 
+    
+    // Find next free inode
+    while(bcnt <= (device->superblock.databl_count / 8)) {
+      dev_read(&byte, sizeof(char), ABIT_BYTE_ADDR(bcnt), device);      
+      if(byte != 0) break;
+      bcnt = (bcnt + 1) % (device->superblock.databl_count / 8);
+    }
+    offset = bm_get_free(&byte);
+    
+    int databl_idx = ABIT_IDX(bcnt, offset);
+    abit_off(device, databl_idx);    
+    device->superblock.freeblock_count--;
+    printf("byte: %s; offset: %d\n", bytbi(byte), offset);
+    return databl_idx;
+}
+
+
+int fs_dealloc_daabl(Dev* device, int databl_idx) {
+    printf("data block freed idx %d\n", databl_idx);
+    device->superblock.freeblock_count++;
+    return abit_on(device, databl_idx);
 }
 
 

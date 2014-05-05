@@ -24,8 +24,13 @@
 /* Display Functions */
 const char *bytbi(int x);
 
+
+
 /* Clear an array: all item to 0 */
 void arr_on(char* arr, int size);
+
+/* Debug printing */
+void print_superblock(Superblock* sb);
 void print_ibit(Dev* device);
 #endif	/* UTIL_H */
 

@@ -39,6 +39,9 @@
 #define IBIT_BYTE_ADDR(IDX) (IBIT_BEGIN + device->superblock.inode_count / 8 - 1 - IDX)
 #define IBIT_IDX(BYTE, OFFSET) (BYTE * 8 + OFFSET)
 
+#define ABIT_BYTE_ADDR(IDX) (ABIT_BEGIN + device->superblock.databl_count / 8 - 1 - IDX)
+#define ABIT_IDX(BYTE, OFFSET) (BYTE * 8 + OFFSET)
+
 //Convert Inode Index to Inode Address in bytes
 #define INODE_ADDR(IDX) (INODE_BEGIN + INODE_SZ * IDX)
 //Convert Data Index to Data Address
