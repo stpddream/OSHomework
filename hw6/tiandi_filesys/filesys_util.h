@@ -26,7 +26,7 @@
         (P_IBIT_BLOCKS + P_ABIT_BLOCKS + P_INODE_BLOCKS + P_DATA_BLOCKS)
 
 
-/* Pointer to blocks in file system */
+/* Pointer to blocks in file system (make sure device is present) */
 #define SUPERBL_BEGIN BOOT_SZ
 #define CONTENT_BEGIN (BOOT_SZ+SUPERBL_SZ)
 #define IBIT_BEGIN (CONTENT_BEGIN + BLOCK_SZ * device->superblock.ibit_offset)
@@ -36,8 +36,8 @@
 #define INODE_SEC_SIZE (DATA_BEGIN - INODE_BEGIN)  
 
 
-#define IBIT_BYTE_ADDR(IDX) (IBIT_BEGIN + IDX)
-#define IBIT_IDX(BYTE, OFFSET) ((BYTE + 1) * 8 - 1 - OFFSET)
+#define IBIT_BYTE_ADDR(IDX) (IBIT_BEGIN + device->superblock.inode_count / 8 - 1 - IDX)
+#define IBIT_IDX(BYTE, OFFSET) (BYTE * 8 + OFFSET)
 
 //Convert Inode Index to Inode Address in bytes
 #define INODE_ADDR(IDX) (INODE_BEGIN + INODE_SZ * IDX)

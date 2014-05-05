@@ -19,7 +19,11 @@
 #define	BITMAP_H
 
 #include "util.h"
+#include "device_ctrl.h"
 
+int ibit_on(Dev* device, int inode_idx);
+int ibit_off(Dev* device, int inode_idx);
+int bit_turn(Dev* device, int inode_idx, int which_map, int (* func)(char*, int));
 int bm_on(char* map, int offset);
 int bm_off(char* map, int offset);
 boolean bm_is_on(char* map, int offset);

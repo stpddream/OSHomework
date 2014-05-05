@@ -31,6 +31,8 @@ int rnd2sm(int val, int base) {
 }
 
 
+
+
 /*
 int inode_clr(iNode* node) {
     node->file_type = 0;

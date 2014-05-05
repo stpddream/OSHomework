@@ -1,6 +1,29 @@
 #include "bitmap.h"
 
 
+int ibit_on(Dev* device, int inode_idx) {    
+    int byte_idx = inode_idx / 8;
+    int offset = inode_idx % 8;
+    return bit_turn(device, IBIT_BYTE_ADDR(byte_idx), offset, bm_on);
+}
+
+int ibit_off(Dev* device, int inode_idx) {
+    int byte_idx = inode_idx / 8;
+    int offset = inode_idx % 8;
+    printf("byte idx: %d; offset: %d", byte_idx, offset);
+    printf("ibit byte: %d\n", IBIT_BYTE_ADDR(byte_idx));
+    
+    return bit_turn(device, IBIT_BYTE_ADDR(byte_idx), offset, bm_off);
+}
+
+int bit_turn(Dev* device, int byte_addr, int offset, int (* func)(char*, int)) {
+    char byte;    
+    dev_read(&byte, sizeof(char), byte_addr, device);    
+    func(&byte, offset);
+    dev_write(&byte, sizeof(char), byte_addr, device);    
+    return 0;    
+}
+
 
 /**
  * Turn on bit at offset

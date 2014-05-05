@@ -96,6 +96,11 @@ int fs_init(Dev* device, int size) {
  */
 int fs_remove_file(int inode_idx){
     
+    
+    
+    
+    
+    
 }
 
 /**
@@ -118,20 +123,26 @@ int fs_alloc_inode(Dev* device) {
     int offset;
     char byte; 
     
-    // Check bytes
+    // Find next free inode
     while(bcnt <= (device->superblock.inode_count / 8)) {
       dev_read(&byte, sizeof(char), IBIT_BYTE_ADDR(bcnt), device);
       if(byte != 0) break;
       bcnt++;
     }
+    offset = bm_get_free(&byte);
+    printf("byte addr %d\n", IBIT_BYTE_ADDR(bcnt));
+    printf("inode size %d\n", INODE_SZ);
+    printf("ibit begin %d\n", IBIT_BEGIN);
     
-    
-    bm_off(&byte, offset);    //Mark as occupied    
-    dev_write(&byte, sizeof(char), IBIT_BYTE_ADDR(bcnt), device);
+    ibit_off(device, IBIT_IDX(bcnt, offset));    
     printf("byte: %s; offset: %d\n", bytbi(byte), offset);
-    return IBIT_IDX(byte, offset);     
+    return IBIT_IDX(bcnt, offset);
 }
 
+int fs_dealloc_inode(Dev* device, int inode_idx) {
+    printf("inode idx %d\n", inode_idx);
+    return ibit_on(device, inode_idx);
+}
 
 /**
  * Write an inode into disk
