@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <time.h>
 #include "filesys_hd.h"
+#include "file_table.h"
+#include "inode_table.h"
 
 
 #define FT_FILE 1
@@ -19,13 +21,14 @@
 
 
 int f_open(const char* path, const char* mode);
-int f_read();
-int f_write();
-int f_close();
-int f_seek();
-int f_rewind();
-int f_stat();
+int f_read(void* ptr, size_t size, size_t nmemb, int fd);
+int f_write(void* ptr, size_t size, size_t nmemb, int fd);
+int f_close(int fd);
+int f_seek(int fd, long offset, int whence);
+int f_rewind(int fd);
+int f_stat(int fd, char* buf);
 int f_remove();
+
 int f_opendir();
 int f_readdir();
 int f_closedir();

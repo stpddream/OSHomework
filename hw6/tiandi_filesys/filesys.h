@@ -41,13 +41,13 @@ int fs_alloc_inode(Dev* device);
 int fs_dealloc_inode(Dev* device, int inode_idx);
 int fs_update_inode(iNode* node, int inode_idx, Dev* device);
 
-
 int fs_alloc_databl(Dev* device);
+int fs_dealloc_databl(Dev* device, int databl_idx);
 
 /* File Manipulation Functions */
 /** Seek from offset from the beginning */
-int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data);
-int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data);
+int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data);
+int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data);
 
 //////////////////////////////
 
