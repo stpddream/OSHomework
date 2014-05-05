@@ -34,12 +34,6 @@ int abit_off(Dev* device, int databl_idx) {
 
 
 
-
-
-
-
-
-
 int bit_turn(Dev* device, int byte_addr, int offset, int (* func)(char*, int)) {
     char byte;    
     dev_read(&byte, sizeof(char), byte_addr, device);    
