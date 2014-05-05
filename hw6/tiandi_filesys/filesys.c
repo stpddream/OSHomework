@@ -96,7 +96,7 @@ int fs_init(Dev* device, int size) {
  * @param inode_idx
  * @return 0 if success
  */
-int fs_remove_file(int inode_idx){
+int fs_remove_file(int inode_idx) {
     
     
     
