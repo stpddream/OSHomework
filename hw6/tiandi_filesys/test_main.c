@@ -29,27 +29,12 @@ int main(int argc, char** argv) {
     printf("Number is %d\n", device->bootblock.fun);
     printf("%s\n", device->bootblock.have_fun);
     
-    Superblock sb = device->superblock;
-    
-    printf("==== Superblock ==== \n");
-    printf("Num of inodes: %d\n", sb.inode_count);
-    printf("Num of data blocks: %d\n", sb.block_count);
-    
-    printf("Num of free inodes: %d\n", sb.freeinode_count);
-    printf("Num of free data blocks: %d\n", sb.freeblock_count);
-  
-    printf("Ibit offset: %d\n", sb.ibit_offset);
-    printf("Abit offset: %d\n", sb.abit_offset);
-    printf("Inode offset: %d\n", sb.inode_offset);
-    printf("Data offset: %d\n", sb.data_offset);
-    
-    printf("Block size: %d\n", sb.block_size);
-    printf("Disk size: %d\n", sb.size);
-    printf("====    ====\n");
+    print_superblock(&device->superblock);
+   
     
     
     //print_ibit(device);
-
+/*
     int which = fs_alloc_inode(device);
     printf("which is %d\n", which);
     
@@ -66,22 +51,25 @@ int main(int argc, char** argv) {
     
     //printf("Second print\n");
     print_ibit(device);
-    
-    
-    
-    
-  //  printf("Allocated: %d\n", which);
-    
-    /*
-    for(i = 0; i < 5; i++) {
+  */  
+        
+    for(i = 0; i < device->superblock.inode_count; i++) {
         printf("Allocated: %d\n", fs_alloc_inode(device));
-            print_ibit(device);
+        //    print_ibit(device);
 
+    }       
+    
+    for(i = 25; i < 600; i++) {
+        fs_dealloc_inode(device, i);
     }
-    
-    
+
+    fs_dealloc_inode(device, 3);
+    fs_dealloc_inode(device, 2);
     print_ibit(device);
-    */
+    
+    //fs_alloc_inode(device);
+    print_ibit(device);
+    
     
     /*
     printf("\n======== abits ========\n");

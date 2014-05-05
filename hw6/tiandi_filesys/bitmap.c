@@ -16,6 +16,30 @@ int ibit_off(Dev* device, int inode_idx) {
     return bit_turn(device, IBIT_BYTE_ADDR(byte_idx), offset, bm_off);
 }
 
+int abit_on(Dev* device, int databl_idx) {    
+    int byte_idx = databl_idx / 8;
+    int offset = databl_idx % 8;
+    return bit_turn(device, ABIT_BYTE_ADDR(byte_idx), offset, bm_on);
+}
+
+int abit_off(Dev* device, int databl_idx) {
+    int byte_idx = databl_idx / 8;
+    int offset = databl_idx % 8;
+    printf("byte idx: %d; offset: %d", byte_idx, offset);
+    printf("ibit byte: %d\n", ABIT_BYTE_ADDR(byte_idx));
+    
+    return bit_turn(device, ABIT_BYTE_ADDR(byte_idx), offset, bm_off);
+}
+
+
+
+
+
+
+
+
+
+
 int bit_turn(Dev* device, int byte_addr, int offset, int (* func)(char*, int)) {
     char byte;    
     dev_read(&byte, sizeof(char), byte_addr, device);    
@@ -49,9 +73,7 @@ int bm_off(char* map, int offset) {
 int bm_get_free(char* map) {
     int offset;
     char byte = *map;
-    for(offset = 0; offset < 8; offset++) {
-        printf("looploop\n");
-        printf("byte: %d\n", byte);
+    for(offset = 0; offset < 8; offset++) {            
         if((byte & 1) == 1) return offset;
         byte = byte >> 1;
     }    
