@@ -8,6 +8,8 @@
 #ifndef FILE_H
 #define	FILE_H
 
+#include <stdio.h>
+
 int f_open(const char* path, const char* mode);
 int f_read();
 int f_write();

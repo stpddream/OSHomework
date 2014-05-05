@@ -12,7 +12,6 @@
 #include "util.h"
 #include "device_ctrl.h"
 #include "filesys_util.h"
-char n = 0;
 
 /*
  * 
@@ -49,13 +48,25 @@ int main(int argc, char** argv) {
     printf("====    ====\n");
     
     
-//    print_ibit(device);
+    //print_ibit(device);
 
     int which = fs_alloc_inode(device);
+    printf("which is %d\n", which);
     
-    iNode node;
-    fs_get_inode(&node, which, device);
-    node.file_type = 3333;
+    //iNode node;
+    //fs_get_inode(&node, which, device);
+    //node.file_type = 3333;
+    
+    int which2 = fs_alloc_inode(device);
+    printf("another which %d\n", which2);
+    
+   
+   
+    fs_dealloc_inode(device, which);
+    
+    //printf("Second print\n");
+    print_ibit(device);
+    
     
     
     

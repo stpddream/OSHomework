@@ -19,6 +19,8 @@ Dev* dev_create(FILE* disk);
 
 int dev_init(Dev* device, int size);
 int dev_read(void* data, int size, int pos, Dev* device);
+int dev_write(void* data, int size, int pos, Dev* device);
+
 
 #endif	/* DISKIO_H */
 
