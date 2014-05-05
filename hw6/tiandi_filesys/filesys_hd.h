@@ -24,10 +24,6 @@
 #define N_IBLOCKS 4
 #define FILE_NAME_MAX 14    /* Maximum file name length */
 
-
-
-
-
 typedef struct {  
     int fun;
     char have_fun[20];    
@@ -65,7 +61,7 @@ typedef struct {
     int file_type;              /* File Type */
     int permission; 		/* file permission field */
     int nlink; 			/* number of links to this file */
-    int size; 			/* numer of bytes in file */
+    int size; 			/* number of bytes in file */
     int uid; 			/* owner's user ID */
     int gid; 			/* owner's group ID */
     int ctime; 			/* change time */
