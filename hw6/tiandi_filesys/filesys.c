@@ -276,7 +276,7 @@ int fs_alloc_databl(Dev* device) {
     }
     offset = bm_get_free(&byte);
     
-    int databl_idx = ABIT_InDX(bcnt, offset);
+    int databl_idx = ABIT_IDX(bcnt, offset);
     abit_off(device, databl_idx);    
     device->superblock.freeblock_count--;
     printf("byte: %s; offset: %d\n", bytbi(byte), offset);
@@ -310,10 +310,9 @@ int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(&inode, pos, &dp) == 0) // if the given position is invalid
-    {
+    if(find_data_ptr(&inode, pos, &dp) == 0) { // if the given position is invalid 
         return 0;
-    }else 
+    } else 
     {
         // total bytes to read
         valid_bytes = get_valid_size(&inode, pos, bytes);
@@ -326,7 +325,7 @@ int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
             //calculate the number of bytes to read
             n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
             //read the bytes to data
-            dev_read(&data+read_bytes, n_bytes, data_pos, device);
+            dev_read(&data + read_bytes, n_bytes, data_pos, device);
             // increment read
             read_bytes += n_bytes;
             //advance to next data block
