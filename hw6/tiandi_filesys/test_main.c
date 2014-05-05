@@ -30,34 +30,10 @@ int main(int argc, char** argv) {
     printf("%s\n", device->bootblock.have_fun);
     
     print_superblock(&device->superblock);
-   
-    
-    
-    //print_ibit(device);
-/*
-    int which = fs_alloc_inode(device);
-    printf("which is %d\n", which);
-    
-    //iNode node;
-    //fs_get_inode(&node, which, device);
-    //node.file_type = 3333;
-    
-    int which2 = fs_alloc_inode(device);
-    printf("another which %d\n", which2);
-    
-   
-   
-    fs_dealloc_inode(device, which);
-    
-    //printf("Second print\n");
-    print_ibit(device);
-  */  
-        
+           
     for(i = 0; i < device->superblock.inode_count; i++) {
         printf("Allocated: %d\n", fs_alloc_inode(device));
-        //    print_ibit(device);
-
-    }       
+    }
     
     for(i = 25; i < 600; i++) {
         fs_dealloc_inode(device, i);
@@ -67,7 +43,12 @@ int main(int argc, char** argv) {
     fs_dealloc_inode(device, 2);
     print_ibit(device);
     
-    //fs_alloc_inode(device);
+    fs_alloc_inode(device);
+    fs_alloc_inode(device);
+    fs_alloc_inode(device);
+    fs_dealloc_inode(device, 3);
+    printf("Allocted %d\n", fs_alloc_inode(device));
+    
     print_ibit(device);
     
     
@@ -125,12 +106,6 @@ int main(int argc, char** argv) {
     printf("Now is %d\n", another.file_type);
 */
     
-    /*
-    fseek(fp, SUPERBL_BEGIN, SEEK_SET);
-    fread(data, sizeof(data), 1, fp);
-    int i;
-    for(i = 0; i < 1024; i++) printf("%d ", data[i]);
-     */   
     
     
     return (EXIT_SUCCESS);
