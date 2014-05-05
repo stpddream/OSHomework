@@ -8,9 +8,10 @@
 #ifndef FILESYS_UTIL_H
 #define	FILESYS_UTIL_H
 
+#include "filesys_hd.h"
 #include "filesys.h"
 #include "bitmap.h"
-#include "filesys_hd.h"
+
 
 
 /* Base of group size, formula as follows */

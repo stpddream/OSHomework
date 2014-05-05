@@ -29,8 +29,6 @@ int rnd2sm(int val, int base) {
     return (val / base) * base;
 }
 
-int remain_bytes();
-
 int find_data_ptr(iNode* inode, int pos, DataPos* dp){
     int remainder, data_pos;
     if(pos > inode->size || pos < 0) {
@@ -85,20 +83,21 @@ int get_valid_size(iNode* inode, int pos, int bytes){
     }
 }
 
-int calc_pos(Dev* device, iNode inode, DataPos* dp){
+int calc_pos(Dev* device, iNode* inode, DataPos* dp){
     int pos, addr;
     int data_ptr[N_PTR];
     if(dp->size_range == DP_DBLOCK){
-        addr = DATA_ADDR(inode->dblock[dp->layers[0]]);
+        addr = DATA_ADDR(inode->dblocks[dp->layers[0]]);
         pos = addr + dp->offset;
     }else if(dp->size_range == DP_IBLOCK){
         //get the addr of the indirect data block
-        addr = DATA_ADDR(inode->iblock[dp->layers[0]]);
+        addr = DATA_ADDR(inode->iblocks[dp->layers[0]]);
         //read data block as a list of int pointers
         dev_read(data_ptr, BLOCK_SZ, addr, device);
         //get the int pointer stored in the data block 
         addr = DATA_ADDR(data_ptr[dp->layers[1]]);
         pos = addr + dp->offset;
+                
     }else if(dp->size_range == DP_I2BLOCK){
         addr = DATA_ADDR(inode->i2block);
         dev_read(data_ptr, BLOCK_SZ, addr, device);
@@ -125,7 +124,7 @@ int calc_cur_size(DataPos* dp){
         size = dp->layers[0]*BLOCK_SZ+dp->offset;
     }else if(dp->size_range == DP_IBLOCK){
         size = DBLOCK_SZ+dp->layers[0]*(BLOCK_SZ*N_PTR)+dp->layers[1]*BLOCK_SZ+dp->offset;
-    }else if(dp->size_range == DP_I2BLCOK){
+    }else if(dp->size_range == DP_I2BLOCK){
         size = DBLOCK_SZ + IBLOCK_SZ + dp->layers[1]*(BLOCK_SZ*N_PTR)
                 +dp->layers[2]*BLOCK_SZ+dp->offset;
     }else{
