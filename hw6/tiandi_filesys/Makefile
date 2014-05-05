@@ -1,6 +1,6 @@
 CFLAGS = -g -Wall 
 CC = gcc
-OBJS = test_main.o device_ctrl.o bitmap.o filesys.o filesys_util.o util.o filetable.o
+OBJS = test_main.o device_ctrl.o bitmap.o filesys.o filesys_util.o util.o file_table.o
 
 All:	tiandi_file
 tiandi_file: $(OBJS)
@@ -22,9 +22,8 @@ util.o: util.c util.h filesys.h
 filesys.o: filesys.c filesys.h filesys_util.h util.h
 	$(CC) $(CLFAGS) -c filesys.c
 	
-filetable.o: filetable.c filetable.h util.h
-	$(CC) $(CFLAGS) -c filetable.c
+file_table.o: file_table.c file_table.h util.h
+	$(CC) $(CFLAGS) -c file_table.c
 	
-
 clean:
 	rm -f *.o test_main .*.sw*
