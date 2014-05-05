@@ -20,6 +20,7 @@
 #include "cmd_history.h"
 #include "util.h"
 #include "jobs.h"
+#include "commands.h"
 #include <termios.h>
 
 #define MAX_CMD 20
@@ -109,7 +110,17 @@ void clean_cmdlines(){
 
 
 int main(int argc, char** argv) {        
-                
+
+   
+    more("super\nioiwoeifjoweifjwoeifjowijfowijefoewjfoiewjofjewofjweoifjewofjewiofjoewifjiewojf\nsuper\nsuper\n"
+            "super\nseupr\n\n\n\n\njwerwe\nwefwefwe\nwe\n\n\newefqfqwfqg\nwqerqerqe\n\nadfqef\nwef\nwef\nwef\n"
+            "wef\nwef\n\0");
+   
+    exit(0);
+    
+    
+    
+    
     init_mysh();
     jobs_init();   
     int n_cmd, n_args;

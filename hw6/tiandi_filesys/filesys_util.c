@@ -11,7 +11,6 @@ int cal_n_ibit_blocks(int size) {
     return act_size / GROUP_SIZE_BASE;    
 }
 
-
 /**
  * Calculate actual valid size of the disk
  * @param size
@@ -30,11 +29,162 @@ int rnd2sm(int val, int base) {
     return (val / base) * base;
 }
 
+int find_data_ptr(iNode* inode, int pos, DataPos* dp){
+    int remainder, data_pos;
+    if(pos > inode->size || pos < 0) {
+        return -1;
+    }
+        
+    if(pos >= 0 && pos < DBLOCK_SZ) // if the position is within the direct blocks
+    {
+        dp->size_range = DP_DBLOCK;
+        dp->layers[0] = pos/BLOCK_SZ;
+        dp->offset = pos % BLOCK_SZ;;
+    } //if the position is within the indirect blocks
+    else if(pos >= DBLOCK_SZ && pos < DBLOCK_SZ+IBLOCK_SZ){
+        dp->size_range = DP_IBLOCK;
+        data_pos = pos - DBLOCK_SZ;
+        dp->layers[0] = data_pos/ (N_PTR*BLOCK_SZ);
+        remainder = data_pos % (N_PTR*BLOCK_SZ);
+        dp->layers[1] = remainder / BLOCK_SZ;
+        dp->offset = remainder % BLOCK_SZ;
+    } // if the position is within the second layer indirect blocks
+    else if(pos >= DBLOCK_SZ+IBLOCK_SZ && pos < DBLOCK_SZ+IBLOCK_SZ+I2BLOCK_SZ){
+        dp->size_range = DP_I2BLOCK;
+        data_pos = pos - DBLOCK_SZ - IBLOCK_SZ;
+        dp->layers[0] = 0; //there is only one second layer indirect pointer, so it is always zero
+        dp->layers[1] = data_pos / (N_PTR*BLOCK_SZ);
+        remainder = data_pos % (N_PTR*BLOCK_SZ);
+        dp->layers[2] = remainder /(BLOCK_SZ);
+        dp->offset = remainder % BLOCK_SZ;
+    } // if the position is within triple indirect blocks
+    else if(pos >= DBLOCK_SZ+IBLOCK_SZ+I2BLOCK_SZ && pos < DBLOCK_SZ+IBLOCK_SZ+I2BLOCK_SZ+I3BLOCK_SZ){
+        dp->size_range = DP_I3BLOCK;
+        data_pos = pos - DBLOCK_SZ - IBLOCK_SZ - I2BLOCK_SZ; //there is only one third layer indirect pointer, so it is always zero
+        dp->layers[0]  = 0;
+        dp->layers[1] = data_pos/(N_PTR*N_PTR*BLOCK_SZ);
+        remainder = data_pos % (N_PTR*N_PTR*BLOCK_SZ);
+        dp->layers[2] = remainder / (N_PTR*BLOCK_SZ);
+        remainder = remainder % (N_PTR*BLOCK_SZ);
+        dp->layers[3] = remainder / BLOCK_SZ;
+        dp->offset = remainder % BLOCK_SZ;
+    } // if the position exceeds the triple indirect blocks
+    else {
+        return -1;
+    }
+    return 0;
+}
+
+int get_valid_size(iNode* inode, int pos, int bytes){
+    if((inode->size - pos) >= bytes) {
+        return bytes;
+    } else {
+        return (inode->size - pos);
+    }
+}
+
+int calc_pos(Dev* device, iNode* inode, DataPos* dp){
+    int pos, addr;
+    int data_ptr[N_PTR];
+    if(dp->size_range == DP_DBLOCK){
+        addr = DATA_ADDR(inode->dblocks[dp->layers[0]]);
+        pos = addr + dp->offset;
+    }else if(dp->size_range == DP_IBLOCK){
+        //get the addr of the indirect data block
+        addr = DATA_ADDR(inode->iblocks[dp->layers[0]]);
+        //read data block as a list of int pointers
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        //get the int pointer stored in the data block 
+        addr = DATA_ADDR(data_ptr[dp->layers[1]]);
+        pos = addr + dp->offset;
+                
+    }else if(dp->size_range == DP_I2BLOCK){
+        addr = DATA_ADDR(inode->i2block);
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        addr = DATA_ADDR(data_ptr[dp->layers[1]]);
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        addr = DATA_ADDR(data_ptr[dp->layers[2]]);
+        pos = addr + dp->offset; 
+    }else{
+        addr = DATA_ADDR(inode->i3block);
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        addr = DATA_ADDR(data_ptr[dp->layers[1]]);
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        addr = DATA_ADDR(data_ptr[dp->layers[2]]);
+        dev_read(data_ptr, BLOCK_SZ, addr, device);
+        addr = DATA_ADDR(data_ptr[dp->layers[3]]);
+        pos = addr + dp->offset; 
+    }
+    return pos;
+}
+
+int calc_cur_size(DataPos* dp){
+    int size;
+    if(dp->size_range == DP_DBLOCK){
+        size = dp->layers[0]*BLOCK_SZ+dp->offset;
+    }else if(dp->size_range == DP_IBLOCK){
+        size = DBLOCK_SZ+dp->layers[0]*(BLOCK_SZ*N_PTR)+dp->layers[1]*BLOCK_SZ+dp->offset;
+    }else if(dp->size_range == DP_I2BLOCK){
+        size = DBLOCK_SZ + IBLOCK_SZ + dp->layers[1]*(BLOCK_SZ*N_PTR)
+                +dp->layers[2]*BLOCK_SZ+dp->offset;
+    }else{
+        size = DBLOCK_SZ + IBLOCK_SZ + I2BLOCK_SZ+ dp->layers[1]*(BLOCK_SZ*N_PTR*N_PTR)
+                +dp->layers[2]*(BLOCK_SZ*N_PTR)+dp->layers[3]*BLOCK_SZ+dp->offset;
+    }
+    return size;
+}
 
 
 
-
-
+int find_next_block(DataPos* dp){
+    if(dp->size_range == DP_DBLOCK){
+        if(dp->layers[0] == N_DBLOCKS-1){
+            dp->size_range = DP_IBLOCK;
+            dp->layers[0] = 0;
+            dp->layers[1] = 0;
+        }else{
+            dp->layers[0]++;
+        }
+    }else if(dp->size_range == DP_IBLOCK){
+        if(dp->layers[0] == N_IBLOCKS-1 && dp->layers[1] == N_PTR-1){
+            dp->size_range = DP_I2BLOCK;
+            dp->layers[0] = 0;
+            dp->layers[1] = 0;
+            dp->layers[2] = 0;
+        }else if (dp->layers[1] == N_PTR-1){
+            dp->layers[0]++;
+            dp->layers[1] = 0;
+        } else {
+            dp->layers[1]++;
+        }   
+    }else if(dp->size_range == DP_I2BLOCK){
+        if(dp->layers[1] == N_PTR-1 && dp->layers[2] == N_PTR-1){
+            dp->size_range = DP_I3BLOCK;
+            dp->layers[0] = 0;
+            dp->layers[1] = 0;
+            dp->layers[2] = 0;
+            dp->layers[3] = 0;
+        }else if (dp->layers[2] == N_PTR-1){
+            dp->layers[1]++;
+            dp->layers[2] = 0;
+        } else {
+            dp->layers[2]++;
+        }           
+    }else if(dp->size_range == DP_I3BLOCK){
+        if(dp->layers[3] == N_PTR-1 && dp->layers[2] == N_PTR-1){
+            dp->layers[1]++;
+            dp->layers[2] = 0;
+            dp->layers[3] = 0;
+        } else if (dp->layers[3] == N_PTR-1){
+            dp->layers[2]++;
+            dp->layers[3] = 0;
+        } else {
+            dp->layers[3]++;
+        }              
+    }
+    dp->offset = 0;
+    return 0;
+}
 
 
 /*
@@ -47,6 +197,24 @@ int inode_clr(iNode* node) {
     
 }*/
 
-
-
-
+/**** Debug Printing ****/
+/*
+void superbl_print(Superblock* sb) {
+    
+    printf("==== Superblock ==== \n");
+    printf("Num of inodes: %d\n", sb.inode_count);
+    printf("Num of data blocks: %d\n", sb.block_count);
+    
+    printf("Num of free inodes: %d\n", sb.freeinode_count);
+    printf("Num of free data blocks: %d\n", sb.freeblock_count);
+  
+    printf("Ibit offset: %d\n", sb.ibit_offset);
+    printf("Abit offset: %d\n", sb.abit_offset);
+    printf("Inode offset: %d\n", sb.inode_offset);
+    printf("Data offset: %d\n", sb.data_offset);
+    
+    printf("Block size: %d\n", sb.block_size);
+    printf("Disk size: %d\n", sb.size);
+    printf("====    ====\n");
+    
+}*/

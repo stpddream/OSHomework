@@ -96,13 +96,112 @@ int fs_init(Dev* device, int size) {
  * @param inode_idx
  * @return 0 if success
  */
-int fs_remove_file(int inode_idx) {
+
+int fs_remove_file(Dev* device, int inode_idx) {
+    // turn off the bit in the inode bitmap
+    FILE* fp = device->phys_data;
+    int i, j, k, abit_idx, dblock_start;
+    int dblock[N_PTR];
+    int dblock2[N_PTR];
+    int dblock3[N_PTR];
+    DataPos dp;
     
+    //turn off the bit in the inode bitmap
+    ibit_off(device, inode_idx);
     
+    // clear all the bits in the inode
+    iNode inode;
+    fseek(fp, INODE_ADDR(inode_idx), SEEK_SET);
+    fread(&inode, INODE_SZ, 1, fp);
     
+    find_data_ptr(&inode, inode->size, &dp);
     
+    //if the size of the file exceeds the direct blocks
+    if(dp->size_range > DP_DBLOCK) {
+        //clear the data blocks pointed by dblock
+        for(i = 0; i < N_DBLOCKS; i++){
+            abit_idx = inode.dblocks[i];
+            bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+        }
+        
+        if(dp->size_range > DP_IBLOCK) {
+            //clear the data blocks storing the indirect pointers
+            for(i = 0; i < N_IBLOCKS; i++){
+                //get block
+                dblock_start= DATA_BEGIN+inode.iblocks[i]*BLOCK_SZ;
+                fseek(fp, dblock_start, SEEK_SET);
+                fread(&dblock, num_ptr, 1, fp);
+                //turn off the bits of the current block in the alloc bitmap
+                bm_update(fp, ABIT_BEGIN, inode.iblocks[i], BM_OFF);       
+                //clear the bits 
+                for(j = 0; j < num_ptr; j++){
+                    abit_idx = dblock[j];
+                    bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+                }
+            }
+        
+            if(dp->size_range > DP_I2BLOCK) {
+                //get i2block
+                dblock_start = DATA_BEGIN+inode.i2block*BLOCK_SZ;
+                fseek(fp, dblock_start, SEEK_SET);
+                fread(&dblock, num_ptr, 1, fp);
+                bm_update(fp, ABIT_BEGIN, inode.i2block, BM_OFF);
+                for(i = 0; i < num_ptr; i++) {
+                    //turn off the bits of the current block
+                    abit_idx = dblock[i];
+                    bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+
+                    dblock_start = DATA_BEGIN+dblock[i]*BLOCK_SZ;
+                    fseek(fp, dblock_start, SEEK_SET);
+                    fread(&dblock2, num_ptr, 1, fp);
+
+                    for(j = 0; j < num_ptr; j++) {
+                        abit_idx = dblock2[j];
+                        bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+                    }
+                }
+            }
+        }
+    }
+    //get i3block
+        /*
+    dblock_start = DATA_BEGIN + inode.i3block * BLOCK_SZ;
+    fseek(fp, dblock_start, SEEK_SET);
+    fread(&dblock, num_ptr, 1, fp);
+    bm_update(fp, ABIT_BEGIN, inode.i3block, BM_OFF);
+    for(i = 0; i < num_ptr; i++) {
+        //turn off the bits of the current block
+        abit_idx = dblock[i];
+        bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+
+        dblock_start = DATA_BEGIN+dblock[i]*BLOCK_SZ;
+        fseek(fp, dblock_start, SEEK_SET);
+        fread(&dblock2, num_ptr, 1, fp);
+        
+        for(j = 0; j < num_ptr; j++){
+            abit_idx = dblock2[j];
+            bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);
+            
+            dblock_start = DATA_BEGIN+dblock[i]*BLOCK_SZ;
+            fseek(fp, dblock_start, SEEK_SET);
+            fread(&dblock3, num_ptr, 1, fp);           
+            for(k = 0; k < num_ptr; k++){
+                abit_idx = dblock3[k];
+                bm_update(fp, ABIT_BEGIN, abit_idx, BM_OFF);        
+            }
+        }
+    }
     
-    
+    //clear all the bytes in inode
+    char inode_block[INODE_SZ];
+    memcpy(&inode_block, &inode, INODE_SZ);
+    for(i = 0; i < INODE_SZ; i++){
+        inode_block[i] = 0;
+    }
+    fseek(fp, INODE_ADDR(inode_idx), SEEK_SET);
+    fwrite(&inode, INODE_SZ, 1, fp);
+    return 0;
+         */
 }
 
 /**
@@ -177,7 +276,7 @@ int fs_alloc_databl(Dev* device) {
     }
     offset = bm_get_free(&byte);
     
-    int databl_idx = ABIT_IDX(bcnt, offset);
+    int databl_idx = ABIT_InDX(bcnt, offset);
     abit_off(device, databl_idx);    
     device->superblock.freeblock_count--;
     printf("byte: %s; offset: %d\n", bytbi(byte), offset);
@@ -200,6 +299,40 @@ int fs_dealloc_daabl(Dev* device, int databl_idx) {
  * @param data 
  * @return number of bytes read
  */
-int fl_read(int inode_idx, int pos, int bytes, char* data) {
+int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
+    int valid_bytes, remain_bytes, read_bytes, n_bytes, data_pos;
     
+    //get inode
+    FILE* fp = device->phys_data;
+    iNode inode;
+    
+    dev_read(&inode, INODE_SZ, pos, device);
+
+    //compute offset
+    DataPos dp;
+    if(find_data_ptr(&inode, pos, &dp) == 0) // if the given position is invalid
+    {
+        return 0;
+    }else 
+    {
+        // total bytes to read
+        valid_bytes = get_valid_size(&inode, pos, bytes);
+        // number of bytes being read
+        read_bytes = 0;
+
+        while(read_bytes < valid_bytes){
+            //calculate the physical address of the current data position
+            data_pos = calc_pos(device, &inode, &dp);
+            //calculate the number of bytes to read
+            n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
+            //read the bytes to data
+            dev_read(&data+read_bytes, n_bytes, data_pos, device);
+            // increment read
+            read_bytes += n_bytes;
+            //advance to next data block
+            find_next_block(&dp);
+        }
+        
+        return valid_bytes;
+    }
 }
