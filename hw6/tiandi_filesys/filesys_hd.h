@@ -81,7 +81,7 @@ typedef struct{
     int size_range;
     int layers[4];
     int offset;
-}DataPos;
+} DataPos;
 
 #endif	/* FILESYS_HD_H */
 
