@@ -31,6 +31,31 @@ int rnd2sm(int val, int base) {
     return (val / base) * base;
 }
 
-
-
 int remain_bytes();
+
+int find_data_ptr(iNode* inode, int pos, DataPos* dp){
+    int remainder, data_pos;
+    if(pos > inode->size || pos < 0) {
+        return -1;
+    }
+        
+    if(pos >= 0 && pos < DBLOCK_SZ) // if the position is within the direct blocks
+    {
+        dp->layers[0] = pos/BLOCK_SZ;
+        dp->offset = pos % BLOCK_SZ;;
+    } //if the position is within the indirect blocks
+    else if(pos >= DBLOCK_SZ && pos < IBLOCK_SZ){
+        data_pos = pos - DBLOCK_SZ;
+        dp->layers[0] = data_pos/ (N_PTR*BLOCK_SZ);
+        remainder = data_pos % (N_PTR*BLOCK_SZ);
+        dp->layers[1] = remainder / BLOCK_SZ;
+        dp->offset = remainder % BLOCK_SZ;
+    } // if the position is within the second layer indirect blocks
+    else if(pos >= IBLOCK_SZ && pos < I2BLOCK_SZ){
+        data_pos = pos - DBLOCK_SZ - IBLOCK_SZ;
+        dp->layers[0] = dapa_pos
+        
+    }
+    
+    return 0;
+}

@@ -13,9 +13,13 @@
 
 #include "util.h"
 
+#define BM_OFF 0
+#define BM_ON 1
+
 int bm_on(char* map, int offset);
 int bm_off(char* map, int offset);
 boolean bm_is_on(char* map, int offset);
+void bm_update(FILE* fp, int bm_begin, int idx, int action);
 
 
 
