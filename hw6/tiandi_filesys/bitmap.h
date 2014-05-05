@@ -7,7 +7,6 @@
 
 /**
  * Helper class for organizing a single byte bitmap
- * 
  */
 
 
