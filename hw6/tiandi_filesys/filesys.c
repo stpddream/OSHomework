@@ -97,6 +97,7 @@ int fs_init(Dev* device, int size) {
  * @return 0 if success
  */
 
+/*
 int fs_remove_file(Dev* device, int inode_idx) {
     // turn off the bit in the inode bitmap
     FILE* fp = device->phys_data;
@@ -164,7 +165,7 @@ int fs_remove_file(Dev* device, int inode_idx) {
         }
     }
     //get i3block
-        /*
+        
     dblock_start = DATA_BEGIN + inode.i3block * BLOCK_SZ;
     fseek(fp, dblock_start, SEEK_SET);
     fread(&dblock, num_ptr, 1, fp);
@@ -201,8 +202,8 @@ int fs_remove_file(Dev* device, int inode_idx) {
     fseek(fp, INODE_ADDR(inode_idx), SEEK_SET);
     fwrite(&inode, INODE_SZ, 1, fp);
     return 0;
-         */
-}
+        
+} */
 
 /**
  * Get inode from disk
@@ -276,7 +277,7 @@ int fs_alloc_databl(Dev* device) {
     }
     offset = bm_get_free(&byte);
     
-    int databl_idx = ABIT_InDX(bcnt, offset);
+    int databl_idx = ABIT_IDX(bcnt, offset);
     abit_off(device, databl_idx);    
     device->superblock.freeblock_count--;
     printf("byte: %s; offset: %d\n", bytbi(byte), offset);
@@ -338,7 +339,7 @@ int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
 }
 
 int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data){
-    int valid_bytes, read_bytes, n_bytes, data_pos;
+    int valid_bytes, write_bytes, n_bytes, data_pos;
     
     //get inode
     FILE* fp = device->phys_data;
@@ -355,17 +356,17 @@ int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data){
         // total bytes to read
         valid_bytes = get_valid_size(&inode, pos, bytes);
         // number of bytes being read
-        read_bytes = 0;
+        write_bytes = 0;
 
-        while(read_bytes < valid_bytes){
+        while(write_bytes < valid_bytes){
             //calculate the physical address of the current data position
             data_pos = calc_pos(device, &inode, &dp);
             //calculate the number of bytes to read
             n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
             //read the bytes to data
-            dev_read(&data+read_bytes, n_bytes, data_pos, device);
+            dev_write(&data+write_bytes, n_bytes, data_pos, device);
             // increment read
-            read_bytes += n_bytes;
+            write_bytes += n_bytes;
             //advance to next data block
             find_next_block(&dp);
         }
