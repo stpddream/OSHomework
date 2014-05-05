@@ -362,7 +362,7 @@ int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data){
             //calculate the physical address of the current data position
             data_pos = calc_pos(device, &inode, &dp);
             //calculate the number of bytes to read
-            n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
+            n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - write_bytes);
             //read the bytes to data
             dev_write(&data+write_bytes, n_bytes, data_pos, device);
             // increment read
