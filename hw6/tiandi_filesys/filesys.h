@@ -46,13 +46,8 @@ int fs_alloc_databl(Dev* device);
 
 /* File Manipulation Functions */
 /** Seek from offset from the beginning */
-int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data);
-int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data);
-
-//////////////////////////////
-
-
-
+int fl_read(Dev* device, iNode* inode, int pos, int bytes, char* data);
+int fl_write(Dev* device, iNode* inode, int pos, int bytes, char* data);
 
 
 

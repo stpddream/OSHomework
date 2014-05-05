@@ -331,77 +331,74 @@ int fs_dealloc_daabl(Dev* device, int databl_idx) {
  * @param data 
  * @return number of bytes read
  */
-int fl_read(Dev* device, int inode_idx, int pos, int bytes, char* data) {
+int fl_read(Dev* device, iNode* inode, int pos, int bytes, char* data) {
     int valid_bytes, read_bytes, n_bytes, data_pos;
-    
-    //get inode
-    FILE* fp = device->phys_data;
-    iNode inode;
-    
-    dev_read(&inode, INODE_SZ, pos, device);
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(&inode, pos, &dp) == 0) // if the given position is invalid
+    if(find_data_ptr(inode, pos, &dp) == 0) // if the given position is invalid
     {
         return 0;
     }else 
     {
         // total bytes to read
-        valid_bytes = get_valid_size(&inode, pos, bytes);
+        valid_bytes = get_valid_size(inode, pos, bytes);
         // number of bytes being read
         read_bytes = 0;
 
         while(read_bytes < valid_bytes){
             //calculate the physical address of the current data position
-            data_pos = calc_pos(device, &inode, &dp);
+            data_pos = calc_pos(device, inode, &dp);
             //calculate the number of bytes to read
             n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
             //read the bytes to data
-            dev_read(&(data+read_bytes), n_bytes, data_pos, device);
+            dev_read(data+read_bytes, n_bytes, data_pos, device);
             // increment read
             read_bytes += n_bytes;
             //advance to next data block
-            find_next_block(&dp);
+            find_next_block(device, inode, &dp, FALSE);
         }
         
         return valid_bytes;
     }
 }
 
-int fl_write(Dev* device, int inode_idx, int pos, int bytes, char* data){
+/**
+ * Write data to file
+ * @param device
+ * @param inode_idx
+ * @param pos
+ * @param bytes
+ * @param data
+ * @return the number of bytes written 
+ */
+int fl_write(Dev* device, iNode* inode, int pos, int bytes, char* data){
     int valid_bytes, write_bytes, n_bytes, data_pos;
-    
-    //get inode
-    FILE* fp = device->phys_data;
-    iNode inode;
-    dev_read(&inode, INODE_SZ, pos, device);
 
     //compute data position
     DataPos dp;
-    if(find_data_ptr(&inode, pos, &dp) == 0) // if the given position is invalid
+    if(find_data_ptr(inode, pos, &dp) == 0) // if the given position is invalid
     {
         return 0;
     }else 
     {
         // total bytes to write
-        valid_bytes = get_valid_size(&inode, pos, bytes);
+        valid_bytes = get_valid_size(inode, pos, bytes);
         // number of bytes being written
         write_bytes = 0;
 
         while(write_bytes < valid_bytes){
             //calculate the physical address of the current data position
-            data_pos = calc_pos(device, &inode, &dp);
+            data_pos = calc_pos(device, inode, &dp);
             //calculate the number of bytes to write
             n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - write_bytes);
             //write the bytes from data
-            dev_write(&(data+write_bytes), n_bytes, data_pos, device);
+            dev_write(data+write_bytes, n_bytes, data_pos, device);
             // increment the written records
             write_bytes += n_bytes;
             //advance to next data block
-            find_next_block(&dp);
+            find_next_block(device, inode, &dp, TRUE);
         }
-        
         return valid_bytes;
     }
 }
