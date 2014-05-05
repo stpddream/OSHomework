@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     printf("Current size is %d\n", filetable.size);
     
     printf("Printing right now\n");
-    print_filetable();
+    //print_filetable();
     
     
     
