@@ -214,11 +214,11 @@ DirStream* f_opendir(char* path) {
 int f_readdir(DirStream* ds, DirFileEntry* entry){
     iNode inode;
     fs_get_inode(&inode, ds->inode_idx , cur_dev);
-    printf("inode size: %d\n", inode.size);
+    //printf("inode size: %d\n", inode.size);
 
-    printf("fl_read(cur_dev, &inode, %d, %d, entry) \n", ds->pos, DIR_ENTRY_SZ);
+   // printf("fl_read(cur_dev, &inode, %d, %d, entry) \n", ds->pos, DIR_ENTRY_SZ);
     if(fl_read(cur_dev, &inode, ds->pos, DIR_ENTRY_SZ, entry) == DIR_ENTRY_SZ){
-        printf("entry filename: %s\n", entry);
+       // printf("entry filename: %s\n", entry);
         ds->pos += DIR_ENTRY_SZ;
     }else{
         entry = NULL;
@@ -234,7 +234,6 @@ int f_closedir(DirStream* ds){
 }
 
 int f_mkdir(char* path) {
-    
     char* dirs;
     char this_path[strlen(path)];
 
