@@ -61,14 +61,16 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
     int inode_idx = ft_get_idx(fd);
     int cur_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
-    fl_write(cur_dev, inode, cur_pos, size * nmemb, ptr);
-    inode->size += size * nmemb;
+    int bytes_written = fl_write(cur_dev, inode, cur_pos, size * nmemb, ptr);
+    inode->size += bytes_written;
+    fs_update_inode(inode, inode_idx, cur_dev);    
     return 0;
 }
 
 int f_remove() {
     
     //remove datafile
+    //Iterate through all 
     
     
 }
@@ -105,7 +107,8 @@ int f_rewind(int fd) {
     return 0;
 }
 
-int f_opendir(char* path, const char* mode) {
+
+int f_opendir(char* path) {
     
 }
 
@@ -124,6 +127,8 @@ int f_mkdir(char* path) {
     fs_get_inode(&root_node, ROOT_NODE, cur_dev);
     dir_add(&root_node, ROOT_NODE, path);  
     fs_update_inode(&root_node, ROOT_NODE, cur_dev);
+    
+    
 
     return 0;
 }

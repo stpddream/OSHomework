@@ -18,7 +18,7 @@ int dir_lookup(iNode* dir_inode, char* file_name) {
     DirFileEntry entry;
     for(i = 0; i < dir_inode->size / DIR_ENTRY_SZ; i++) {
         fl_read(cur_dev, dir_inode, i * DIR_ENTRY_SZ, DIR_ENTRY_SZ, &entry);
-        if(strcmp(entry.file_name, file_name)) return entry.inode_idx;
+        if(strcmp(entry.file_name, file_name) == 0) return entry.inode_idx;
     }
     return -1;    
 }

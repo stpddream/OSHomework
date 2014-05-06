@@ -20,7 +20,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define MIN(A, B) (A > B) ? A : B
+#define MIN(A, B) (A > B) ? B : A
 
 /* Display Functions */
 const char *bytbi(int x);
