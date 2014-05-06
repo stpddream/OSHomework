@@ -14,12 +14,9 @@
 #include "filesys_hd.h"
 #include "file_table.h"
 #include "inode_table.h"
+#include "filesys_hd.h"
 #include "file_util.h"
 #include "ft_dir.h"
-
-#define FT_FILE 1
-#define FT_DIR 2
-#define FT_MOUNT 3
 
 #define FP_READ 1
 #define FP_WRITE 1 << 1

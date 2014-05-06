@@ -88,5 +88,11 @@ typedef struct{
     int offset;
 } DataPos;
 
+
+#define FT_FILE 1
+#define FT_DIR 2
+#define FT_MOUNT 3
+
+
 #endif	/* FILESYS_HD_H */
 
