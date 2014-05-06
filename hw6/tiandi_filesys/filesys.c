@@ -43,7 +43,7 @@ int fs_init(Dev* device, int size) {
     device->superblock.ibit_offset = 0;
     device->superblock.abit_offset = n_ibit_blocks;
     device->superblock.inode_offset = superb.abit_offset + n_abit_blocks;
-    device->superblock.data_offset = superb.inode_offset + n_inode_blocks;
+    device->superabblock.data_offset = superb.inode_offset + n_inode_blocks;
     device->superblock.swap_offset = -1; //Invalid    
     device->superblock.size = act_size;
     device->superblock.inode_alloc_hd = 0;
@@ -115,14 +115,14 @@ int fs_remove_file(Dev* device, int inode_idx){
     dev_read(&inode, INODE_SZ, INODE_ADDR(inode_idx), device);
     
     //clear all the inode data bits
-    /////////////////////TODO
+    /////////////////////TODO//////////////////////
+    clear_data_bits(device, &inode);
     
     //clear all the bits in the inode
     memcpy(&inode_block, &inode, INODE_SZ);
     for(i = 0; i < INODE_SZ; i++){
         inode_block[i] = 0;
-    }
-    
+    }   
     dev_write(inode_block, INODE_SZ, INODE_ADDR(inode_idx), device);
     
     return 0;
@@ -402,3 +402,5 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, char* data){
         return valid_bytes;
     }
 }
+
+
