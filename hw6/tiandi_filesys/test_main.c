@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
     //f_open("/file/good", "r");
     //f_mkdir("good");
     
+    /*
     iNode root;
 
    
@@ -74,7 +75,9 @@ int main(int argc, char** argv) {
     printf("Entry name is %s\n", entry.file_name);        
     f_open("/file/quick/ha", "w");
     
+    */
     
+<<<<<<< HEAD
     
     
     int inode_idx = fs_alloc_inode(cur_dev);    
@@ -109,6 +112,7 @@ int main(int argc, char** argv) {
     
     
     
+
     
     
     /*
