@@ -94,17 +94,16 @@ int fs_init(Dev* device, int size) {
     
     
     /* Reserve inode 0 and 1*/
-    iNode node;
     fs_alloc_inode(device); /* Allocate inode 0 */
     fs_alloc_inode(device); /* Allocate inode 1 */
 
     /* Create root folder */            
-    iNode inode;
+    iNode* inode = (iNode*)malloc(sizeof(iNode));
     fs_alloc_inode(device); /* Allocate inode 2 */
-    fs_get_inode(&inode, ROOT_NODE, device);       
-    activate_inode(&inode, FT_DIR, "/");             
-    fs_update_inode(&inode, ROOT_NODE, device);    
-    it_put(&inode, ROOT_NODE);   
+    fs_get_inode(inode, ROOT_NODE, device);       
+    activate_inode(inode, FT_DIR, "/");             
+    fs_update_inode(inode, ROOT_NODE, device);    
+    it_put(inode, ROOT_NODE);   
     return 0;
 }
 
@@ -183,8 +182,7 @@ int fs_alloc_inode(Dev* device) {
     return inode_idx;
 }
 
-int fs_dealloc_inode(Dev* device, int inode_idx) {
-    printf("inode idx %d\n", inode_idx);
+int fs_dealloc_inode(Dev* device, int inode_idx) {  
     device->superblock.freeblock_count++;    
     return ibit_on(device, inode_idx);
 }
@@ -216,7 +214,7 @@ int fs_alloc_databl(Dev* device) {
     int databl_idx = ABIT_IDX(bcnt, offset);
     abit_off(device, databl_idx);    
     device->superblock.freeblock_count--;
-    printf("byte: %s; offset: %d\n", bytbi(byte), offset);
+    //printf("byte: %s; offset: %d\n", bytbi(byte), offset);
     return databl_idx;
 }
 
@@ -280,7 +278,7 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
  */
 int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
     int write_bytes, n_bytes, data_pos;
-
+   
     //compute data position
     DataPos dp;
     if(find_data_ptr(inode, pos, &dp) == -1) // if the given position is invalid
@@ -288,7 +286,6 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
         return 0;
     }else 
     {
-        // number of bytes being written
         write_bytes = 0;
         
         while(write_bytes < bytes){

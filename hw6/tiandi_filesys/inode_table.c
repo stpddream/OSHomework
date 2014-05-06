@@ -9,8 +9,7 @@ void it_init() {
 
 int it_put(iNode* inode, int inode_idx) {
     
-    iNodeEntry* entry = (iNodeEntry*)malloc(sizeof(iNodeEntry));
-    
+    iNodeEntry* entry = (iNodeEntry*)malloc(sizeof(iNodeEntry));    
     inode_table.entries[inode_table.size++] = entry;
     entry->inode = inode;
     entry->inode_idx = inode_idx;
@@ -35,18 +34,10 @@ int it_exist(int inode_idx) {
     return FALSE;    
 }
 
-int it_remove(int inode_idx) {
-    int i;
-    iNode* inode;
-    for(i = 0; i < inode_table.size; i++) {
-        if(inode_idx == inode_table.entries[i]->inode_idx) break;
-    }
-    if(i == inode_table.size) return -1;
-//    inode = inode_table.entries[i]->inode;
-    free(inode_table.entries[i]->inode);
-     printf("which one?? \n");
-    // printf("Is null %d\n", inode == NULL);
-    // free(inode);
-    inode_table.entries[i] = NULL;
+int it_remove(int inode_idx) {  
+    iNode* inode = it_get_node(inode_idx);            
+    if(inode == NULL) return -1;
+    inode_table.size--;
+    free(inode);           
     return 0;
 }
