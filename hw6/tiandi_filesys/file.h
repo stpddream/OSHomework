@@ -20,6 +20,10 @@
 #define FT_DIR 2
 #define FT_MOUNT 3
 
+#define FP_READ 1
+#define FP_WRITE 1 << 1
+#define FP_APPEND 1 << 2
+
 
 int f_open(char* path, const char* mode);
 int f_read(void* ptr, size_t size, size_t nmemb, int fd);
