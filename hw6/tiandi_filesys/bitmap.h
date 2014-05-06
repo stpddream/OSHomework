@@ -22,6 +22,10 @@
 
 int ibit_on(Dev* device, int inode_idx);
 int ibit_off(Dev* device, int inode_idx);
+
+int abit_on(Dev* device, int databl_idx);
+int abit_off(Dev* device, int databl_idx);
+
 int bit_turn(Dev* device, int inode_idx, int which_map, int (* func)(char*, int));
         
 int bm_on(char* map, int offset);

@@ -1,5 +1,23 @@
 #include "commands.h"
 
+int ls() {
+    
+}
+
+
+int cat(int fd) {
+    char buffer[512];
+    int act_size;
+    do {
+       // act_size = f_read(buffer, sizeof(buffer), 1, fd);
+        printf("%s", buffer);
+    } while(act_size != 0);
+    return 0;
+}
+
+
+
+
 
 /** More coming */
 int more(char* content) {    
@@ -40,8 +58,7 @@ int more(char* content) {
 
     }
     
-    
-    
-    
-    
 }
+
+
+

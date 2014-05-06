@@ -14,13 +14,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 /**
  * Linux command more
  * @param 
  * @return 
  */
 int more(char* content);
-
+int cat(int fd);
 
 
 #endif	/* COMMANDS_H */
