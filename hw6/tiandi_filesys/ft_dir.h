@@ -17,6 +17,11 @@ typedef struct {
     int inode_idx;
 } DirFileEntry;
 
+typedef struct{
+    int inode_idx;
+    int pos;
+}DirStream;
+
 int dir_add(iNode* dir_inode, int inode_file_idx, char* name);
 int dir_lookup(iNode* dir_inode, char* file_name);
 int dir_remove_file(iNode* inode, int dir_inode_idx, int inode_file_idx);

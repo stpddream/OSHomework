@@ -193,11 +193,52 @@ int f_rewind(int fd) {
 
 
 
-int f_opendir(char* path) {
-    return 0;
+DirStream* f_opendir(char* path) {
+    char this_path[strlen(path)];
+    strcpy(this_path, path);
+    
+    char* dir;
+    iNode cur_node;
+    
+    DirStream* ds = (DirStream*)malloc(sizeof(DirStream));
+    
+    if(path[0] == '/'){
+        ds->inode_idx = 2;
+    }
+        
+    dir = strtok(this_path, "/");
+    while(dir != NULL){
+        fs_get_inode(&cur_node, ds->inode_idx , cur_dev);
+        
+        ds->inode_idx  = dir_lookup(&cur_node, dir);
+        if(ds->inode_idx  == -1) return NULL;  
+        dir = strtok(NULL, "/");
+    }
+    
+  return ds;
 }
 
+int f_readdir(DirStream* ds, DirFileEntry* entry){
+    iNode inode;
+    fs_get_inode(&inode, ds->inode_idx , cur_dev);
+    printf("inode size: %d\n", inode.size);
 
+    printf("fl_read(cur_dev, &inode, %d, %d, entry) \n", ds->pos, DIR_ENTRY_SZ);
+    if(fl_read(cur_dev, &inode, ds->pos, DIR_ENTRY_SZ, entry) == DIR_ENTRY_SZ){
+        printf("entry filename: %s\n", entry);
+        ds->pos += DIR_ENTRY_SZ;
+    }else{
+        entry = NULL;
+        return -1;
+    }
+    
+    return 0;  
+}
+
+int f_closedir(DirStream* ds){
+    free(ds);
+    return 0;
+}
 
 int f_mkdir(char* path) {
     
