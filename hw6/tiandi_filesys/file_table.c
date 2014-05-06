@@ -37,6 +37,11 @@ int ft_get_idx(int fd) {
     return file_table.entries[fd]->inode_idx;
 }
 
+int ft_get_perm(int fd) {
+    if(file_table.entries[fd] == NULL) return FALSE;
+    return file_table.entries[fd]->protection;
+}
+
 int ft_get_pos(int fd) {
     if(file_table.entries[fd] == NULL) return -1;
     return file_table.entries[fd]->pos;

@@ -40,7 +40,20 @@ int main(int argc, char** argv) {
     ft_init();
     it_init();      
     
-    f_opendir("/usr/jacy/");
+    f_mkdir("/la"); 
+    //f_mkdir("/yo"); 
+    //f_mkdir("/ha"); 
+
+    DirStream* res = f_opendir("/");
+    DirFileEntry dir;
+    printf("open dir inode = %d\n", res->inode_idx);
+    printf("open dir pos = %d\n", res->pos);
+    
+    while(f_readdir(res, &dir) != -1){
+        printf("filename: %s\n", dir.file_name);
+    }
+    
+    f_closedir(res);
     return (EXIT_SUCCESS);
 }
 
