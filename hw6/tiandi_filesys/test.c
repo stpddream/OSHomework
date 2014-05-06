@@ -26,3 +26,41 @@ void ibit_test(Dev* device) {
     
     
 }
+
+void file_table_test() {
+    ft_init();
+    int i;
+    for(i = 0; i < 10; i++) printf("fd: %d %d \n", ft_put(i, 0), file_table.size);
+    
+    
+    ft_remove(5);
+    ft_remove(7);
+    ft_remove(3);
+    
+    printf("Current size is %d\n", file_table.size);
+    
+    printf("Printing right now\n");
+}
+
+void rw_test() {
+     /*
+    int inode_idx = fs_alloc_inode(cur_dev);    
+    iNode inode;
+    int fd = f_open("super.h", "r");
+    
+    int num = 46;
+    
+    char* good = "this is a very long long long long long long long long long long string";
+    f_write(&good, sizeof(good), 1, fd);
+    
+    printf("File Descr %d\n", fd);
+    
+    char a[300];
+    f_read(&a, sizeof(good), 1, fd);
+    
+    printf("read out %s\n", good);
+    
+    print_filetable();
+    print_inodetable();
+    */
+}

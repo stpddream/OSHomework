@@ -13,8 +13,12 @@
 #include "device_ctrl.h"
 #include "filesys_util.h"
 #include "file_table.h"
+#include "file.h"
+#include "ft_dir.h"
 
-extern FileTable filetable;
+extern FileTable file_table;
+
+Dev* cur_dev;
 
 /*
  * 
@@ -23,31 +27,77 @@ int main(int argc, char** argv) {
     int i;
     FILE* fp;
     fp = fopen("testfile/disk", "w+");    
-    Dev* device = dev_create(fp);            
-    dev_init(device, 20480);
-    fs_init(device, 20480);
+    cur_dev = dev_create(fp);
+    
+    printf("now changes!!\n");
+    
+    dev_init(cur_dev, 10240000);
+    fs_init(cur_dev, 10240000);
+            
+  //  printf("size of %d\n", sizeof(iNode));
   
-    printf("Number is %d\n", device->bootblock.fun);
-    printf("%s\n", device->bootblock.have_fun);    
-    print_superblock(&device->superblock);
-    
+    //Init tables
     ft_init();
-    for(i = 0; i < 10; i++) printf("fd: %d %d \n", ft_put(i, 0), filetable.size);
-    
-    
-    ft_remove(5);
-    ft_remove(7);
-    ft_remove(3);
-    
-    printf("Current size is %d\n", filetable.size);
-    
-    printf("Printing right now\n");
-    //print_filetable();
+    it_init();      
     
     
     
+    printf("Number is %d\n", cur_dev->bootblock.fun);
+    printf("%s\n", cur_dev->bootblock.have_fun);    
+    print_superblock(&cur_dev->superblock);          
+   
+    //f_open("/file/good", "r");
+    //f_mkdir("good");
     
-         
+    /*
+    iNode root;
+
+   
+    
+    f_mkdir("good");
+    f_mkdir("perfect");
+    fs_get_inode(&root, ROOT_NODE, cur_dev);    
+    printf("Root name is : %s\n", root.name);
+    printf("Root size is: %d\n", root.size);
+    
+    printf("now listing...\n");
+    list_dir(&root);
+    
+    
+    iNode another;    
+    fs_get_inode(&another, 4, cur_dev);       
+    printf("file name is %s\n", another.name);
+    
+    DirFileEntry entry;
+    fl_read(cur_dev, &root, 0, DIR_ENTRY_SZ, &entry);
+    
+    
+    printf("Entry name is %s\n", entry.file_name);        
+    f_open("/file/quick/ha", "w");
+    
+    */
+    
+    iNode testNode;
+    int inode_idx = fs_alloc_inode(cur_dev);
+    fs_get_inode(&testNode, inode_idx, cur_dev);       
+    printf("inode allocated %d\n", inode_idx);
+    char test[10] = "lalala";
+    char testOut[10];
+    fl_write(cur_dev, &testNode, 0, 10, test);
+    fl_read(cur_dev, &testNode, 0, 10, testOut);
+    printf("out:\t %s\n", testOut);
+    
+    
+    /*
+    fseek(cur_dev->phys_data, 9728, SEEK_SET);     
+    
+    for(i = 0; i < 20; i++) {
+        fread(&inode, 128, 1, cur_dev->phys_data);
+        printf("inode blabla %d\n", inode.file_type);
+    }*/    
+    
+//  printf("FD is %d\n", fd);
+
     
     
     /*

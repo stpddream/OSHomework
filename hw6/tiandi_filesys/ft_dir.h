@@ -10,15 +10,19 @@
 
 #include "filesys.h"
 
-
+#define DIR_ENTRY_SZ 16
 
 typedef struct {
     char file_name[FILE_NAME_MAX];
     int inode_idx;
 } DirFileEntry;
 
-int dir_add_file(int inode_dir_idx, int inode_file_idx);
-int dir_remove_file(int inode_dir_idx, int inode_file_idx);
+int dir_add(iNode* dir_inode, int inode_file_idx, char* name);
+int dir_lookup(iNode* dir_inode, char* file_name);
+int dir_remove_file(iNode* inode, int dir_inode_idx, int inode_file_idx);
+
+/* Debug */
+void list_dir(iNode* node);
 //int zanshimeile();
 
 
