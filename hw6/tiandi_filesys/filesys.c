@@ -175,14 +175,9 @@ int fs_alloc_inode(Dev* device) {
         
     
     offset = bm_get_free(&byte);
-    printf("byte addr %d\n", IBIT_BYTE_ADDR(bcnt));
-    printf("inode size %d\n", INODE_SZ);
-    printf("ibit begin %d\n", IBIT_BEGIN);
-    
     int inode_idx = IBIT_IDX(bcnt, offset);
     
     ibit_off(device, inode_idx);    
-    printf("byte: %s; offset: %d\n", bytbi(byte), offset);
     device->superblock.freeblock_count--;
     device->superblock.inode_alloc_hd = bcnt;
     return inode_idx;

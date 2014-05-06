@@ -42,8 +42,11 @@ int it_remove(int inode_idx) {
         if(inode_idx == inode_table.entries[i]->inode_idx) break;
     }
     if(i == inode_table.size) return -1;
-    inode = inode_table.entries[i]->inode;
-    free(inode);
+//    inode = inode_table.entries[i]->inode;
+    free(inode_table.entries[i]->inode);
+     printf("which one?? \n");
+    // printf("Is null %d\n", inode == NULL);
+    // free(inode);
     inode_table.entries[i] = NULL;
     return 0;
 }
