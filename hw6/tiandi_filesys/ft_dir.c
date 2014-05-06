@@ -4,14 +4,14 @@ extern Dev* cur_dev;
 
 
 int dir_add(iNode* dir_inode, int inode_file_idx, char* name) {    
-    DirFileEntry* entry = (DirFileEntry*)malloc(sizeof(DirFileEntry));
-    strcpy(entry->file_name, name);
-    entry->inode_idx = inode_file_idx;    
-    fl_write(cur_dev, dir_inode, dir_inode->size, DIR_ENTRY_SZ, entry);    
-    dir_inode->size += DIR_ENTRY_SZ;    
+    DirFileEntry entry; 
+    strcpy(entry.file_name, name);
+    entry.inode_idx = inode_file_idx;    
+    printf("size of dir node %d\n", dir_inode->size);
+    fl_write(cur_dev, dir_inode, dir_inode->size, DIR_ENTRY_SZ, &entry);    
+    dir_inode->size += DIR_ENTRY_SZ;                
     return 0;
 }
-
 
 int dir_lookup(iNode* dir_inode, char* file_name) {
     int i;
@@ -49,10 +49,11 @@ int dir_remove_file(iNode* dir_inode, int dir_inode_idx, int inode_file_idx) {
 void list_dir(iNode* node) {
     int i;
     DirFileEntry entry;
-    
+    printf("||||||||| LIST DIR |||||||||\n");
     printf("size is %d\n", node->size);
     for(i = 0; i < node->size / DIR_ENTRY_SZ; i++) {        
         fl_read(cur_dev, node, i * DIR_ENTRY_SZ,  DIR_ENTRY_SZ, &entry);
         printf("file: %d %s\n", entry.inode_idx, entry.file_name);
     }
+    printf("----------------------------\n");
 }
