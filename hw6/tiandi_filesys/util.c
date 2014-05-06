@@ -29,6 +29,13 @@ void arr_on(char* arr, int size) {
     }    
 }
 
+void arr_init(char* arr, int size, int val) {
+    int i;
+    for(i = 0; i < size; i++) {
+        arr[i] = val;
+    }  
+}
+
 
 void print_superblock(Superblock* sb) {
        
@@ -62,13 +69,27 @@ void print_ibit(Dev* device) {
 
 
 extern FileTable file_table;
-void print_filetable() {
-    
+void print_filetable() {    
     int i;
+    printf("===== File Table =====\n");
     for(i = 0; i < MAX_N_FILE_OPEN; i++) {
         if(file_table.entries[i] != NULL) {
-            printf("%d\n", file_table.entries[i]->inode_idx);
+            printf("[Index: %d, Pos: %d]\n", file_table.entries[i]->inode_idx, file_table.entries[i]->pos);
         }
-    }
-    
+    }    
+    printf("======================\n");
 }
+
+extern iNodeTable inode_table;
+
+void print_inodetable() {
+    int i;
+    printf("===== inode table ======\n");
+    for(i = 0; i < MAX_N_FILE_OPEN; i++) {
+        if(inode_table.entries[i] != NULL) {
+            printf("[Index: %d]\n", inode_table.entries[i]->inode_idx);
+        }
+    }    
+    printf("========================\n");
+}
+

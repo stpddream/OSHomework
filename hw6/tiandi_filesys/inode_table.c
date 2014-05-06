@@ -7,8 +7,13 @@ void it_init() {
     inode_table.size = 0;
 }
 
-int it_put(iNode* inode) {
-    inode_table.entries[inode_table.size++]->inode = inode;
+int it_put(iNode* inode, int inode_idx) {
+    
+    iNodeEntry* entry = (iNodeEntry*)malloc(sizeof(iNodeEntry));
+    
+    inode_table.entries[inode_table.size++] = entry;
+    entry->inode = inode;
+    entry->inode_idx = inode_idx;
     return inode_table.size;
 }
 

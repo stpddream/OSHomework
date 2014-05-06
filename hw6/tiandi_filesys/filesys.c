@@ -9,8 +9,9 @@
  * @return 
  */
 int fs_init(Dev* device, int size) {
+        
     /* Disk Arrangements */
-    int n_ibit_blocks = cal_n_ibit_blocks(size);
+    int n_ibit_blocks = cal_n_ibit_blocks(size / BLOCK_SZ);
     int n_abit_blocks = n_ibit_blocks * P_ABIT_BLOCKS;
     int n_inode_blocks = n_ibit_blocks * P_INODE_BLOCKS;
     int n_datablocks = n_ibit_blocks * P_DATA_BLOCKS;
@@ -18,8 +19,9 @@ int fs_init(Dev* device, int size) {
     int n_inodes = n_inode_blocks * N_INODE_E_BLOCK;
     
     int act_size = round_sz(size);
-    printf("Actual size of disk %d\n", act_size);
+    printf("Total Number of blocks: %d\n", act_size);
     printf("Ibit blocks %d\n", n_ibit_blocks);
+    printf("Abit blocks %d\n", n_abit_blocks);
     
     /* Init Bootblock */
     device->bootblock.fun = 8888;
@@ -30,7 +32,6 @@ int fs_init(Dev* device, int size) {
     fwrite(&device->bootblock, sizeof(Bootblock), 1, device->phys_data);
     
     /* Init Superblock */    
-    Superblock superb;
     device->superblock.system_type = TIANDI_FS_ID;
     
     /** Counts **/
@@ -42,22 +43,24 @@ int fs_init(Dev* device, int size) {
     /** offsets **/
     device->superblock.ibit_offset = 0;
     device->superblock.abit_offset = n_ibit_blocks;
-    device->superblock.inode_offset = superb.abit_offset + n_abit_blocks;
-    device->superblock.data_offset = superb.inode_offset + n_inode_blocks;
+    device->superblock.inode_offset = device->superblock.abit_offset + n_abit_blocks;
+    device->superblock.data_offset = device->superblock.inode_offset + n_inode_blocks;
     device->superblock.swap_offset = -1; //Invalid    
     device->superblock.size = act_size;
     device->superblock.inode_alloc_hd = 0;
     device->superblock.data_alloc_hd = 0;
     
-       
+    
     fseek(device->phys_data, SUPERBL_BEGIN, SEEK_SET);
     fwrite(&device->superblock, sizeof(device->superblock), 1, device->phys_data);
     
     char bit_block[BLOCK_SZ];
     arr_on(bit_block, BLOCK_SZ);
        
+    
     fseek(device->phys_data, IBIT_BEGIN, SEEK_SET);
     
+
     /* Init Bitmap */
     int i;
     for(i = 0; i < n_ibit_blocks; i++) {
@@ -72,19 +75,34 @@ int fs_init(Dev* device, int size) {
     
     printf("abit begin: %d\n", ABIT_BEGIN);
     printf("Content begin: %d\n", CONTENT_BEGIN);
-        
+    printf("Data begin: %d\n", DATA_BEGIN);
+                  
     /* Inode Block */   
     iNode empty_node;
     empty_node.nlink = 100;        
 
     for(i = 0; i < n_inodes; i++) {
-        fseek(device->phys_data, INODE_ADDR(i), SEEK_SET);
+        fseek(device->phys_data, INODE_ADDR(i), SEEK_SET);        
         empty_node.file_type = i + 1;
         fwrite(&empty_node, sizeof(empty_node), 1, device->phys_data);
     }
-    
-    /* Data Block */
+        
+    /* Data Block */    
     //Nothing needs to do
+    
+    
+    /* Reserve inode 0 and 1*/
+    iNode node;
+    fs_alloc_inode(device); /* Allocate inode 0 */
+    fs_alloc_inode(device); /* Allocate inode 1 */
+
+    /* Create root folder */            
+    iNode inode;
+    fs_alloc_inode(device); /* Allocate inode 2 */
+    fs_get_inode(&inode, ROOT_NODE, device);       
+    activate_inode(&inode, FT_DIR, "/");             
+    fs_update_inode(&inode, ROOT_NODE, device);    
+    it_put(&inode, ROOT_NODE);   
     return 0;
 }
 
@@ -243,7 +261,7 @@ int fs_remove_file(Dev* device, int inode_idx) {
  * @param inode_idx 
  * @return 0 if success
  */
-int fs_get_inode(iNode* node, int inode_idx, Dev* device) {        
+int fs_get_inode(iNode* node, int inode_idx, Dev* device) {                      
     dev_read(node, INODE_SZ, INODE_ADDR(inode_idx), device);
     return 0;
 }
@@ -332,7 +350,7 @@ int fs_dealloc_databl(Dev* device, int databl_idx) {
  * @return number of bytes read
  */
 
-int fl_read(Dev* device, iNode* inode, int pos, int bytes, char* data) {
+int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
     int valid_bytes, read_bytes, n_bytes, data_pos;
 
     //compute offset
@@ -372,7 +390,7 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, char* data) {
  * @param data
  * @return the number of bytes written 
  */
-int fl_write(Dev* device, iNode* inode, int pos, int bytes, char* data){
+int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
     int valid_bytes, write_bytes, n_bytes, data_pos;
 
     //compute data position
@@ -399,6 +417,7 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, char* data){
             //advance to next data block
             find_next_block(device, inode, &dp, TRUE);
         }
+                
         return valid_bytes;
     }
 }

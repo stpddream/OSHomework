@@ -29,9 +29,12 @@ const char *bytbi(int x);
 
 /* Clear an array: all item to 0 */
 void arr_on(char* arr, int size);
+void arr_init(char* arr, int size, int val);
 
 /* Debug printing */
 void print_superblock(Superblock* sb);
 void print_ibit(Dev* device);
+void print_filetable();
+void print_inodetable();
 #endif	/* UTIL_H */
 

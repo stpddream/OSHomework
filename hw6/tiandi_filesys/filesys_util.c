@@ -61,7 +61,7 @@ int find_data_ptr(iNode* inode, int pos, DataPos* dp){
     else if(pos >= DBLOCK_SZ+IBLOCK_SZ+I2BLOCK_SZ && pos < DBLOCK_SZ+IBLOCK_SZ+I2BLOCK_SZ+I3BLOCK_SZ){
         dp->size_range = DP_I3BLOCK;
         data_pos = pos - DBLOCK_SZ - IBLOCK_SZ - I2BLOCK_SZ; //there is only one third layer indirect pointer, so it is always zero
-        dp->layers[0]  = 0;
+        dp->layers[0] = 0;
         dp->layers[1] = data_pos/(N_PTR*N_PTR*BLOCK_SZ);
         remainder = data_pos % (N_PTR*N_PTR*BLOCK_SZ);
         dp->layers[2] = remainder / (N_PTR*BLOCK_SZ);
