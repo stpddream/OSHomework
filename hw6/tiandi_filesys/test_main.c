@@ -41,14 +41,18 @@ int main(int argc, char** argv) {
     it_init();      
     
     
+    iNode bigNode;
+    int idx = fs_alloc_inode(cur_dev);
+    printf("allocated inode = %d\n", idx);
+    fs_get_inode(&bigNode, idx, cur_dev);
+    char* testString = "abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc";    
+    int ssize = strlen(testString)+1;
+    char outString[ssize];
     
-    printf("Number is %d\n", cur_dev->bootblock.fun);
-    printf("%s\n", cur_dev->bootblock.have_fun);    
-    print_superblock(&cur_dev->superblock);          
-   
-    //f_open("/file/good", "r");
-    //f_mkdir("good");
+    printf("size %d\n", ssize);
     
+    fl_write(cur_dev, &bigNode, 0, ssize, testString);
+    fl_read(cur_dev, &bigNode, 0, ssize, outString);
     
     iNode root;
 
@@ -225,7 +229,8 @@ int main(int argc, char** argv) {
         fs_get_inode(&another, 0, fp);
         printf("Now is %d\n", another.file_type);
     }*/
-   
+
+
     
     return (EXIT_SUCCESS);
 }
