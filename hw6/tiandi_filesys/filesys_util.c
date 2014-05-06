@@ -303,6 +303,10 @@ int find_next_block(Dev* device, iNode* inode, DataPos* dp, int flag){
     return 0;
 }
 
+int clear_data_bits(Dev* device, iNode* inode){
+    
+    return 0;
+}
 
 /*
 int inode_clr(iNode* node) {
