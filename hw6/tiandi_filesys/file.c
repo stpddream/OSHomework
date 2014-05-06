@@ -110,10 +110,32 @@ int f_rewind(int fd) {
 
 
 int f_opendir(char* path) {
+    DirFileEntry* dir;
+    char this_path[strlen(path)];
+    strcpy(this_path, path);
+    char* dir;
+    int cur_dir;
+    
+    if(path[0] == '/'){
+        cur_dir = 2;
+    }
+    
+    
+    dir = strtok(this_path, "/");
+    while(dir != NULL){
+        dir = strtok(NULL, "/");
+    }
+    
+  return 0;
+}
+
+int f_readdir(char* path){
     
 }
 
-
+int f_closedir(char* path){
+    
+}
 
 int f_mkdir(char* path) {
     int inode_idx = fs_alloc_inode(cur_dev);

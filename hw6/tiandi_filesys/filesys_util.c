@@ -31,7 +31,7 @@ int rnd2sm(int val, int base) {
 
 int find_data_ptr(iNode* inode, int pos, DataPos* dp){
     int remainder, data_pos;
-    if(pos > inode->size || pos < 0) {
+    if(pos > inode->size+1 || pos < 0) {
         return -1;
     }
         

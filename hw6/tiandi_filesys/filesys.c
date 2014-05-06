@@ -247,7 +247,7 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(inode, pos, &dp) == -1) // if the given position is invalid
+    if(pos > inode->size || find_data_ptr(inode, pos, &dp) == -1) // if the given position is invalid
     {
         return 0;
     }else 
