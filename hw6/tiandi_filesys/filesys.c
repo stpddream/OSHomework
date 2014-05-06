@@ -411,7 +411,6 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
             data_pos = calc_pos(device, inode, &dp);
             //calculate the number of bytes to write
             n_bytes = MIN((BLOCK_SZ - dp.offset), (bytes-write_bytes));
-            printf("data_pos: %d\n", data_pos);
             //write the bytes from data
             dev_write(data+write_bytes, n_bytes, data_pos, device);
             // increment the written records
