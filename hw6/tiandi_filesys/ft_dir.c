@@ -24,7 +24,6 @@ int dir_lookup(iNode* dir_inode, char* file_name) {
     return -1;    
 }
 
-
 int dir_remove_file(iNode* dir_inode, int dir_inode_idx, int inode_file_idx) {
     
     int i;

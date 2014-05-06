@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
     ft_init();
     it_init();      
     
+
     iNode root;
     
     printf("@@@@@@@@ Directory Test @@@@@@@@@@\n");
@@ -217,51 +218,17 @@ int main(int argc, char** argv) {
     
 //  printf("FD is %d\n", fd);
 
+
+    DirStream* res = f_opendir("/");
+    DirFileEntry dir;
+    printf("open dir inode = %d\n", res->inode_idx);
+    printf("open dir pos = %d\n", res->pos);
     
-    
-    /*
-    printf("\n======== abits ========\n");
-    
-    char abit[BLOCK_SZ * 16];
-    fseek(fp, ABIT_BEGIN, SEEK_SET);
-    fread(abit, sizeof(abit), 1, fp);
-    for(i = 0; i < BLOCK_SZ * 16; i++) printf("%d ", abit[i]);
-     */   
-    
-    /*
-    iNode inode[4096];
-    
-    printf("how many inodes: %d\n", sb.inode_count);
-    
-    iNode some_node;
-     */
-    /*    fseek(fp, INODE_ADDR(1), SEEK_SET);
-    fread(&some_node, INODE_SZ, 1, fp);
-    
-    printf("Inode begin %d\n", INODE_BEGIN);
-    printf("Inode first %d\n", INODE_ADDR(1));
-    printf("File type is %d\n", some_node.file_type);
-    */
-    /*
-    iNode sm_node;
-    for(i = 0; i < 4096; i++) {
-        //fseek(fp, INODE_ADDR(i), SEEK_SET);
-        //fread(&some_node, INODE_SZ, 1, fp);   
-        
-        fs_get_inode(&some_node, i, fp);    
-        printf("%d\n", some_node.file_type);
-        some_node.file_type = 1000;
-        fs_update_inode(&some_node, i, fp);
+    while(f_readdir(res, &dir) != -1){
+        printf("filename: %s\n", dir.file_name);
     }
     
-    for(i = 0; i < 4096; i++) {          
-        iNode another;
-        fs_get_inode(&another, 0, fp);
-        printf("Now is %d\n", another.file_type);
-    }*/
-
-
-    
+    f_closedir(res);
     return (EXIT_SUCCESS);
 }
 
