@@ -13,14 +13,15 @@
 #include "filesys_hd.h"
 #include "file_table.h"
 #include "inode_table.h"
-
+#include "file_util.h"
+#include "ft_dir.h"
 
 #define FT_FILE 1
 #define FT_DIR 2
 #define FT_MOUNT 3
 
 
-int f_open(const char* path, const char* mode);
+int f_open(char* path, const char* mode);
 int f_read(void* ptr, size_t size, size_t nmemb, int fd);
 int f_write(void* ptr, size_t size, size_t nmemb, int fd);
 int f_close(int fd);
@@ -29,10 +30,10 @@ int f_rewind(int fd);
 int f_stat(int fd, char* buf);
 int f_remove();
 
-int f_opendir();
+int f_opendir(const char* path);
 int f_readdir();
 int f_closedir();
-int f_mkdir();
+int f_mkdir(char* path);
 int f_rmdir();
 int f_mount();
 int f_umount();

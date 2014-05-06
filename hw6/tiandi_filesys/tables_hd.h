@@ -31,7 +31,6 @@ typedef struct {
     int inode_idx;
     int pos;
     int protection;
-    
 } FileEntry;
 
 

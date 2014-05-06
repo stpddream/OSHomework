@@ -22,7 +22,10 @@
 #define INODE_SZ 128        /* Inodo size: 128 bytes */
 #define N_DBLOCKS 10
 #define N_IBLOCKS 4
-#define FILE_NAME_MAX 14    /* Maximum file name length */
+#define FILE_NAME_MAX 12    /* Maximum file name length */
+#define PADDING 14
+
+#define ROOT_NODE 2
 
 typedef struct {  
     int fun;
@@ -71,8 +74,10 @@ typedef struct {
     int iblocks[N_IBLOCKS]; 	/* pointers to indirect blocks */
     int i2block; 			/* pointer to doubly indirect block */
     int i3block; 			/* pointer to triply indirect block */
-
+    
     char name[FILE_NAME_MAX];       /* file name */
+    char padding[PADDING];    /* Reserve space */
+    
 } iNode;
 
 typedef struct{

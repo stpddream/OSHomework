@@ -14,9 +14,11 @@
 #include "filesys_util.h"
 #include "file_table.h"
 #include "file.h"
-
+#include "ft_dir.h"
 
 extern FileTable file_table;
+
+Dev* cur_dev;
 
 /*
  * 
@@ -25,20 +27,69 @@ int main(int argc, char** argv) {
     int i;
     FILE* fp;
     fp = fopen("testfile/disk", "w+");    
-    Dev* device = dev_create(fp);            
-    dev_init(device, 20480);
-    fs_init(device, 20480);
-  
-    printf("Number is %d\n", device->bootblock.fun);
-    printf("%s\n", device->bootblock.have_fun);    
-    print_superblock(&device->superblock);
-   
-    f_open("super.h", "r");
+    cur_dev = dev_create(fp);
     
-//   int i = 127;
-//    f_write();
+    printf("now changes!!\n");
+    
+    dev_init(cur_dev, 10240000);
+    fs_init(cur_dev, 10240000);
+            
+  //  printf("size of %d\n", sizeof(iNode));
+  
+    //Init tables
+    ft_init();
+    it_init();      
+    
+    
+    
+    printf("Number is %d\n", cur_dev->bootblock.fun);
+    printf("%s\n", cur_dev->bootblock.have_fun);    
+    print_superblock(&cur_dev->superblock);          
+   
+    //f_open("/file/good", "r");
+    //f_mkdir("good");
+    
+    iNode root;
 
-    //print_filetable();
+   
+    
+    f_mkdir("good");
+    f_mkdir("perfect");
+    fs_get_inode(&root, ROOT_NODE, cur_dev);    
+    printf("Root name is : %s\n", root.name);
+    printf("Root size is: %d\n", root.size);
+    
+    printf("now listing...\n");
+    list_dir(&root);
+    
+    
+    iNode another;    
+    fs_get_inode(&another, 4, cur_dev);       
+    printf("file name is %s\n", another.name);
+    
+    DirFileEntry entry;
+    fl_read(cur_dev, &root, 0, DIR_ENTRY_SZ, &entry);
+    
+    
+    printf("Entry name is %s\n", entry.file_name);        
+    f_open("/file/quick/ha", "w");
+    
+    
+    
+    
+    
+    
+    /*
+    fseek(cur_dev->phys_data, 9728, SEEK_SET);     
+    
+    for(i = 0; i < 20; i++) {
+        fread(&inode, 128, 1, cur_dev->phys_data);
+        printf("inode blabla %d\n", inode.file_type);
+    }*/    
+    
+//  printf("FD is %d\n", fd);
+
+    
     
     /*
     printf("\n======== abits ========\n");
