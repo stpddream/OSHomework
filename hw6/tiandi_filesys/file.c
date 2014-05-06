@@ -58,10 +58,14 @@ int f_open(char* path, const char* mode) {
     int prev_idx = cur_idx;
     fs_get_inode(&cur_node, cur_idx, cur_dev);            
     cur_idx = dir_lookup(&cur_node, dirs);
+    printf("listing dir\n");
+    list_dir(&cur_node);    
+
     
     int cnt = 0;
     char prev_name[FILE_NAME_MAX];
     printf("[%s, %d, %d, %d]\n", dirs, cur_idx, prev_idx, parent_idx);
+    printf("here?? cur_idx %d\n", cur_idx);
     if(create_flag == FALSE && cur_idx == -1) return -1;
 
     while(dirs != NULL) {        
@@ -69,6 +73,7 @@ int f_open(char* path, const char* mode) {
         prev_idx = cur_idx;       
         strcpy(prev_name, dirs);
         dirs = strtok(NULL, "/");         
+
         if(dirs != NULL && cur_idx == -1) return -1;
         if(dirs == NULL) break;
         fs_get_inode(&cur_node, cur_idx, cur_dev);
@@ -81,18 +86,20 @@ int f_open(char* path, const char* mode) {
     }
     
     /** If file already exists on file table **/                
-    iNode inode;
+    iNode* inode = (iNode*)malloc(sizeof(iNode));
     int inode_idx;
     if(prev_idx == -1) {
         /** Create File **/    
         inode_idx = fs_alloc_inode(cur_dev);                   
-        fs_get_inode(&inode, inode_idx, cur_dev);        
-        activate_inode(&inode, FT_FILE, prev_name);               
-        fs_update_inode(&inode, inode_idx, cur_dev);
+        fs_get_inode(inode, inode_idx, cur_dev);        
+        activate_inode(inode, FT_FILE, prev_name);               
+        fs_update_inode(inode, inode_idx, cur_dev);
     }
-    else fs_get_inode(&inode, prev_idx, cur_dev);
-    it_put(&inode, inode_idx);   
+    else fs_get_inode(inode, prev_idx, cur_dev);
+    it_put(inode, inode_idx);   
     int fd = ft_put(inode_idx, mode_v);
+    
+    print_filetable();
     
     
     /** Add file to directory */
@@ -138,7 +145,7 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
            
     int bytes_written = fl_write(cur_dev, inode, write_pos, size * nmemb, ptr);
     inode->size += bytes_written;
-    fs_update_inode(inode, inode_idx, cur_dev);    
+    fs_update_inode(inode, inode_idx, cur_dev);            
     return 0;
 }
 
@@ -163,10 +170,10 @@ int f_stat(int fd, char* buf) {
 int f_close(int fd) {
     int inode_idx = ft_get_idx(fd);
     iNode* inode = it_get_node(inode_idx);
+        
     fs_update_inode(inode, inode_idx, cur_dev);
     
     ft_remove(fd);
-   
     it_remove(inode_idx);
     return 0;
 }
@@ -235,32 +242,34 @@ int f_mkdir(char* path) {
         cnt++;
     }
     
-    printf("[%s, %d, %d, %d]\n", dirs, cur_idx, prev_idx, parent_idx);
+    printf("When done: [%s, %d, %d, %d]\n", dirs, cur_idx, prev_idx, parent_idx);
     printf("File name is %s\n", prev_name);
         
     /** Create new inode for directory **/
     int inode_idx = fs_alloc_inode(cur_dev);
     printf("inode index is %d\n", inode_idx);
-    iNode inode;
-    fs_get_inode(&inode, inode_idx, cur_dev);       
-    activate_inode(&inode, FT_DIR, prev_name);             
-    fs_update_inode(&inode, inode_idx, cur_dev);    
-    it_put(&inode, inode_idx);  
+    iNode* inode = (iNode*)malloc(sizeof(iNode));
+    fs_get_inode(inode, inode_idx, cur_dev);       
+    activate_inode(inode, FT_DIR, prev_name);             
+    fs_update_inode(inode, inode_idx, cur_dev);    
+    it_put(inode, inode_idx);  
+   
     
     /** Add . and .. **/
-    dir_add(&inode, inode_idx, ".");
-    dir_add(&inode, parent_idx, "..");
-    fs_update_inode(&inode, inode_idx, cur_dev);
+    dir_add(inode, inode_idx, ".");
+    dir_add(inode, parent_idx, "..");
+   
+    fs_update_inode(inode, inode_idx, cur_dev);
     
-    
+  
     /** Add node to parent directory **/
     iNode parent_node;  
-    fs_get_inode(&parent_node, parent_idx, cur_dev);
+    fs_get_inode(&parent_node, parent_idx, cur_dev);   
     printf("parent name is %s\n", parent_node.name);
-    dir_add(&parent_node, inode_idx, prev_name);  
+    dir_add(&parent_node, inode_idx, prev_name);      
+      
     fs_update_inode(&parent_node, parent_idx, cur_dev);
-    
-    
+        
         
     return 0;
 }

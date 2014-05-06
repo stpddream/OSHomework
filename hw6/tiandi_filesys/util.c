@@ -74,7 +74,7 @@ void print_filetable() {
     printf("===== File Table =====\n");
     for(i = 0; i < MAX_N_FILE_OPEN; i++) {
         if(file_table.entries[i] != NULL) {
-            printf("[Index: %d, Pos: %d]\n", file_table.entries[i]->inode_idx, file_table.entries[i]->pos);
+            printf("%d: [Index: %d, Pos: %d]\n", i, file_table.entries[i]->inode_idx, file_table.entries[i]->pos);
         }
     }    
     printf("======================\n");

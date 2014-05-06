@@ -194,10 +194,7 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
     if(calc_cur_size(&boundary) <= calc_cur_size(dp)){
         find_next_block(&boundary);
         if(inode->size == 0){ // if no data pointers as been allocated
-            
-            printf("alloc first!\n");
-            
-            
+                       
             inode->dblocks[0] = fs_alloc_databl(device);
             addr = DATA_ADDR(inode->dblocks[0]);
         }else if(boundary.size_range == DP_DBLOCK){
