@@ -52,18 +52,70 @@ int main(int argc, char** argv) {
     
     iNode root;
 
-   
+    f_open("/file.h", "r");
+        
+    f_mkdir("/good/");
+    f_mkdir("/perfect/");
     
-    f_mkdir("good");
-    f_mkdir("perfect");
+    printf("@@@@@@@ Two levels @@@@@@\n");
+    f_mkdir("/good/etc");
+    f_mkdir("/good/quite");
+    
+    f_mkdir("/good/quite/super");
+    f_mkdir("/good/quite/haha");
+    f_mkdir("/good/quite/so");
+    
+    f_open("/good/super.c", "w");
+    f_open("/good/hahah.o", "w");
+            
+    
     fs_get_inode(&root, ROOT_NODE, cur_dev);    
     printf("Root name is : %s\n", root.name);
     printf("Root size is: %d\n", root.size);
     
     printf("now listing...\n");
     list_dir(&root);
+    int good_idx = dir_lookup(&root, "good");
+    
+    printf("Processing good\n");
+    iNode good;
+    fs_get_inode(&good, good_idx, cur_dev);
+    list_dir(&good);
+    
+    int quite_idx = dir_lookup(&good, "quite");
+    iNode quite;
+    fs_get_inode(&quite, quite_idx, cur_dev);
+    list_dir(&quite);
     
     
+    printf("readf here\n");
+    /* Read file doesn't exist */
+    int readf = f_open("/superfile.h", "r");    
+    printf("Readf %d\n", readf);
+    char* perfect = "hohoho";
+    printf("Status is %d\n", f_write(perfect, sizeof(perfect), 1, readf));
+    
+
+    /* Read to write only file */    
+    int writef = f_open("/supergreat.h", "w");
+    char* stuff = "great job writing!!\n";
+    f_write(stuff, sizeof(stuff), 1, writef);
+    char readout[20];
+    printf("Status: %d \n", f_read(readout, sizeof(stuff), 1, writef));
+    printf("Read out as: %s\n", readout);
+    f_close(writef);
+    
+    /* Write to read only file */
+    printf("whwhwhwhwhw\n");
+    readf = f_open("/supergreat.h", "r");
+    f_read(readout, sizeof(stuff), 1, readf);
+    printf("Read out!! %s\n", readout);
+    printf("seg!!\n");
+    
+    
+    
+    
+    /*
     iNode another;    
     fs_get_inode(&another, 4, cur_dev);       
     printf("file name is %s\n", another.name);
@@ -74,6 +126,13 @@ int main(int argc, char** argv) {
     
     printf("Entry name is %s\n", entry.file_name);        
     f_open("/file/quick/ha", "w");
+    
+    
+    int sub_idx = dir_lookup(&root, "good");
+    printf("index is %d\n", sub_idx);
+    */
+    
+    
     
     
     

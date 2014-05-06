@@ -52,8 +52,7 @@ void list_dir(iNode* node) {
     DirFileEntry entry;
     
     printf("size is %d\n", node->size);
-    for(i = 0; i < node->size / DIR_ENTRY_SZ; i++) {
-        printf("newnew\n");
+    for(i = 0; i < node->size / DIR_ENTRY_SZ; i++) {        
         fl_read(cur_dev, node, i * DIR_ENTRY_SZ,  DIR_ENTRY_SZ, &entry);
         printf("file: %d %s\n", entry.inode_idx, entry.file_name);
     }
