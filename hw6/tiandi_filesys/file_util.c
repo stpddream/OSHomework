@@ -1,12 +1,5 @@
 #include "file_util.h"
 
-char* parse_path(char* path) {
-   
-    
-    return NULL;
-    
-}
-
 
 /**
  * Fill default inode info

@@ -30,7 +30,7 @@ int f_rewind(int fd);
 int f_stat(int fd, char* buf);
 int f_remove();
 
-int f_opendir(const char* path);
+int f_opendir(char* path);
 int f_readdir();
 int f_closedir();
 int f_mkdir(char* path);
