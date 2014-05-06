@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     jobs_init();   
     int n_cmd, n_args;
     commands = malloc(MAX_CMD*sizeof(char*));
-    while(1) {       
+    while(1) {
         printf("TERMINAL >>  ");
         if((line = readline("")) == NULL) {
             perror("IO Error\n");

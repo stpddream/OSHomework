@@ -8,26 +8,18 @@
 #ifndef INODETABLE_H
 #define	INODETABLE_H
 
-#include "file_table.h"
+
 #include "util.h"
+#include "tables_hd.h"
 
 extern iNodeTable inode_table;
 
-typedef struct {
-    iNode* inode;    
-    int inode_idx;
-} iNodeEntry;
 
+void it_init();
 
-typedef struct {
-    iNodeEntry* entries[MAX_N_FILE_OPEN];    
-    int size;
-} iNodeTable;
-
-
-int it_init();
-
-int it_put(iNode* inode);
+int it_put(iNode* inode, int inode_idx);
+int it_remove(int inode_idx);
+iNode* it_get_node(int inode_idx);
 
 int it_exist(int inode_idx);
 

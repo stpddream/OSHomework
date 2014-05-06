@@ -76,9 +76,12 @@ int rnd2sm(int val, int base);
 int get_valid_size(iNode* inode, int pos, int bytes);
 int find_data_ptr(iNode* inode, int fs_alloc_datablpos, DataPos* dp);
 int calc_pos(Dev* device, iNode* inode, DataPos* dp);
-int find_next_block(Dev* device, iNode* inode, DataPos* dp, int flag);
+int find_next_block(DataPos* dp);
 int calc_cur_size(DataPos* dp);
 int clear_data_bits(Dev* device, iNode* inode);
+int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp);
+
+
 
 /* Debug Qu */
 //void superbl_print(Superblock* sb);

@@ -26,12 +26,12 @@ int more(char* content) {
                     }
             }
             if(row == 1) {
-                printf("---- More ----\r");     
-                sleep(5);
-                printf("happy\n");
-                char enter = 0;
-              
-                // while (enter != '\r' && enter != '\n') { enter = getchar(); } 
+                printf("---- More ----");                     
+                sleep(3);
+                printf("\r");
+                int i;
+                for(i = 0; i < w.ws_col; i++) printf(" ");
+                //while (enter != '\r' && enter != '\n') { enter = getchar(); } 
                 row = 2;
             }      
             ch++;
