@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 #include "filesys_hd.h"
 #include "file_table.h"
 #include "inode_table.h"
@@ -29,7 +30,6 @@ int f_seek(int fd, long offset, int whence);
 int f_rewind(int fd);
 int f_stat(int fd, char* buf);
 int f_remove();
-
 int f_opendir(char* path);
 int f_readdir();
 int f_closedir();

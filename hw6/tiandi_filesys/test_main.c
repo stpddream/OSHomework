@@ -40,22 +40,7 @@ int main(int argc, char** argv) {
     ft_init();
     it_init();      
     
-    
-    iNode bigNode;
-    int idx = fs_alloc_inode(cur_dev);
-    printf("allocated inode = %d\n", idx);
-    fs_get_inode(&bigNode, idx, cur_dev);
-    char* testString = "abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc";    
-    int ssize = strlen(testString)+1;
-    char outString[ssize];
-    
-    printf("size %d\n", ssize);
-    
-    fl_write(cur_dev, &bigNode, 0, ssize, testString);
-    fl_read(cur_dev, &bigNode, 0, ssize, outString);
-    
-    printf("read string%s\n", outString);
-    
+    f_opendir("/usr/jacy/");
     return (EXIT_SUCCESS);
 }
 
