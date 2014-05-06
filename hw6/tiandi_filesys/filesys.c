@@ -43,8 +43,10 @@ int fs_init(Dev* device, int size) {
     /** offsets **/
     device->superblock.ibit_offset = 0;
     device->superblock.abit_offset = n_ibit_blocks;
+
     device->superblock.inode_offset = device->superblock.abit_offset + n_abit_blocks;
     device->superblock.data_offset = device->superblock.inode_offset + n_inode_blocks;
+
     device->superblock.swap_offset = -1; //Invalid    
     device->superblock.size = act_size;
     device->superblock.inode_alloc_hd = 0;
@@ -133,14 +135,14 @@ int fs_remove_file(Dev* device, int inode_idx){
     dev_read(&inode, INODE_SZ, INODE_ADDR(inode_idx), device);
     
     //clear all the inode data bits
-    /////////////////////TODO
+    /////////////////////TODO//////////////////////
+    clear_data_bits(device, &inode);
     
     //clear all the bits in the inode
     memcpy(&inode_block, &inode, INODE_SZ);
     for(i = 0; i < INODE_SZ; i++){
         inode_block[i] = 0;
-    }
-    
+    }   
     dev_write(inode_block, INODE_SZ, INODE_ADDR(inode_idx), device);
     
     return 0;
@@ -355,7 +357,7 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
 
     //compute offset
     DataPos dp;
-    if(find_data_ptr(inode, pos, &dp) == 0) // if the given position is invalid
+    if(find_data_ptr(inode, pos, &dp) == -1) // if the given position is invalid
     {
         return 0;
     }else 
@@ -371,10 +373,11 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
             //calculate the number of bytes to read
             n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - read_bytes);
             //read the bytes to data
+            dev_read(data+read_bytes, n_bytes, data_pos, device);
             // increment read
             read_bytes += n_bytes;
             //advance to next data block
-            find_next_block(device, inode, &dp, FALSE);
+            find_next_block(&dp);
         }
         
         return valid_bytes;
@@ -391,33 +394,34 @@ int fl_read(Dev* device, iNode* inode, int pos, int bytes, void* data) {
  * @return the number of bytes written 
  */
 int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
-    int valid_bytes, write_bytes, n_bytes, data_pos;
+    int write_bytes, n_bytes, data_pos;
 
     //compute data position
     DataPos dp;
-    if(find_data_ptr(inode, pos, &dp) == 0) // if the given position is invalid
+    if(find_data_ptr(inode, pos, &dp) == -1) // if the given position is invalid
     {
         return 0;
     }else 
     {
-        // total bytes to write
-        valid_bytes = get_valid_size(inode, pos, bytes);
         // number of bytes being written
         write_bytes = 0;
-
-        while(write_bytes < valid_bytes){
+        while(write_bytes < bytes){
+            alloc_data_ptr(device, inode, &dp);
             //calculate the physical address of the current data position
             data_pos = calc_pos(device, inode, &dp);
             //calculate the number of bytes to write
-            n_bytes = MIN(BLOCK_SZ - dp.offset, valid_bytes - write_bytes);
+            n_bytes = MIN((BLOCK_SZ - dp.offset), (bytes-write_bytes));
+            printf("data_pos: %d\n", data_pos);
             //write the bytes from data
             dev_write(data+write_bytes, n_bytes, data_pos, device);
             // increment the written records
             write_bytes += n_bytes;
             //advance to next data block
-            find_next_block(device, inode, &dp, TRUE);
+            find_next_block(&dp);
         }
                 
-        return valid_bytes;
+        return bytes;
     }
 }
+
+
