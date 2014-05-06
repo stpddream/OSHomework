@@ -194,9 +194,16 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
     if(calc_cur_size(&boundary) <= calc_cur_size(dp)){
         find_next_block(&boundary);
         if(inode->size == 0){ // if no data pointers as been allocated
+            
+            printf("alloc first!\n");
+            
+            
             inode->dblocks[0] = fs_alloc_databl(device);
             addr = DATA_ADDR(inode->dblocks[0]);
         }else if(boundary.size_range == DP_DBLOCK){
+            
+                        printf("alloc dir!\n");
+
             if(boundary.layers[0] == N_DBLOCKS-1){
                 inode->iblocks[boundary.layers[0]] = fs_alloc_databl(device);
                 addr = DATA_ADDR(inode->iblocks[boundary.layers[0]]);
@@ -207,6 +214,9 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
                 inode->dblocks[boundary.layers[0]] = fs_alloc_databl(device);
             }
         }else if(boundary.size_range == DP_IBLOCK){
+            
+                        printf("alloc idir!\n");
+
             if(boundary.layers[0] == N_IBLOCKS-1 && boundary.layers[1] == N_PTR-1){         
                 inode->i2block= fs_alloc_databl(device);
                 addr = DATA_ADDR(inode->i2block);
@@ -231,6 +241,10 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
                 dev_write(data_ptrs, BLOCK_SZ, addr, device);
             }   
         } else if(boundary.size_range == DP_I2BLOCK){
+            
+                        printf("alloc i2dir!\n");
+
+            
             if(boundary.layers[1] == N_PTR-1 && boundary.layers[2] == N_PTR-1){
                 inode->i2block = fs_alloc_databl(device);
                 addr = DATA_ADDR(inode->i3block);
@@ -261,6 +275,10 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
                 dev_write(data_ptrs, BLOCK_SZ, addr, device);
             }
         } else if(boundary.size_range == DP_I3BLOCK){
+            
+                        printf("alloc i3dir!\n");
+
+            
             if(boundary.layers[3] == N_PTR-1 && boundary.layers[2] == N_PTR-1){
             
                 addr = DATA_ADDR(inode->i3block);
@@ -303,7 +321,79 @@ int alloc_data_ptr(Dev* device, iNode* inode, DataPos* dp){
 
 
 int clear_data_bits(Dev* device, iNode* inode){
+    DataPos boundary;  
+    int i, j, k, databl_idx, addr;
+    int data_ptrs[N_PTR];
+    int data_ptrs2[N_PTR];
+    int data_ptrs3[N_PTR];
+
+    find_data_ptr(inode, inode->size, &boundary);
     
+    //clear direct block data
+    for(i = 0; i < (boundary.size_range > DP_DBLOCK ? N_DBLOCKS : boundary.layers[0]+1); i++){
+        databl_idx = inode->dblocks[i]; 
+        abit_off(device, databl_idx); 
+    }
+    
+    //clear the data blocks storing the indirect pointers
+    if(boundary.size_range > DP_DBLOCK){
+        for(i = 0; i < (boundary.size_range > DP_IBLOCK ? N_IBLOCKS : boundary.layers[0]+1); i++){
+            addr = DATA_ADDR(inode->iblocks[i]);
+            dev_read(data_ptrs, BLOCK_SZ, addr, device);
+            //turn off the bits of the current block in the alloc bitmap
+            databl_idx = inode->iblocks[i];
+            abit_off(device, inode->iblocks[i]);       
+            //clear the bits 
+            for(j = 0; j < (boundary.size_range > DP_IBLOCK ? N_PTR : boundary.layers[1]+1); j++){
+                databl_idx = data_ptrs[j];
+                abit_off(device, databl_idx);  
+            }
+        }
+    }
+    
+    if(boundary.size_range > DP_IBLOCK){
+        databl_idx = inode->i2block;
+        addr = DATA_ADDR(inode->i2block);
+        dev_read(data_ptrs, BLOCK_SZ, addr, device);
+        abit_off(device, databl_idx);
+        
+        for(i = 0; i < (boundary.size_range > DP_I2BLOCK ? N_PTR : boundary.layers[1]+1); i++){
+            databl_idx = data_ptrs[i];
+            addr = DATA_ADDR(data_ptrs[i]);
+            abit_off(device, databl_idx);
+            dev_read(data_ptrs2, BLOCK_SZ, addr, device);
+            for(j = 0; j < (boundary.size_range > DP_I2BLOCK ? N_PTR: boundary.layers[2]+1); j++){
+                databl_idx = data_ptrs2[j];
+                abit_off(device, databl_idx);
+            }
+        }
+    }
+
+    if(boundary.size_range == DP_I3BLOCK){
+        databl_idx = inode->i3block;
+        addr = DATA_ADDR(inode->i3block);
+        dev_read(data_ptrs, BLOCK_SZ, addr, device);
+        abit_off(device, databl_idx);
+        
+        for(i = 0; i < boundary.layers[1]+1; i++){
+            databl_idx = data_ptrs[i];
+            addr = DATA_ADDR(data_ptrs[i]);
+            abit_off(device, databl_idx);
+            
+            dev_read(data_ptrs2, BLOCK_SZ, addr, device);
+            for(j = 0; j < boundary.layers[2]+1; j++){                
+                databl_idx = data_ptrs2[j];
+                addr = DATA_ADDR(databl_idx);
+                abit_off(device, databl_idx);
+                
+                dev_read(data_ptrs3, BLOCK_SZ, addr, device);
+                for(k = 0; k < boundary.layers[3]+1; k++){
+                    databl_idx = data_ptrs3[k];
+                    abit_off(device, databl_idx);
+                }
+            }
+        }
+    }
     return 0;
 }
 

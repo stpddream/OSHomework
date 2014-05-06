@@ -107,21 +107,49 @@ void clean_cmdlines(){
     free(cmdlines);
 }*/
 
+int user;
+
 
 
 int main(int argc, char** argv) {        
 
-   
+    /*
     more("super\nioiwoeifjoweifjwoeifjowijfowijefoewjfoiewjofjewofjweoifjewofjewiofjoewifjiewojf\nsuper\nsuper\n"
             "super\nseupr\n\n\n\n\njwerwe\nwefwefwe\nwe\n\n\newefqfqwfqg\nwqerqerqe\n\nadfqef\nwef\nwef\nwef\n"
             "wef\nwef\n\0");
    
     exit(0);
-    
+    */
     
     
     
     init_mysh();
+    
+    printf("---- Welcome to Jianghu Shell Please login ---- \n");
+    char uname[20];
+    char passwd[20];
+    
+    while(1) {
+        printf("Username: ");
+        scanf("%s", &uname);
+        printf("Password: ");
+        scanf("%s", &passwd);
+    
+        if(strcmp(uname, "panda") == 0 && strcmp(passwd, "123456") == 0) {
+            user = 1;
+            break;
+        }
+                        
+        if(strcmp(uname, "jacy") == 0 && strcmp(passwd, "111111") == 0) {
+            user = 2;
+            break;
+        }
+        printf("Invalid password or user name\n");
+    }
+    
+    
+    printf("Welcome user %d\n", user);
+    
     jobs_init();   
     int n_cmd, n_args;
     commands = malloc(MAX_CMD*sizeof(char*));
