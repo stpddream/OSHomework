@@ -40,26 +40,21 @@ int main(int argc, char** argv) {
     ft_init();
     it_init();      
     
-    
-    iNode bigNode;
-    int idx = fs_alloc_inode(cur_dev);
-    printf("allocated inode = %d\n", idx);
-    fs_get_inode(&bigNode, idx, cur_dev);
-    char* testString = "abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abcdef abc";    
-    int ssize = strlen(testString)+1;
-    char outString[ssize];
-    
-    printf("size %d\n", ssize);
-    
-    fl_write(cur_dev, &bigNode, 0, ssize, testString);
-    fl_read(cur_dev, &bigNode, 0, ssize, outString);
-    
     iNode root;
+    
+    printf("@@@@@@@@ Directory Test @@@@@@@@@@\n");
 
-    f_open("/file.h", "r");
+    //f_open("/file.h", "r");
         
-    f_mkdir("/good/");
+    list_dir(&root);
+    printf("((((((( before good happends )))))))\n");
+    
+    f_mkdir("/good/");        
     f_mkdir("/perfect/");
+    printf("((((((( after good happends )))))))\n");
+    
+    fs_get_inode(&root, ROOT_NODE, cur_dev);     
+    list_dir(&root);
     
     printf("@@@@@@@ Two levels @@@@@@\n");
     f_mkdir("/good/etc");
@@ -73,7 +68,10 @@ int main(int argc, char** argv) {
     f_open("/good/hahah.o", "w");
             
     
-    fs_get_inode(&root, ROOT_NODE, cur_dev);    
+
+
+    
+   
     printf("Root name is : %s\n", root.name);
     printf("Root size is: %d\n", root.size);
     
@@ -91,33 +89,65 @@ int main(int argc, char** argv) {
     fs_get_inode(&quite, quite_idx, cur_dev);
     list_dir(&quite);
     
+    printf("===================================\n");
+    
     
     printf("readf here\n");
     /* Read file doesn't exist */
+    /*
     int readf = f_open("/superfile.h", "r");    
     printf("Readf %d\n", readf);
     char* perfect = "hohoho";
     printf("Status is %d\n", f_write(perfect, sizeof(perfect), 1, readf));
-    
+    */
 
     /* Read to write only file */    
+    
     int writef = f_open("/supergreat.h", "w");
-    char* stuff = "great job writing!!\n";
+    printf("what about writef %d\n", writef);
+    char* stuff = "great job\n";
+    printf("size of stuff %d\n", sizeof(stuff));
     f_write(stuff, sizeof(stuff), 1, writef);
-    char readout[20];
-    printf("Status: %d \n", f_read(readout, sizeof(stuff), 1, writef));
-    printf("Read out as: %s\n", readout);
+    char readout[20];        
+    printf("Status: %d \n", f_read(readout, sizeof(stuff), 1, writef));   
+    
+
+        
+    int inode_idx = ft_get_idx(writef);
+
+    iNode* inode = it_get_node(inode_idx);
+    printf("size of node %d", inode->size);
+    printf("Inode another here %d\n", inode->file_type);        
     f_close(writef);
     
+    fl_read(cur_dev, inode, 0, sizeof(stuff), readout);
+    printf("read out something?? %s\n", readout);
+    
+    
+    print_filetable();
+   
     /* Write to read only file */
+    
     printf("whwhwhwhwhw\n");
-    readf = f_open("/supergreat.h", "r");
+    int readf = f_open("/supergreat.h", "r");
+    printf("read f is %d\n", readf);
     f_read(readout, sizeof(stuff), 1, readf);
     printf("Read out!! %s\n", readout);
     printf("seg!!\n");
     
     
+    //Test iNode table
+    /*    printf("Inode table test\n");
+    iNode* inode = (iNode*)malloc(sizeof(iNode));
+    printf("ioioi\n");
+    inode->file_type = 23;
+    it_put(inode, 23);
+    printf("before??\n");
     
+    iNode* hahanode = it_get_node(23);
+    printf("hahahahho %d\n", hahanode->file_type);
+    
+    */
     
     /*
     iNode another;    
