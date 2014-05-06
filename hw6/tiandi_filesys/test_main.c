@@ -49,11 +49,8 @@ int main(int argc, char** argv) {
     //f_open("/file/good", "r");
     //f_mkdir("good");
     
-    /*
     iNode root;
 
-   
-    
     f_mkdir("good");
     f_mkdir("perfect");
     fs_get_inode(&root, ROOT_NODE, cur_dev);    
@@ -74,18 +71,6 @@ int main(int argc, char** argv) {
     
     printf("Entry name is %s\n", entry.file_name);        
     f_open("/file/quick/ha", "w");
-    
-    */
-    
-    iNode testNode;
-    int inode_idx = fs_alloc_inode(cur_dev);
-    fs_get_inode(&testNode, inode_idx, cur_dev);       
-    printf("inode allocated %d\n", inode_idx);
-    char test[10] = "lalala";
-    char testOut[10];
-    fl_write(cur_dev, &testNode, 0, 10, test);
-    fl_read(cur_dev, &testNode, 0, 10, testOut);
-    printf("out:\t %s\n", testOut);
     
     
     /*
