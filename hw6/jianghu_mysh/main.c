@@ -21,6 +21,8 @@
 #include "util.h"
 #include "jobs.h"
 #include "commands.h"
+#include "libs/device_ctrl.h"
+#include "libs/kernel_mem.h"
 #include <termios.h>
 #include "usr.h"
 
@@ -153,5 +155,5 @@ void init_mysh() {
 }
 
 void clean_up() {
-
+   
 }
