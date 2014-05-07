@@ -1,6 +1,6 @@
 #include "commands.h"
 
-int ls(char* flags) {
+/*int ls(char* flags) {
     int i;
     int lflag = FALSE;
     int fflag = FALSE;
@@ -83,13 +83,13 @@ int cat(int fd) {
     } while(act_size != 0);
     return 0;
 }
-
+*/
 
 
 
 
 /** More coming */
-int more(char* content) {    
+/*int more(char* content) {    
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     int row = w.ws_row - 1;
@@ -127,7 +127,7 @@ int more(char* content) {
 
     }
     
-}
+}*/
 
 
 

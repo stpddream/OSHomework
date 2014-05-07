@@ -19,9 +19,7 @@ int fs_init(Dev* device, int size) {
     int n_inodes = n_inode_blocks * N_INODE_E_BLOCK;
     
     int act_size = round_sz(size);
-    printf("Total Number of blocks: %d\n", act_size);
-    printf("Ibit blocks %d\n", n_ibit_blocks);
-    printf("Abit blocks %d\n", n_abit_blocks);
+   
     
     /* Init Bootblock */
     device->bootblock.fun = 8888;
@@ -74,11 +72,7 @@ int fs_init(Dev* device, int size) {
     for(i = 0; i < n_abit_blocks; i++) {
         fwrite(bit_block, sizeof(bit_block), 1, device->phys_data);
     }
-    
-    printf("abit begin: %d\n", ABIT_BEGIN);
-    printf("Content begin: %d\n", CONTENT_BEGIN);
-    printf("Data begin: %d\n", DATA_BEGIN);
-                  
+  
     /* Inode Block */   
     iNode empty_node;
     empty_node.nlink = 100;        
@@ -127,7 +121,9 @@ int fs_remove_file(Dev* device, int inode_idx){
 
     
     //turn off the bit in the inode bitmap
-    ibit_off(device, inode_idx);
+    ibit_on(device, inode_idx);
+    printf("turn on %d\n", inode_idx);
+    printf("is on %d\n", ibit_is_on(device, inode_idx));
     
     //get the inode
     dev_read(&inode, INODE_SZ, INODE_ADDR(inode_idx), device);

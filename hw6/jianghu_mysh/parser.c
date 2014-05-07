@@ -44,9 +44,6 @@ int parse_process(char* line, char** processes) {
     tok = strtok(line, "|");
     while(tok != NULL){
         processes[i++] = strip_space(tok);
-        //free(tok);
-        
-        //Where to free tok????
         tok = strtok(NULL, "|");
     }
   
