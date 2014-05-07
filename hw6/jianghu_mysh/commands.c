@@ -26,7 +26,7 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     dir_stream.inode_idx = iList_tail->inode_idx;
 
     DirFileEntry entry;
-    iNode* inode = (iNode*) malloc(sizeof (iNode));
+    iNode* inode;
     char display[FILE_NAME_MAX + 1];
     char str[MAX_PATH_LEN];
 
@@ -35,6 +35,8 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
         if (strcmp(entry.file_name, ".") == 0) continue;
         if (strcmp(entry.file_name, "..") == 0) continue;
 
+        inode = (iNode*) malloc(sizeof (iNode));
+        
         strcpy(display, entry.file_name);
 
         if (it_exist(entry.inode_idx) == TRUE) {
@@ -68,8 +70,7 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
             if (lflag) printf("\n");
         }
 
-        printf("%s\t", display);
-        if (lflag) printf("\n");
+        free(inode);
     }
 
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
@@ -79,14 +80,11 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
         printf("\n");
     }
 
-    free(inode);
-
     return 0;
 }
 
 int cmd_pwd(int redir_mode, int fd) {
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
-        printf("write %s to fd %d\n", cur_dir, fd);
         f_write(cur_dir, strlen(cur_dir), 1, fd);
         f_close(fd);
     } else {
@@ -116,7 +114,7 @@ int cmd_rmdir(char** dir_name, int n_args) {
 int cmd_cat(char* path) {
 
     int fd = f_open(path, "r");
-
+    
     char buffer[512];
     int act_size;
     while (1) {
@@ -124,8 +122,10 @@ int cmd_cat(char* path) {
         if (act_size == 0) break;
         printf("%s", buffer);
     }
+    
     printf("\n");
     f_close(fd);
+   
     return 0;
 }
 
@@ -174,7 +174,6 @@ int cmd_rm(char** path, int n_args) {
 
 int cmd_chmod(char* mode, char** files, int n_files) {
     int i, who, what, symbol;
-    printf("tada!\n");
     // parse symbolic mode
     if (strlen(mode) != 3) printf("chmod: invalid mode: ‘%s’\n", mode);
     return 0;
