@@ -42,6 +42,27 @@ int main(int argc, char** argv) {
     set_user(users[0]);
     set_cur_idx(2);
     int cur_dir_idx = 2;
+    
+    int mfd = f_open("file", "w+");
+
+    
+    char* data = "hahahaha";
+    int rt2 = f_write(data, strlen(data), 1, mfd);
+    
+    printf("rt2 %d\n", rt2);
+    printf("gui after close\n");
+    f_close(mfd);
+    printf("guile\n");
+    
+    char another[20];
+    
+    int hahafd = f_open("file", "r");
+    int rt3 = f_read(another, strlen(data), 1, hahafd);
+    printf("rt3 is %d\n", rt3);
+    printf("content: %s\n", another);
+    
+    
+    /*
     f_mkdir("home");
     iNode node;
     fs_get_inode(&node, ROOT_NODE, cur_dev);
@@ -54,7 +75,7 @@ int main(int argc, char** argv) {
     
     list_dir(&node);
     list_dir(&another);
-    
+    */
     return 0;
 }
 

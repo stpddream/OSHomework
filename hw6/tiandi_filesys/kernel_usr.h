@@ -26,17 +26,12 @@ extern "C" {
         char passwd[MAX_PW_LEN];
     } User;
 
-    extern User* users[3];
+extern User* users[3];
            
-    int user_init();
-    int user_login();
-    int user_clean();
-    User* user_new(int uid, int gid, int user_type, char* usrname, char* passwd);
-    
-    
-    
-
-    
+int user_init();
+int user_login();
+int user_clean();
+User* user_new(int uid, int gid, int user_type, char* usrname, char* passwd);
 int get_pm_val(char owner, char group, char all);
 
     

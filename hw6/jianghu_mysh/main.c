@@ -112,6 +112,37 @@ int main(int argc, char** argv) {
     int n_cmd;
     
     printf("where fault???\n");
+    
+    printf("iowjeoifjweiofjeqwiofjqewiogjoqewijgiqegj\n");
+    ////////////// Manual file write
+   
+    
+    int mfd = f_open("file", "w+");
+    printf("done open mfd is %d\n", mfd);
+    
+    char* data = "hahahaha";
+    int rt2 = f_write(data, strlen(data), 1, mfd);
+    
+    printf("rt2 is %d\n", rt2);
+
+    f_close(mfd);
+    
+/*
+    
+    char another[20];
+    f_seek(mfd, 0, SEEK_SET);
+    int rt = f_read(another, strlen(data), 1, mfd);
+    printf("another is: %s\n", another);
+    printf("returns %d\n", rt);
+
+    */
+    
+    /////////////////////////////////
+    
+    
+    
+    
+    
     commands = malloc(MAX_CMD * sizeof (char*));
     while (1) {
         printf("TERMINAL >>  ");
