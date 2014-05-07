@@ -78,10 +78,8 @@ int main(int argc, char** argv) {
     fp = fopen("testfile/disk", "w+");
     cur_dev = dev_create(fp);
 
-    dev_init(cur_dev, 10240000);
-    printf("Even before??\n");
-    fs_init(cur_dev, 10240000);
-    printf("after this???\n");
+    dev_init(cur_dev, 10240000);  
+    fs_init(cur_dev, 10240000);  
 
     //Init tables
     ft_init();
@@ -108,20 +106,14 @@ int main(int argc, char** argv) {
     jobs_init();
     set_cur_idx(2); //Current directory to root.
     int n_cmd;
-
-    printf("where fault???\n");
-    
-    printf("iowjeoifjweiofjeqwiofjqewiogjoqewijgiqegj\n");
+   
     ////////////// Manual file write
    
     
     int mfd = f_open("file", "w+");
-    printf("done open mfd is %d\n", mfd);
     
     char* data = "hahahaha";
     int rt2 = f_write(data, strlen(data), 1, mfd);
-    
-    printf("rt2 is %d\n", rt2);
 
     f_close(mfd);
     
