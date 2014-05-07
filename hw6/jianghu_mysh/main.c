@@ -106,17 +106,17 @@ int main(int argc, char** argv) {
     jobs_init();
     set_cur_idx(2); //Current directory to root.
     int n_cmd;
-   
+
     ////////////// Manual file write
    
-    
+    /*
     int mfd = f_open("file", "w+");
     
     char* data = "hahahaha";
     int rt2 = f_write(data, strlen(data), 1, mfd);
 
     f_close(mfd);
-    
+    */
 /*
     
     char another[20];

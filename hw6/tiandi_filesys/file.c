@@ -83,9 +83,13 @@ int f_open(char* path, const char* mode) {
         inode_idx = fs_alloc_inode(cur_dev);
         fs_get_inode(inode, inode_idx, cur_dev);
         activate_inode(inode, FT_FILE, prev_name);
-        fs_update_inode(inode, inode_idx, cur_dev);   
+        fs_update_inode(inode, inode_idx, cur_dev);
         
-        
+            /** Add file to directory */
+        iNode parent_node;
+        fs_get_inode(&parent_node, parent_idx, cur_dev);
+        dir_add(&parent_node, inode_idx, prev_name);
+        fs_update_inode(&parent_node, parent_idx, cur_dev);
     } else fs_get_inode(inode, prev_idx, cur_dev);
     
     //check permission
@@ -94,11 +98,7 @@ int f_open(char* path, const char* mode) {
     it_put(inode, inode_idx);
     int fd = ft_put(inode_idx, mode_v);
 
-    /** Add file to directory */
-    iNode parent_node;
-    fs_get_inode(&parent_node, parent_idx, cur_dev);
-    dir_add(&parent_node, inode_idx, prev_name);
-    fs_update_inode(&parent_node, parent_idx, cur_dev);
+
 
     return fd;
 }
