@@ -130,4 +130,25 @@ int cat(int fd) {
 }*/
 
 
+int chmod(char* args) {
+    int fd = f_open(args[1], "r");
+    int mult = 0;
+    char grp = args[0];
+    
+    char op = args[1];
+    int sum = 0;
+    
+    if(grp == 'x') mult = 1;
+    else if(grp == 'g') mult = 10;
+    else if(grp == 'u') mult = 100;
+    
+    
+    
+//    sum = ;
+    
+    
+    
+    
+    
+}
 

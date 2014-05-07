@@ -1,4 +1,5 @@
-#include "usr.h"
+#include "kernel_usr.h"
+User* users[3];
 
 User* user_new(int uid, int gid, int user_type, char* usrname, char* passwd) {
     User* user = (User*) malloc(sizeof (User));
@@ -48,3 +49,16 @@ int user_login() {
     }
     return users[i]->uid;
 }
+
+
+/**
+ * Get integer permission value
+ * @param owner permission
+ * @param group permission
+ * @param all permission
+ * @return 
+ */
+int get_pm_val(char owner, char group, char all) {
+    return owner * 100 + group * 10 + all;        
+}
+            

@@ -24,7 +24,7 @@
 #include "libs/device_ctrl.h"
 #include "libs/kernel_mem.h"
 #include <termios.h>
-#include "usr.h"
+//#include "usr.h"
 
 #define MAX_CMD 20
 #define MAX_ARG_LEN 256
@@ -45,8 +45,10 @@ sigset_t chld_mask; //Sig set that contains only SIG_CHLD
 void init_mysh();
 void clean_up();
 
-User* users[3];
+
 int cur_usr;
+
+extern Dev* cur_dev;
 
 int main(int argc, char** argv) {
 
@@ -54,8 +56,14 @@ int main(int argc, char** argv) {
 
     printf("---- Welcome to Jianghu Shell Please login ---- \n");
 
-    user_init();
-    while ((cur_usr = user_login()) == -1);
+    FILE* fp = fopen("testfile/disk", "w+");
+    cur_dev = dev_create(fp);
+    dev_init(cur_dev, 102400);
+    printf("hohoho\n");
+    
+    
+  //  user_init();
+    //while ((cur_usr = user_login()) == -1);
 
     printf("Welcome user %d\n", cur_usr);
 
@@ -107,7 +115,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    user_clean();
+   // user_clean();
 
     return 0;
 }
