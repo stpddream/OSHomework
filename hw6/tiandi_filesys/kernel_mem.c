@@ -5,6 +5,7 @@ User* cur_user;
 iNode* cur_dir;
 int cur_dir_idx;
 char* cur_path;
+User* cur_user;
 
 void set_user(User* user) {
     cur_user = user;

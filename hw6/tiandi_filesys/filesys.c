@@ -103,15 +103,12 @@ int fs_init(Dev* device, int size) {
     inode->atime = time(0);
          
     inode->uid = 0;
-    inode->gid = 0;
-    
+    inode->gid = 0;    
     inode->permission = get_pm_val(PM_READ | PM_WRITE, PM_READ | PM_WRITE, PM_READ);
             
     strcpy(inode->name, "/");
     inode->size = 0;
-    
-    
-    
+        
     fs_update_inode(inode, ROOT_NODE, device);    
     it_put(inode, ROOT_NODE);   
     return 0;
