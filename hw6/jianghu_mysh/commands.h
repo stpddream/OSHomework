@@ -30,12 +30,12 @@ extern char cur_dir[MAX_PATH_LEN];
 
 int cmd_more(char* content);
 int cmd_cat(int fd);
-int cmd_ls(char* flags);
-int cmd_mkdir(char* dir_name);
-int cmd_rmdir(char* dir_name);
+int cmd_ls(char** args, int n_args);
+int cmd_mkdir(char** dir_name, int n_args); 
+int cmd_rmdir(char** dir_name, int n_args);
 int cmd_cd(char* dir_name);
 int cmd_pwd();
-int cmd_rm(char* path);
+int cmd_rm(char** path, int n_args);
 int cmd_chmod();
 
 #endif	/* COMMANDS_H */

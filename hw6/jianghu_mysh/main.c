@@ -54,6 +54,10 @@ char* job_line;
 char** commands;
 char** proc_cmds;
 
+
+char gl_cmds[MAX_PATH_LEN];
+char gl_file[MAX_PATH_LEN];
+
 char* line;
 
 int mysh_terminal;
@@ -64,8 +68,7 @@ sigset_t chld_mask; //Sig set that contains only SIG_CHLD
 User* users[3];
 int cur_usr;
 
-
-int main(int argc, char** argv) {    
+int main(int argc, char** argv) {
     ///////////////// INITIALIZE EVERYTHING /////////////////////
     FILE* fp;
     fp = fopen("testfile/disk", "w+");
@@ -77,10 +80,16 @@ int main(int argc, char** argv) {
     //Init tables
     ft_init();
     it_init();
-    
+
     user_init();
     init_mysh();
-    
+
+    //append root to current path
+    inode_append(2);
+    //clear the path 
+    cur_dir[0] = '\0';
+    gen_path(cur_dir);
+
     //////////////////////// INIT END ////////////////////////////
 
     printf("---- Welcome to Jianghu Shell Please login ---- \n");
@@ -103,15 +112,42 @@ int main(int argc, char** argv) {
         //allocates memory to cmdlines array and parse the input       
         n_cmd = parse_args(line, commands);
 
+
+
         //further parse each commands and execute the commands
 
-        int i, j;
-       
+        int i, res, fd, n_args;
+        char file_path[MAX_PATH_LEN];
+
         for (i = 0; i < n_cmd; i++) {
             job_line = (char*) malloc(sizeof (char)*strlen(commands[i]));
             proc_cmds = (char**) malloc(sizeof (char*)*MAX_CMD);
-            printf("%s\n", commands[i]);
 
+            res = parse_redirection(commands[i], gl_cmds, gl_file);
+
+            args = (char**) malloc(sizeof (char*)*MAX_ARG_LEN);
+            Process* process = (Process*) malloc(sizeof (Process));
+
+            n_args = parse_space(gl_cmds, args);
+
+            process->args = args;
+            process->n_args = n_args;
+            process->next = NULL;
+
+            strcpy(file_path, cur_dir);
+            strcat(file_path, gl_file);
+            if (res == READ_MODE) {
+                fd = f_open(file_path, "r");
+            } else if (res == WRITE_OVRWT) {
+                fd = f_open(file_path, "w+");
+            } else if (res == WRITE_APND) {
+                fd = f_open(file_path, "a+");
+            }
+            
+            Job* job = job_create(gl_cmds, process,
+                    ((gl_cmds[0] == '&') ? JOB_BACK : JOB_FORE),
+                    fd, res);
+            exec_job(job);
         }
     }
 
@@ -163,5 +199,5 @@ void init_mysh() {
 }
 
 void clean_up() {
-   
+
 }
