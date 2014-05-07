@@ -161,7 +161,6 @@ int main(int argc, char** argv) {
         }
         tcgetattr(mysh_terminal, &mysh_tmodes);
 
-                    
         //allocates memory to cmdlines array and parse the input       
         n_cmd = parse_args(line, commands);
              

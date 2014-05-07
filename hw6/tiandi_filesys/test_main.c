@@ -204,34 +204,10 @@ int main(int argc, char** argv) {
     inode->file_type = 23;
     it_put(inode, 23);
     printf("before??\n");
-    
-    iNode* hahanode = it_get_node(23);
-    printf("hahahahho %d\n", hahanode->file_type);
-    
-    */
-    
+=======
     /*
-    iNode another;    
-    fs_get_inode(&another, 4, cur_dev);       
-    printf("file name is %s\n", another.name);
-    
-    DirFileEntry entry;
-    fl_read(cur_dev, &root, 0, DIR_ENTRY_SZ, &entry);
-    
-    
-    printf("Entry name is %s\n", entry.file_name);        
-    f_open("/file/quick/ha", "w");
-    
-    
-    int sub_idx = dir_lookup(&root, "good");
-    printf("index is %d\n", sub_idx);
-    */
-    
-    
-    
-    
-    
-    
+    int fd = f_open("/good/quite/test.c", "r");
+    f_close(fd);*/
     /*
     int inode_idx = fs_alloc_inode(cur_dev);    
     iNode inode;

@@ -15,7 +15,6 @@ int dir_add(iNode* dir_inode, int inode_file_idx, char* name) {
     return 0;
 }
 
-
 int dir_lookup(iNode* dir_inode, char* file_name) {
     int i;
     DirFileEntry entry;  

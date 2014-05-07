@@ -1,6 +1,7 @@
 #include "commands.h"
 
-int ls() {
+int ls(char* flags) {
+    
     
 }
 

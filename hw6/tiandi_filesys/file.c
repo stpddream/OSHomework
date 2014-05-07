@@ -361,7 +361,6 @@ int f_closedir(DirStream* ds) {
 }
 
 int f_mkdir(char* path) {
-    
     char* dirs;
     char this_path[strlen(path) + 1];
 

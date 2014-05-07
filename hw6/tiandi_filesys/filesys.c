@@ -282,7 +282,6 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
         return 0;
     }else 
     {
-        // number of bytes being written      
         write_bytes = 0;
         
         while(write_bytes < bytes){
@@ -294,8 +293,7 @@ int fl_write(Dev* device, iNode* inode, int pos, int bytes, void* data){
             //write the bytes from data
             dev_write(data+write_bytes, n_bytes, data_pos, device);
             // increment the written records
-            write_bytes += n_bytes;                        
-            
+            write_bytes += n_bytes;            
             //advance to next data block
             find_next_block(&dp);
         }
