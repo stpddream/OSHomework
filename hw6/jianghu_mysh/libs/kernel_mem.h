@@ -11,16 +11,18 @@
 
 #define UNAME_MAX_LEN
 
+#include "device_ctrl.h"
+#include "kernel_usr.h"
 
 #define UP_SUPER 1
 #define UP_REG 2
-/*
-typedef struct {
-    char name[UNAME_MAX_LEN];
-    int privilege;    
-} User;
-*/
 
+
+extern Dev* cur_dev;
+extern User* cur_user;
+
+void set_user(User* user);
+void set_cur_idx(int idx);
 
 
 #endif	/* KERNEL_MEM_H */
