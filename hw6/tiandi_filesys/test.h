@@ -8,6 +8,6 @@
 #define	TEST_H
 
 void ibit_test(Dev* device);
-
+void test_print_ibit();
 #endif	/* TEST_H */
 

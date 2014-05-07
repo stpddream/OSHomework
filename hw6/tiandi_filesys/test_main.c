@@ -24,60 +24,63 @@ Dev* cur_dev;
  * 
  */
 int main(int argc, char** argv) {
-    int i;
+    
+
     FILE* fp;
     fp = fopen("testfile/disk", "w+");    
-    cur_dev = dev_create(fp);
-    
-    printf("now changes!!\n");
-    
+    cur_dev = dev_create(fp);    
     dev_init(cur_dev, 10240000);
     fs_init(cur_dev, 10240000);
-            
-  //  printf("size of %d\n", sizeof(iNode));
-  
+              
     //Init tables
+    
     ft_init();
     it_init();      
     
 
+    print_superblock(&cur_dev->superblock);
     iNode root;
     
-    printf("@@@@@@@@ Directory Test @@@@@@@@@@\n");
-
-    //f_open("/file.h", "r");
-        
-    list_dir(&root);
+    printf("@@@@@@@@ Directory Test @@@@@@@@@@\n");    
     printf("((((((( before good happends )))))))\n");
     
     f_mkdir("/good/");        
     f_mkdir("/perfect/");
+
     printf("((((((( after good happends )))))))\n");
-    
-    fs_get_inode(&root, ROOT_NODE, cur_dev);     
-    list_dir(&root);
-    
+
     printf("@@@@@@@ Two levels @@@@@@\n");
     f_mkdir("/good/etc");
     f_mkdir("/good/quite");
     
-    f_mkdir("/good/quite/super");
-    f_mkdir("/good/quite/haha");
-    f_mkdir("/good/quite/so");
+    //f_mkdir("/good/quite/super");
+    //f_mkdir("/good/quite/haha");
+    //f_mkdir("/good/quite/so");
     
-    f_open("/good/super.c", "w");
+    int fd = f_open("/good/super.c", "w");
     f_open("/good/hahah.o", "w");
-            
     
 
-
+    int idx = ft_get_idx(fd);    
+    
+    f_remove_dir("/good/");
+       
+    fs_get_inode(&root, ROOT_NODE, cur_dev);    
+    list_dir(&root);
+    
+    
+    printf("fd is %d\n", f_open("/good/super.c", "w"));
+    printf("not exist %p\n", f_opendir("/good/"));
+    printf("not exist %p\n", f_opendir("/good/quite/"));
     
    
-    printf("Root name is : %s\n", root.name);
-    printf("Root size is: %d\n", root.size);
+    printf("index is %d\n", idx);
+
+
+//   ibit_on(cur_dev, 7);
     
-    printf("now listing...\n");
-    list_dir(&root);
+         
+  /*
     int good_idx = dir_lookup(&root, "good");
     
     printf("Processing good\n");
@@ -103,12 +106,63 @@ int main(int argc, char** argv) {
     */
 
     /* Read to write only file */    
+    /*
+    int writef = f_open("/supergre.h", "w");
+    int writef2 = f_open("/hihihihi.h", "w");
     
-    int writef = f_open("/supergreat.h", "w");
+    int iidx = ft_get_idx(writef2);
     printf("what about writef %d\n", writef);
+    
+     
+    printf("===== Before Reading ======\n");
+    
+    fs_get_inode(&root, ROOT_NODE, cur_dev);    
+    list_dir(&root);
+    
+
+ 
+    printf("which one??\n");
+    printf("after\n");
+       
+    
+    printf("before removing\n");
+    f_remove("/hihihihi.h");
+    
+    printf("===== After removing =====\n");
+    fs_get_inode(&root, ROOT_NODE, cur_dev);
+    list_dir(&root);
+    
+    
+    iNode hohoho;
+    
+    */
+    /*
+    fs_get_inode(&removed, iidx, cur_dev);
+    
+    printf("index %d\n", iidx);
+    
+    
+    
+    printf("is on %d\n", ibit_is_on(cur_dev, iidx));
+
+
+    Dev* device = cur_dev;
+
+    char bits[4096];
+    dev_read(bits, sizeof(bits), IBIT_BEGIN, cur_dev);
+
+    printf("ibit begin %d\n", IBIT_BEGIN);
+    int s;
+    for(s = 0; s < 4096; s++) printf("%c ", bits[s]);
+    
+    */
+    /*
     char* stuff = "great job\n";
     printf("size of stuff %d\n", sizeof(stuff));
     f_write(stuff, sizeof(stuff), 1, writef);
+   */
+    /*
+    
     char readout[20];        
     printf("Status: %d \n", f_read(readout, sizeof(stuff), 1, writef));   
     
@@ -128,14 +182,20 @@ int main(int argc, char** argv) {
     print_filetable();
    
     /* Write to read only file */
-    
-    printf("whwhwhwhwhw\n");
+    /*
     int readf = f_open("/supergreat.h", "r");
     printf("read f is %d\n", readf);
     f_read(readout, sizeof(stuff), 1, readf);
     printf("Read out!! %s\n", readout);
     printf("seg!!\n");
     
+    f_remove("/supergreat.h");
+    
+    printf("===== Before removal =====\n");
+    list_dir(&root);    
+    printf("===== After removal =====\n");
+    list_dir(&root);
+    */
     
     //Test iNode table
     /*    printf("Inode table test\n");
@@ -218,7 +278,7 @@ int main(int argc, char** argv) {
     
 //  printf("FD is %d\n", fd);
 
-
+/*
     DirStream* res = f_opendir("/");
     DirFileEntry dir;
     printf("open dir inode = %d\n", res->inode_idx);
@@ -228,7 +288,7 @@ int main(int argc, char** argv) {
         printf("filename: %s\n", dir.file_name);
     }
     
-    f_closedir(res);
+    f_closedir(res);*/
     return (EXIT_SUCCESS);
 }
 

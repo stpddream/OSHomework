@@ -31,6 +31,7 @@ int f_seek(int fd, long offset, int whence);
 int f_rewind(int fd);
 int f_stat(int fd, char* buf);
 int f_remove();
+int f_remove_dir(char* path);
 DirStream* f_opendir(char* path);
 int f_readdir(DirStream* ds, DirFileEntry* entry);
 int f_closedir(DirStream* ds);

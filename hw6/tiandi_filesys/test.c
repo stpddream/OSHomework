@@ -64,3 +64,13 @@ void rw_test() {
     print_inodetable();
     */
 }
+
+void test_print_ibit() {
+    
+    char bits[4096];
+    dev_read(bits, sizeof(bits), 1024, cur_dev);
+    int s;
+    for(s = 0; s < 4096 / 8; s++) printf("%s ", bytbi(bits[s]));
+    printf("is on?? %d\n", ibit_is_on(cur_dev, 7)); 
+    
+}
