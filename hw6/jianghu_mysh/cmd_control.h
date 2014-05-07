@@ -20,6 +20,10 @@
 
 #define NOT_INTERNAL_CMD -2
 
+#define READ_MODE 0
+#define WRITE_OVRWT 1
+#define WRITE_APND 2
+
 extern int mysh_terminal;
 extern pid_t mysh_pgid;
 extern struct termios mysh_tmodes;

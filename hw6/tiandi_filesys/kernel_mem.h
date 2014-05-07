@@ -18,8 +18,8 @@
 extern Dev* cur_dev;
 
 typedef struct {
+    int privilege;
     char name[UNAME_MAX_LEN];
-    int privilege;    
 } User;
 
 
