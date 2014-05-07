@@ -13,7 +13,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "commands.h"
 
 #define JOB_BACK 4
 #define JOB_FORE 5
@@ -45,6 +45,7 @@ typedef struct {
         int status;	
         int process_status;
         int file;
+        int redir_mode;
 	char* path;
         pid_t pgid;
         Process* f_process;  //Process List for job
@@ -52,7 +53,7 @@ typedef struct {
 } Job;
 
 
-Job* job_create(char*, Process*, int, int);
+Job* job_create(char* path, Process* process_head, int status, int file, int redir_mode); 
 Job* job_createc(int);
 void job_free(Job*);
 void job_setpgid(Job*, pid_t);

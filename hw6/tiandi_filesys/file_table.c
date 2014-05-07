@@ -48,6 +48,13 @@ int ft_get_pos(int fd) {
 }
 
 
+int ft_set_pos(int fd, int pos) {
+    if(file_table.entries[fd] == NULL) return -1;
+    file_table.entries[fd]->pos = pos;
+}
+
+
+
 int ft_remove(int fd) {
     if(file_table.entries[fd] == NULL) return -1;
     FileEntry* entry = file_table.entries[fd];

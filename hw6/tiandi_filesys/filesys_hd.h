@@ -93,6 +93,20 @@ typedef struct{
 #define FT_DIR 2
 #define FT_MOUNT 3
 
+/* Permission */
+#define FP_APPEND 1
+#define FP_WRITE 1 << 1
+#define FP_READ 1 << 2
+
+//Permissions
+#define PM_EXC 1
+#define PM_READ 1 << 1
+#define PM_WRITE 1 << 2
+    
+#define PM_USER 0
+#define PM_GROUP 1
+#define PM_ALL 2
+
 
 #endif	/* FILESYS_HD_H */
 

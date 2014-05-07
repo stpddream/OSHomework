@@ -1,8 +1,8 @@
-COMPILERFLAGS = -g -Wall -L../tiandi_filesys
+COMPILERFLAGS = -g -Wall -L.
 FLB = -lfilesys
 CC = gcc
 CFLAGS = $(COMPILERFLAGS)
-OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o commands.o
+OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o inode_list.o commands.o
 
 All:	shell
 
@@ -26,6 +26,9 @@ parser.o:	parser.c parser.h
 
 jobs.o: jobs.c jobs.h
 	$(CC) $(CFLAGS) -c jobs.c
+
+inode_list.o: inode_list.c inode_list.h
+	$(CC) $(CFLAGS) -c inode_list.c $(FLB)
 
 util.o: util.c util.h
 	$(CC) $(CFLAGS) -c util.c $(FLB)

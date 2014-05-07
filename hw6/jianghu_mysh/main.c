@@ -13,27 +13,50 @@
 #include <signal.h>
 #include <readline/readline.h>
 #include <sys/types.h>
-
+#include <termios.h>
 
 #include "parser.h"
 #include "cmd_control.h"
 #include "cmd_history.h"
 #include "util.h"
 #include "jobs.h"
+#include "inode_list.h"
 #include "commands.h"
+
 #include "libs/device_ctrl.h"
 #include "libs/kernel_mem.h"
-#include <termios.h>
-//#include "usr.h"
+#include "libs/bitmap.h"
+#include "libs/util.h"
+#include "libs/filesys_util.h"
+#include "libs/file_table.h"
+#include "libs/file.h"
+#include "libs/ft_dir.h"
+
+
 
 #define MAX_CMD 20
 #define MAX_ARG_LEN 256
+
+/***HEADERS***/
+void init_mysh();
+void clean_up();
+
+
+/*** GLOBAL VARIABLES ***/
+extern Dev* cur_dev;
+
+char cur_dir[MAX_PATH_LEN];
+//User* users[3];
 
 
 char** args;
 char* job_line;
 char** commands;
 char** proc_cmds;
+
+
+char gl_cmds[MAX_PATH_LEN];
+char gl_file[MAX_PATH_LEN];
 
 char* line;
 
@@ -42,25 +65,44 @@ pid_t mysh_pgid;
 struct termios mysh_tmodes;
 sigset_t chld_mask; //Sig set that contains only SIG_CHLD
 
+
 void init_mysh();
 void clean_up();
-
 
 int cur_usr;
 
 extern Dev* cur_dev;
 
 int main(int argc, char** argv) {
+    ///////////////// INITIALIZE EVERYTHING /////////////////////
+    FILE* fp;
+    fp = fopen("testfile/disk", "w+");
+    cur_dev = dev_create(fp);
 
+    dev_init(cur_dev, 10240000);
+    printf("Even before??\n");        
+    fs_init(cur_dev, 10240000);
+    printf("after this???\n");
+    
+    
+
+    //Init tables
+    ft_init();
+    it_init();
+
+//    user_init();
     init_mysh();
 
-    printf("---- Welcome to Jianghu Shell Please login ---- \n");
+    //append root to current path
+    inode_append(2);
+    //clear the path 
+    cur_dir[0] = '\0';
+    gen_path(cur_dir);
 
-    FILE* fp = fopen("testfile/disk", "w+");
-    cur_dev = dev_create(fp);
-    dev_init(cur_dev, 102400);
-    printf("hohoho\n");
-    
+    //////////////////////// INIT END ////////////////////////////
+
+    printf("---- Welcome to Jianghu Shell Please login ---- \n");
+      
     
   //  user_init();
     //while ((cur_usr = user_login()) == -1);
@@ -69,6 +111,8 @@ int main(int argc, char** argv) {
 
     jobs_init();
     int n_cmd;
+    
+    printf("where fault???\n");
     commands = malloc(MAX_CMD * sizeof (char*));
     while (1) {
         printf("TERMINAL >>  ");
@@ -81,37 +125,42 @@ int main(int argc, char** argv) {
         //allocates memory to cmdlines array and parse the input       
         n_cmd = parse_args(line, commands);
 
+
+
         //further parse each commands and execute the commands
 
-        int i, j;
-        int writeMode, writeStart;
-        int readMode, readFrom;
+        int i, res, fd, n_args;
+        char file_path[MAX_PATH_LEN];
+
         for (i = 0; i < n_cmd; i++) {
             job_line = (char*) malloc(sizeof (char)*strlen(commands[i]));
             proc_cmds = (char**) malloc(sizeof (char*)*MAX_CMD);
-            printf("%s\n", commands[i]);
-            
-            while(commands[i][j] != '\0'){ //while not at the end of the command
-                if(commands[i][j] == '>'){
-                    //check ahead to see if it is >>
-                    if(commands[i][j+1] == '>'){
-                        writeMode = WRITE_APND;
-                        writeStart = j+2;
-                        commands[i][j] = '\0';
-                        commands[i][j+1] = '\0';
-                        j++;
-                    }else{
-                        writeMode = WRITE_OVRWT;
-                        writeStart = j+1;
-                    }
-                }else if(commands[i][j] == '<'){
-                    readMode = READ_MODE;
-                    readFrom = j+1;
-                    commands[i][j] = '\0';
-                }
-                j++;
-            }
 
+            res = parse_redirection(commands[i], gl_cmds, gl_file);
+
+            args = (char**) malloc(sizeof (char*)*MAX_ARG_LEN);
+            Process* process = (Process*) malloc(sizeof (Process));
+
+            n_args = parse_space(gl_cmds, args);
+
+            process->args = args;
+            process->n_args = n_args;
+            process->next = NULL;
+
+            strcpy(file_path, cur_dir);
+            strcat(file_path, gl_file);
+            if (res == READ_MODE) {
+                fd = f_open(file_path, "r");
+            } else if (res == WRITE_OVRWT) {
+                fd = f_open(file_path, "w+");
+            } else if (res == WRITE_APND) {
+                fd = f_open(file_path, "a+");
+            }
+            
+            Job* job = job_create(gl_cmds, process,
+                    ((gl_cmds[0] == '&') ? JOB_BACK : JOB_FORE),
+                    fd, res);
+            exec_job(job);
         }
     }
 
@@ -163,5 +212,5 @@ void init_mysh() {
 }
 
 void clean_up() {
-   
+
 }

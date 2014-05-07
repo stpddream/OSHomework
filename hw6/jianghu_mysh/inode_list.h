@@ -12,17 +12,19 @@
 extern "C" {
 #endif
 
-#include "../tiandi_filesys/filesys_hd.h"
-#include "../tiandi_filesys/filesys.h"
-#include "../tiandi_filesys/kernel_mem.h"
+#include "libs/filesys_hd.h"
+#include "libs/filesys.h"
+#include "libs/kernel_mem.h"
 
-extern iList_node *iList_head, *iList_tail;    
-    
-typedef struct{
+typedef struct iList_node_{
     iNode inode;
-    struct iList_node* next;
+    int inode_idx;
+    struct iList_node_ *next;
 }iList_node;    
 
+extern iList_node *iList_head, *iList_tail; 
+extern Dev* cur_dev;
+    
 int inode_append(int inode_idx);
 int inode_remove_tail();
 int gen_path(char* path);
