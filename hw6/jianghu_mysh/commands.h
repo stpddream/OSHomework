@@ -18,7 +18,7 @@
 #include "inode_list.h"
 #include "libs/file.h"
 #include "libs/ft_dir.h"
-
+#include "parser.h"
 
 /**
  * Linux command more
@@ -30,7 +30,7 @@ extern char cur_dir[MAX_PATH_LEN];
 
 int cmd_more(char* content);
 int cmd_cat(int fd);
-int cmd_ls(char** args, int n_args);
+int cmd_ls(char** args, int n_args, int redir_mode, int fd);
 int cmd_mkdir(char** dir_name, int n_args); 
 int cmd_rmdir(char** dir_name, int n_args);
 int cmd_cd(char* dir_name);

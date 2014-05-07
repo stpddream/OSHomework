@@ -1,6 +1,6 @@
 #include "commands.h"
 
-int cmd_ls(char** args, int n_args) {
+int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     int i;
     int lflag = FALSE;
     int fflag = FALSE;
@@ -28,42 +28,61 @@ int cmd_ls(char** args, int n_args) {
     DirFileEntry entry;
     iNode* inode;
     char display[FILE_NAME_MAX + 1];
+    char str[MAX_PATH_LEN];
 
     while (f_readdir(&dir_stream, &entry) != -1) {
         //ignore the previous/cur directory
         if (strcmp(entry.file_name, ".") == 0) continue;
         if (strcmp(entry.file_name, "..") == 0) continue;
 
-        strcpy(display, entry.file_name);
         if (it_exist(entry.inode_idx) == TRUE) {
             inode = it_get_node(entry.inode_idx);
         } else {
             fs_get_inode(inode, entry.inode_idx, cur_dev);
         }
 
+        strcpy(display, entry.file_name);
         if (fflag == TRUE && inode->file_type == FT_DIR) {
             strcat(display, "/");
         }
-        if (lflag == TRUE) {
-            printf("permissions ");
-            printf("%d ", inode->nlink);
-            printf("%d\t", inode->uid);
-            printf("%d\t", inode->gid);
-            printf("%d\t", inode->size);
-            printf("%d\t", inode->mtime);
+
+        if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+            if (lflag == TRUE) {
+                sprintf(str, "permissions\t%d\t%d\t%d\t%d\t%d\t", inode->nlink, inode->uid, inode->gid, inode->size, inode->mtime);
+                f_write(str, strlen(str), 1, fd);
+            }
+            f_write(display, strlen(display), 1, fd);
+            if (lflag) f_write("\n", strlen("\n"), 1, fd);
+        } else {
+            if (lflag == TRUE) {
+                printf("permissions ");
+                printf("%d\t", inode->nlink);
+                printf("%d\t", inode->uid);
+                printf("%d\t", inode->gid);
+                printf("%d\t", inode->size);
+                printf("%d\t", inode->mtime);
+            }
+            printf("%s\t", display);
+            if (lflag) printf("\n");
         }
-        printf("%s\t", display);
-        if (lflag) printf("\n");
     }
-    printf("\n");
+
+    if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+        f_write("\n", strlen("\n"), 1, fd);
+        f_close(fd);
+    } else {
+        printf("\n");
+    }
 
     return 0;
 }
 
 int cmd_mkdir(char** dir_name, int n_args) {
+    printf("here!\n");
     int i = 0;
     for (i = 0; i < n_args; i++) {
         f_mkdir(dir_name[i]);
+        printf("make dir: %s\n", dir_name[i]);
     }
     return 0;
 }
@@ -77,12 +96,6 @@ int cmd_rmdir(char** dir_name, int n_args) {
 }
 
 int cmd_cat(int fd) {
-    /*    char buffer[512];
-        int act_size;
-        do {
-           // act_size = f_read(buffer, sizeof(buffer), 1, fd);
-            printf("%s", buffer);
-        } while(act_size != 0);*/
     return 0;
 }
 
@@ -118,7 +131,7 @@ int cmd_pwd() {
 
 int cmd_rm(char** path, int n_args) {
     int i = 0;
-    for(i = 0; i < n_args; i++){
+    for (i = 0; i < n_args; i++) {
         f_remove(path[i]);
     }
     return 0;
