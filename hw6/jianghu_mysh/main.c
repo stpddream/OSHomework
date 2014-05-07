@@ -125,8 +125,6 @@ int main(int argc, char** argv) {
         //further parse each commands and execute the commands
 
         int i, res, fd, n_args;
-        char file_path[MAX_PATH_LEN];
-
 
         for (i = 0; i < n_cmd; i++) {
 
@@ -140,15 +138,12 @@ int main(int argc, char** argv) {
             process->n_args = n_args;
             process->next = NULL;
 
-            strcpy(file_path, cur_dir);
-            strcat(file_path, gl_file);
-            
             if (res == READ_MODE) {
-                fd = f_open(file_path, "r");
+                fd = f_open(gl_file, "r");
             } else if (res == WRITE_OVRWT) {
-                fd = f_open(file_path, "w+");
+                fd = f_open(gl_file, "w+");
             } else if (res == WRITE_APND) {
-                fd = f_open(file_path, "a+");
+                fd = f_open(gl_file, "a+");
             }
 
             Job* job = job_create(gl_cmds, process,

@@ -26,7 +26,7 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     dir_stream.inode_idx = iList_tail->inode_idx;
 
     DirFileEntry entry;
-    iNode* inode;
+    iNode* inode = (iNode*) malloc(sizeof (iNode));
     char display[FILE_NAME_MAX + 1];
     char str[MAX_PATH_LEN];
 
@@ -74,6 +74,19 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
         printf("\n");
     }
 
+    free(inode);
+
+    return 0;
+}
+
+int cmd_pwd(int redir_mode, int fd) {
+    if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+        printf("write %s to fd %d\n", cur_dir, fd);
+        f_write(cur_dir, strlen(cur_dir), 1, fd);
+        f_close(fd);
+    } else {
+        printf("%s\n", cur_dir);
+    }
     return 0;
 }
 
@@ -81,7 +94,6 @@ int cmd_mkdir(char** dir_name, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
         f_mkdir(dir_name[i]);
-        printf("make dir: %s\n", dir_name[i]);
     }
     return 0;
 }
@@ -89,12 +101,10 @@ int cmd_mkdir(char** dir_name, int n_args) {
 int cmd_rmdir(char** dir_name, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
-        f_remove_dir(dir_name[i]);
+        if (f_remove_dir(dir_name[i]) == -1) {
+            printf("rm: cannot remove %s: No such file\n", path[i]);
+        }
     }
-    return 0;
-}
-
-int cmd_cat(int fd) {
     return 0;
 }
 
@@ -110,7 +120,14 @@ int cmd_cd(char* dir_name) {
     while (f_readdir(&ds, &entry) != -1) {
 
         if (strcmp(entry.file_name, dir_name) == 0) {
-            inode_append(entry.inode_idx);
+            if (strcmp(dir_name, "..") == 0) {
+                inode_remove_tail();
+            } else if (strcmp(dir_name, ".") == 0) {
+                continue;
+            } else {
+                inode_append(entry.inode_idx);
+            }
+
             cur_dir[0] = '\0';
             gen_path(cur_dir);
             found = TRUE;
@@ -124,16 +141,17 @@ int cmd_cd(char* dir_name) {
     return 0;
 }
 
-int cmd_pwd() {
-    printf("%s\n", cur_dir);
-    return 0;
-}
-
 int cmd_rm(char** path, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
-        f_remove(path[i]);
+        if (f_remove(path[i]) == -1) {
+            printf("rm: cannot remove %s: No such file\n", path[i]);
+        }
     }
+    return 0;
+}
+
+int cmd_cat(int fd) {
     return 0;
 }
 
@@ -182,26 +200,25 @@ int cmd_more(char* content) {
 
 }
 
-
 int chmod(char* args) {
-    int fd = f_open(args[1], "r");
-    int mult = 0;
-    char grp = args[0];
+    /*  int fd = f_open(args[1], "r");
+      int mult = 0;
+      char grp = args[0];
     
-    char op = args[1];
-    int sum = 0;
+      char op = args[1];
+      int sum = 0;
     
-    if(grp == 'x') mult = 1;
-    else if(grp == 'g') mult = 10;
-    else if(grp == 'u') mult = 100;
-    
-    
-    
-//    sum = ;
-    
-    
-    
-    
-    
+      if(grp == 'x') mult = 1;
+      else if(grp == 'g') mult = 10;
+      else if(grp == 'u') mult = 100;*/
+
+
+
+    //    sum = ;
+
+
+
+    return 0;
+
 }
 
