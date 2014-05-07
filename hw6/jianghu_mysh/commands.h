@@ -15,6 +15,9 @@
 #include <stdlib.h>
 
 #include "util.h"
+#include "inode_list.h"
+#include "libs/file.h"
+#include "libs/ft_dir.h"
 
 
 /**
@@ -22,9 +25,18 @@
  * @param 
  * @return 
  */
-int more(char* content);
-int cat(int fd);
 
+extern char cur_dir[MAX_PATH_LEN];
+
+int cmd_more(char* content);
+int cmd_cat(int fd);
+int cmd_ls(char* flags);
+int cmd_mkdir(char* dir_name);
+int cmd_rmdir(char* dir_name);
+int cmd_cd(char* dir_name);
+int cmd_pwd();
+int cmd_rm(char* path);
+int cmd_chmod();
 
 #endif	/* COMMANDS_H */
 
