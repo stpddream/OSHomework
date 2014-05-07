@@ -8,31 +8,32 @@ void b_exit() {
 
 int exec_job(Job* new_job) {
 
-    Process *cur_proc = new_job->f_process;
-    char* cur_cmd = cur_proc->args[0]+1;
+    /*
+    Process *p = new_job->f_process;
+    char* cur_cmd = p->args[0]+1;
 
     if (strcmp(cur_cmd, "ls") == 0) {
-        cmd_ls(cur_proc->args + 1, cur_proc->n_args - 1);
+        cmd_ls(p->args + 1, p->n_args - 1, new_job->redir_mode, new_job->file);
     } else if (strcmp(cur_cmd, "chmod") == 0) {
         printf("chmod:\t under construction...\n");
     } else if (strcmp(cur_cmd, "mkdir") == 0) {
-        cmd_mkdir(cur_proc->args + 1, cur_proc->n_args - 1);
+        cmd_mkdir(p->args + 1, p->n_args - 1);
     } else if (strcmp(cur_cmd, "rmdir") == 0) {
-        cmd_rmdir(cur_proc->args + 1, cur_proc->n_args - 1);
+        cmd_rmdir(p->args + 1, p->n_args - 1);
     } else if (strcmp(cur_cmd, "cd") == 0) {
-        if (cur_proc->n_args == 1) {
+        if (p->n_args == 1) {
             printf("please enter directory name\n");
         } else {
-            cmd_cd(cur_proc->args[1]);
+            cmd_cd(p->args[1]);
         }
     } else if (strcmp(cur_cmd, "pwd") == 0) {
-        cmd_pwd();
+        cmd_pwd(new_job->redir_mode, new_job->file);
     } else if (strcmp(cur_cmd, "cat") == 0) {
         cmd_cat(cur_proc->args[1]);
     } else if (strcmp(cur_cmd, "more") == 0) {
         printf("more:\t under construction...\n");
     } else if (strcmp(cur_cmd, "rm") == 0) {
-        cmd_rm(cur_proc->args + 1, cur_proc->n_args - 1);
+        cmd_rm(p->args + 1, p->n_args - 1);
     } else if (strcmp(cur_cmd, "mount") == 0) {
         printf("mount:\t under construction...\n");
     } else if (strcmp(cur_cmd, "unmount") == 0) {
@@ -42,7 +43,7 @@ int exec_job(Job* new_job) {
     } else {
         printf("invalid command, please try again\n");
     }
-    return 0;
+    return 0;*/
 }
 
 void sigchld_handler(int sig) {

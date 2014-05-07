@@ -1,6 +1,6 @@
 #include "commands.h"
 
-int cmd_ls(char** args, int n_args) {
+int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     int i;
     int lflag = FALSE;
     int fflag = FALSE;
@@ -26,8 +26,9 @@ int cmd_ls(char** args, int n_args) {
     dir_stream.inode_idx = iList_tail->inode_idx;
 
     DirFileEntry entry;
-    iNode* inode;
+    iNode* inode = (iNode*) malloc(sizeof (iNode));
     char display[FILE_NAME_MAX + 1];
+    char str[MAX_PATH_LEN];
 
     while (f_readdir(&dir_stream, &entry) != -1) {
         //ignore the previous/cur directory
@@ -44,23 +45,56 @@ int cmd_ls(char** args, int n_args) {
             fs_get_inode(inode, entry.inode_idx, cur_dev);
         }
 
+        strcpy(display, entry.file_name);
         if (fflag == TRUE && inode->file_type == FT_DIR) {
             strcat(display, "/");
         }
-        if (lflag == TRUE) {
-            printf("permissions ");
-            printf("%d ", inode->nlink);
-            printf("%d\t", inode->uid);
-            printf("%d\t", inode->gid);
-            printf("%d\t", inode->size);
-            printf("%d\t", inode->mtime);
+
+        if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+            if (lflag == TRUE) {
+                sprintf(str, "permissions\t%d\t%d\t%d\t%d\t%d\t", inode->nlink, inode->uid, inode->gid, inode->size, inode->mtime);
+                f_write(str, strlen(str), 1, fd);
+            }
+            f_write(display, strlen(display), 1, fd);
+            if (lflag) f_write("\n", strlen("\n"), 1, fd);
+        } else {
+            if (lflag == TRUE) {
+                printf("permissions ");
+                printf("%d\t", inode->nlink);
+                printf("%d\t", inode->uid);
+                printf("%d\t", inode->gid);
+                printf("%d\t", inode->size);
+                printf("%d\t", inode->mtime);
+            }
+            printf("%s\t", display);
+            if (lflag) printf("\n");
         }
+
         printf("%s\t", display);
         if (lflag) printf("\n");
         free(inode);
     }
-    printf("\n");
 
+    if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+        f_write("\n", strlen("\n"), 1, fd);
+        f_close(fd);
+    } else {
+        printf("\n");
+    }
+
+    free(inode);
+
+    return 0;
+}
+
+int cmd_pwd(int redir_mode, int fd) {
+    if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
+        printf("write %s to fd %d\n", cur_dir, fd);
+        f_write(cur_dir, strlen(cur_dir), 1, fd);
+        f_close(fd);
+    } else {
+        printf("%s\n", cur_dir);
+    }
     return 0;
 }
 
@@ -75,7 +109,9 @@ int cmd_mkdir(char** dir_name, int n_args) {
 int cmd_rmdir(char** dir_name, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
-        f_remove_dir(dir_name[i]);
+        if (f_remove_dir(dir_name[i]) == -1) {
+            //printf("rm: cannot remove %s: No such file\n", path[i]);
+        }
     }
     return 0;
 }
@@ -110,7 +146,14 @@ int cmd_cd(char* dir_name) {
     while (f_readdir(&ds, &entry) != -1) {
 
         if (strcmp(entry.file_name, dir_name) == 0) {
-            inode_append(entry.inode_idx);
+            if (strcmp(dir_name, "..") == 0) {
+                inode_remove_tail();
+            } else if (strcmp(dir_name, ".") == 0) {
+                continue;
+            } else {
+                inode_append(entry.inode_idx);
+            }
+
             cur_dir[0] = '\0';
             gen_path(cur_dir);
             found = TRUE;
@@ -124,15 +167,12 @@ int cmd_cd(char* dir_name) {
     return 0;
 }
 
-int cmd_pwd() {
-    printf("%s\n", cur_dir);
-    return 0;
-}
-
 int cmd_rm(char** path, int n_args) {
     int i = 0;
-    for(i = 0; i < n_args; i++){
-        f_remove(path[i]);
+    for (i = 0; i < n_args; i++) {
+        if (f_remove(path[i]) == -1) {
+            printf("rm: cannot remove %s: No such file\n", path[i]);
+        }
     }
     return 0;
 }
@@ -182,7 +222,6 @@ int cmd_more(char* content) {
 
 }
 
-
 int chmod(char* args) {
     int fd = f_open(args, "r");
     int mult = 0;
@@ -198,6 +237,24 @@ int chmod(char* args) {
     
     
 //    sum = ;
+
+    /*  int fd = f_open(args[1], "r");
+      int mult = 0;
+      char grp = args[0];
     
+      char op = args[1];
+      int sum = 0;
+    
+      if(grp == 'x') mult = 1;
+      else if(grp == 'g') mult = 10;
+      else if(grp == 'u') mult = 100;*/
+
+
+
+    //    sum = ;
+
+
+
+    return 0;
 }
 
