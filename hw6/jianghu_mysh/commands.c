@@ -35,9 +35,12 @@ int cmd_ls(char** args, int n_args) {
         if (strcmp(entry.file_name, "..") == 0) continue;
 
         strcpy(display, entry.file_name);
+        printf("cur file %s\n", entry.file_name);
+     
         if (it_exist(entry.inode_idx) == TRUE) {
             inode = it_get_node(entry.inode_idx);
         } else {
+            inode = (iNode*)malloc(sizeof(iNode));
             fs_get_inode(inode, entry.inode_idx, cur_dev);
         }
 
@@ -54,6 +57,7 @@ int cmd_ls(char** args, int n_args) {
         }
         printf("%s\t", display);
         if (lflag) printf("\n");
+        free(inode);
     }
     printf("\n");
 
@@ -76,13 +80,21 @@ int cmd_rmdir(char** dir_name, int n_args) {
     return 0;
 }
 
-int cmd_cat(int fd) {
-    /*    char buffer[512];
-        int act_size;
-        do {
-           // act_size = f_read(buffer, sizeof(buffer), 1, fd);
-            printf("%s", buffer);
-        } while(act_size != 0);*/
+int cmd_cat(char* path) {
+    
+    int fd = f_open(path, "r");
+    printf("path is %s\n", path);
+    printf("fd is %d\n", fd);
+    
+    char buffer[512];
+    int act_size;   
+    while(1) {
+        act_size = f_read(buffer, sizeof(buffer), 1, fd);
+        if(act_size == 0) break;
+        printf("%s", buffer);
+    } while(act_size != 0);
+    
+    f_close(fd);
     return 0;
 }
 
@@ -172,7 +184,7 @@ int cmd_more(char* content) {
 
 
 int chmod(char* args) {
-    int fd = f_open(args[1], "r");
+    int fd = f_open(args, "r");
     int mult = 0;
     char grp = args[0];
     
@@ -186,10 +198,6 @@ int chmod(char* args) {
     
     
 //    sum = ;
-    
-    
-    
-    
     
 }
 
