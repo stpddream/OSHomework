@@ -67,9 +67,6 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
             printf("%s\t", display);
             if (lflag) printf("\n");
         }
-
-        printf("%s\t", display);
-        if (lflag) printf("\n");
     }
 
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
@@ -86,7 +83,6 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
 
 int cmd_pwd(int redir_mode, int fd) {
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
-        printf("write %s to fd %d\n", cur_dir, fd);
         f_write(cur_dir, strlen(cur_dir), 1, fd);
         f_close(fd);
     } else {
@@ -177,7 +173,6 @@ int cmd_rm(char** path, int n_args) {
 
 int cmd_chmod(char* mode, char** files, int n_files) {
     int i, who, what, symbol;
-    printf("tada!\n");
     // parse symbolic mode
     if (strlen(mode) != 3) printf("chmod: invalid mode: ‘%s’\n", mode);
     return 0;

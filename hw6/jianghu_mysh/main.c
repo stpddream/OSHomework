@@ -108,13 +108,9 @@ int main(int argc, char** argv) {
     jobs_init();
     set_cur_idx(2); //Current directory to root.
     int n_cmd;
-
-    printf("where fault???\n");
-    
-    printf("iowjeoifjweiofjeqwiofjqewiogjoqewijgiqegj\n");
     ////////////// Manual file write
    
-    
+    /*
     int mfd = f_open("file", "w+");
     printf("done open mfd is %d\n", mfd);
     
@@ -124,7 +120,7 @@ int main(int argc, char** argv) {
     printf("rt2 is %d\n", rt2);
 
     f_close(mfd);
-    
+    */
 /*
     
     char another[20];
