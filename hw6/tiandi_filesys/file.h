@@ -19,9 +19,6 @@
 #include "kernel_mem.h"
 #include "ft_dir.h"
 
-#define FP_READ 1
-#define FP_WRITE 1 << 1
-#define FP_APPEND 1 << 2
 
 
 int f_open(char* path, const char* mode);

@@ -14,11 +14,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "libs/file.h"
 #include "util.h"
 #include "inode_list.h"
 #include "libs/file.h"
 #include "libs/ft_dir.h"
 #include "parser.h"
+#include "util.h"
+
+
+#define MAX_PATH_LEN 256
 
 /**
  * Linux command more

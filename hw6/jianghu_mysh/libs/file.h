@@ -19,9 +19,11 @@
 #include "kernel_mem.h"
 #include "ft_dir.h"
 
-#define FP_READ 1
+#define FP_APPEND 1
 #define FP_WRITE 1 << 1
-#define FP_APPEND 1 << 2
+#define FP_READ 1 << 2
+
+
 
 
 int f_open(char* path, const char* mode);
@@ -37,7 +39,6 @@ DirStream* f_opendir(char* path);
 int f_readdir(DirStream* ds, DirFileEntry* entry);
 int f_closedir(DirStream* ds);
 int f_mkdir(char* path);
-int f_rmdir();
 int f_mount();
 int f_umount();
 

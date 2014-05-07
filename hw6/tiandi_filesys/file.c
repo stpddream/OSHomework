@@ -83,11 +83,20 @@ int f_open(char* path, const char* mode) {
         inode_idx = fs_alloc_inode(cur_dev);
         fs_get_inode(inode, inode_idx, cur_dev);
         activate_inode(inode, FT_FILE, prev_name);
-        fs_update_inode(inode, inode_idx, cur_dev);
+        fs_update_inode(inode, inode_idx, cur_dev);   
+        
+        
     } else fs_get_inode(inode, prev_idx, cur_dev);
+    
+    //check permission
+    if(check_permission(inode, mode) == FALSE) return -1;
+
+    
+    
     it_put(inode, inode_idx);
     int fd = ft_put(inode_idx, mode_v);
 
+    
     print_filetable();
 
 
@@ -104,36 +113,48 @@ int f_read(void* ptr, size_t size, size_t nmemb, int fd) {
 
     int permission = ft_get_perm(fd);
 
-    if ((permission & 1) == 0) {
+    if (((permission >> 2) & 1) == 0) {
         return -1;
     }
 
     int inode_idx = ft_get_idx(fd);
     int cur_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
-    return fl_read(cur_dev, inode, cur_pos, size * nmemb, ptr);
+    
+    int byte_read = fl_read(cur_dev, inode, cur_pos, size * nmemb, ptr);    
+    cur_pos += byte_read;    
+    ft_set_pos(fd, cur_pos);
+    return byte_read;    
 }
 
 int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
 
     int permission = ft_get_perm(fd);
     int write_pos;
+    
+    //Check open mode permission
     if (((permission >> 1) & 1) == 0) {
         return -1;
     }
-
+    
     int inode_idx = ft_get_idx(fd);
     write_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
+    
+    //Check file permission
+    if(check_permission(inode, PM_WRITE) == 0) return -1;
 
-    if (((permission >> 2) & 1) == 1) {
+    if ((permission & 1) == 1) {
         write_pos = inode->size + 1;
     }
 
     int bytes_written = fl_write(cur_dev, inode, write_pos, size * nmemb, ptr);
     inode->size += bytes_written;
-    fs_update_inode(inode, inode_idx, cur_dev);
-    return 0;
+    fs_update_inode(inode, inode_idx, cur_dev);    
+    write_pos += bytes_written;
+    ft_set_pos(fd, write_pos);    
+    return bytes_written;    
+
 }
 
 int f_remove(char* path) {
@@ -155,7 +176,6 @@ int f_remove(char* path) {
     }
 
     dirs = strtok(this_path, "/");
-
     iNode cur_node;
 
 
@@ -171,9 +191,7 @@ int f_remove(char* path) {
     //printf("right now examining %s\n", dirs);
     if (cur_idx == -1) return -1;
 
-    printf("current inode %s\n", cur_node.name);
-
-
+    printf("current inode %s\n", cur_node.name);   
 
 
     while (dirs != NULL) {
@@ -407,6 +425,28 @@ int f_mkdir(char* path) {
     fs_get_inode(&parent_node, parent_idx, cur_dev);
     dir_add(&parent_node, inode_idx, prev_name);
     fs_update_inode(&parent_node, parent_idx, cur_dev);
+
+    return 0;
+}
+
+
+int f_chmod(char* path, int type, int which, int mode) {
+    int fd = f_open(path, "r");
+    iNode* inode = it_get_node(fd);
+    
+//    if(type == )
+    
+    
+    if(which == PM_ALL) {
+        inode->permission = inode->permission - inode->permission % 10 + mode;
+    }
+    
+    else if(which = PM_GROUP) {
+        inode->permission = inode->permission - (inode->permission / 10 % 10) + mode * 10;
+    }    
+    else {
+        inode->permission = inode->permission - inode->permission / 100 + mode * 100;
+    }    
 
     return 0;
 }

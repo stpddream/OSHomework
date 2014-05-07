@@ -49,29 +49,51 @@ int parse_process(char* line, char** processes) {
     return i;
 }
 
-int parse_redirection(char* line, char* cmds, char* file) {
-    int i = 0;
+int parse_redirection(char* line, char** args, char* file, int* redir_mode) {
+    int i = 0, j = 0;
+    int n_args;
     while (line[i] != '\0') {
         if (line[i] == '>') {
             if (line[i + 1] == '>') {
-                strcpy(cmds, strip_space(substring(line, 0, i)));
+                n_args = parse_space(strip_space(substring(line, 0, i)), args);
                 strcpy(file, strip_space(substring(line, i + 2, strlen(line) + 1)));
-                return WRITE_APND;
+                while (file[j] != '\0' && file[j] != ' ') j++;
+                if (file[j] == ' ') {
+                    n_args += parse_space(strip_space(substring(file, j + 1, strlen(file) + 1)), args + n_args);
+                    strcpy(file, strip_space(substring(file, 0, j)));
+                }
+                (*redir_mode) = WRITE_APND;
+                return n_args;
             } else {
-                strcpy(cmds, strip_space(substring(line, 0, i)));
+                n_args = parse_space(strip_space(substring(line, 0, i)), args);
                 strcpy(file, strip_space(substring(line, i + 1, strlen(line) + 1)));
-                return WRITE_OVRWT;
+                while (file[j] != '\0' && file[j] != ' ') j++;
+                if (file[j] == ' ') {
+
+                    n_args += parse_space(strip_space(substring(file, j + 1, strlen(file) + 1)), args + n_args);
+                    strcpy(file, strip_space(substring(file, 0, j)));
+                }
+                (*redir_mode) = WRITE_OVRWT;
+                return n_args;
             }
         } else if (line[i] == '<') {
-            strcpy(cmds, strip_space(substring(line, 0, i)));
+            n_args = parse_space(strip_space(substring(line, 0, i)), args);
             strcpy(file, strip_space(substring(line, i + 1, strlen(line) + 1)));
-            return READ_MODE;
+            while (file[j] != '\0' && file[j] != ' ') j++;
+            if (file[j] == ' ') {
+                n_args += parse_space(strip_space(substring(file, j + 1, strlen(file) + 1)), args + n_args);
+                strcpy(file, strip_space(substring(file, 0, j)));
+            }
+            (*redir_mode) = READ_MODE;
+            return n_args;
         }
         i++;
     }
-    strcpy(cmds, strip_space(line));
+    n_args = parse_space(strip_space(substring(line, 0, i)), args);
     strcpy(file, "");
-    return -1;
+
+    (*redir_mode) = -1;
+    return n_args;
 }
 
 int parse_space(char* cmd_str, char** args) {

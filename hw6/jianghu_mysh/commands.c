@@ -78,7 +78,6 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
 }
 
 int cmd_mkdir(char** dir_name, int n_args) {
-    printf("here!\n");
     int i = 0;
     for (i = 0; i < n_args; i++) {
         f_mkdir(dir_name[i]);
@@ -121,6 +120,7 @@ int cmd_cd(char* dir_name) {
 
     if (!found) printf("-mysh: cd: %s: No such file or directory\n", dir_name);
 
+    set_cur_idx(iList_tail->inode_idx);
     return 0;
 }
 
@@ -183,4 +183,25 @@ int cmd_more(char* content) {
 }
 
 
+int chmod(char* args) {
+    int fd = f_open(args[1], "r");
+    int mult = 0;
+    char grp = args[0];
+    
+    char op = args[1];
+    int sum = 0;
+    
+    if(grp == 'x') mult = 1;
+    else if(grp == 'g') mult = 10;
+    else if(grp == 'u') mult = 100;
+    
+    
+    
+//    sum = ;
+    
+    
+    
+    
+    
+}
 

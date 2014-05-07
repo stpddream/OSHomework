@@ -21,7 +21,6 @@
 #include "util.h"
 #include "jobs.h"
 #include "inode_list.h"
-#include "usr.h"
 #include "commands.h"
 
 #include "libs/device_ctrl.h"
@@ -32,6 +31,7 @@
 #include "libs/file_table.h"
 #include "libs/file.h"
 #include "libs/ft_dir.h"
+
 
 
 #define MAX_CMD 20
@@ -46,7 +46,7 @@ void clean_up();
 extern Dev* cur_dev;
 
 char cur_dir[MAX_PATH_LEN];
-User* users[3];
+//User* users[3];
 
 
 char** args;
@@ -65,8 +65,13 @@ pid_t mysh_pgid;
 struct termios mysh_tmodes;
 sigset_t chld_mask; //Sig set that contains only SIG_CHLD
 
-User* users[3];
+
+void init_mysh();
+void clean_up();
+
 int cur_usr;
+
+extern Dev* cur_dev;
 
 int main(int argc, char** argv) {
     ///////////////// INITIALIZE EVERYTHING /////////////////////
@@ -75,13 +80,17 @@ int main(int argc, char** argv) {
     cur_dev = dev_create(fp);
 
     dev_init(cur_dev, 10240000);
+    printf("Even before??\n");
     fs_init(cur_dev, 10240000);
+    printf("after this???\n");
+
+
 
     //Init tables
     ft_init();
     it_init();
 
-    user_init();
+    //    user_init();
     init_mysh();
 
     //append root to current path
@@ -94,12 +103,16 @@ int main(int argc, char** argv) {
 
     printf("---- Welcome to Jianghu Shell Please login ---- \n");
 
-    while ((cur_usr = user_login()) == -1);
+
+    //  user_init();
+    //while ((cur_usr = user_login()) == -1);
 
     printf("Welcome user %d\n", cur_usr);
 
     jobs_init();
     int n_cmd;
+
+    printf("where fault???\n");
     commands = malloc(MAX_CMD * sizeof (char*));
     while (1) {
         printf("TERMINAL >>  ");
@@ -119,16 +132,14 @@ int main(int argc, char** argv) {
         int i, res, fd, n_args;
         char file_path[MAX_PATH_LEN];
 
-        for (i = 0; i < n_cmd; i++) {
-            job_line = (char*) malloc(sizeof (char)*strlen(commands[i]));
-            proc_cmds = (char**) malloc(sizeof (char*)*MAX_CMD);
 
-            res = parse_redirection(commands[i], gl_cmds, gl_file);
+        for (i = 0; i < n_cmd; i++) {
 
             args = (char**) malloc(sizeof (char*)*MAX_ARG_LEN);
-            Process* process = (Process*) malloc(sizeof (Process));
 
-            n_args = parse_space(gl_cmds, args);
+            // parse redirection
+            n_args = parse_redirection(commands[i], args, gl_file, &res);
+            Process* process = (Process*) malloc(sizeof (Process));
 
             process->args = args;
             process->n_args = n_args;
@@ -136,6 +147,7 @@ int main(int argc, char** argv) {
 
             strcpy(file_path, cur_dir);
             strcat(file_path, gl_file);
+            
             if (res == READ_MODE) {
                 fd = f_open(file_path, "r");
             } else if (res == WRITE_OVRWT) {
@@ -143,15 +155,13 @@ int main(int argc, char** argv) {
             } else if (res == WRITE_APND) {
                 fd = f_open(file_path, "a+");
             }
-            
+
             Job* job = job_create(gl_cmds, process,
                     ((gl_cmds[0] == '&') ? JOB_BACK : JOB_FORE),
                     fd, res);
             exec_job(job);
         }
     }
-
-    user_clean();
 
     return 0;
 }

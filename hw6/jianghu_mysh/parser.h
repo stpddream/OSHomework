@@ -29,8 +29,8 @@ char* strip_space(char*);
 int parse_args(char*, char**);
 int parse_process(char*, char**);
 int parse_space(char*, char**);
-int parse_redirection(char*, char*, char*);
-
+//int parse_redirection(char*, char*, char*);
+int parse_redirection(char* line, char** args, char* file, int* redir_mode);
 
 
 #endif	/* PARSER_H */
