@@ -37,6 +37,7 @@ DirStream* f_opendir(char* path);
 int f_readdir(DirStream* ds, DirFileEntry* entry);
 int f_closedir(DirStream* ds);
 int f_mkdir(char* path);
+int f_rmdir();
 int f_mount();
 int f_umount();
 
