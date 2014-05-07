@@ -46,8 +46,7 @@ void clean_up();
 extern Dev* cur_dev;
 
 char cur_dir[MAX_PATH_LEN];
-//User* users[3];
-
+//User* users[3]
 
 char** args;
 char* job_line;
@@ -85,7 +84,6 @@ int main(int argc, char** argv) {
     printf("after this???\n");
     
     
-
     //Init tables
     ft_init();
     it_init();
@@ -104,12 +102,13 @@ int main(int argc, char** argv) {
     printf("---- Welcome to Jianghu Shell Please login ---- \n");
       
     
-  //  user_init();
-    //while ((cur_usr = user_login()) == -1);
+    user_init();
+    while ((cur_usr = user_login()) == -1);
 
     printf("Welcome user %d\n", cur_usr);
 
     jobs_init();
+    set_cur_idx(2); //Current directory to root.
     int n_cmd;
     
     printf("where fault???\n");
@@ -124,8 +123,6 @@ int main(int argc, char** argv) {
 
         //allocates memory to cmdlines array and parse the input       
         n_cmd = parse_args(line, commands);
-
-
 
         //further parse each commands and execute the commands
 
