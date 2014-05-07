@@ -47,6 +47,8 @@ int user_login() {
         printf("Invalid password or user name\n");
         return -1;
     }
+    
+    set_user(users[i]);
     return users[i]->uid;
 }
 
