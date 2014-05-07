@@ -5,6 +5,7 @@
  * Created on April 28, 2014, 8:00 PM
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,13 +17,18 @@
 #include "file.h"
 #include "ft_dir.h"
 
+
+
 extern FileTable file_table;
 
-Dev* cur_dev;
 
+int main(int argc, char** argv) {
+    return 0;
+}
 /*
  * 
  */
+/*
 int main(int argc, char** argv) {
     
 
@@ -53,9 +59,9 @@ int main(int argc, char** argv) {
     f_mkdir("/good/etc");
     f_mkdir("/good/quite");
     
-    //f_mkdir("/good/quite/super");
-    //f_mkdir("/good/quite/haha");
-    //f_mkdir("/good/quite/so");
+    f_mkdir("/good/quite/super");
+    f_mkdir("/good/quite/haha");
+    f_mkdir("/good/quite/so");
     
     int fd = f_open("/good/super.c", "w");
     f_open("/good/hahah.o", "w");
@@ -72,13 +78,7 @@ int main(int argc, char** argv) {
     printf("fd is %d\n", f_open("/good/super.c", "w"));
     printf("not exist %p\n", f_opendir("/good/"));
     printf("not exist %p\n", f_opendir("/good/quite/"));
-    
-   
-    printf("index is %d\n", idx);
-
-
-//   ibit_on(cur_dev, 7);
-    
+            
          
   /*
     int good_idx = dir_lookup(&root, "good");
@@ -265,6 +265,8 @@ int main(int argc, char** argv) {
     }
     
     f_closedir(res);*/
+/*
     return (EXIT_SUCCESS);
 }
 
+*/

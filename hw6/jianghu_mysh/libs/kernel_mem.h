@@ -11,12 +11,9 @@
 
 #define UNAME_MAX_LEN
 
-#include "device_ctrl.h"
 
 #define UP_SUPER 1
 #define UP_REG 2
-
-extern Dev* cur_dev;
 /*
 typedef struct {
     char name[UNAME_MAX_LEN];

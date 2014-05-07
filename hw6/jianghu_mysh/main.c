@@ -21,7 +21,13 @@
 #include "util.h"
 #include "jobs.h"
 #include "commands.h"
+//#include "device_ctrl.h"
+#include "libs/device_ctrl.h"
+#include "libs/kernel_mem.h"
 #include <termios.h>
+
+
+
 
 #define MAX_CMD 20
 #define MAX_ARG_LEN 256
@@ -110,7 +116,6 @@ void clean_cmdlines(){
 int user;
 
 
-
 int main(int argc, char** argv) {        
 
     /*
@@ -122,6 +127,9 @@ int main(int argc, char** argv) {
     */
     
     
+    FILE* fp;
+    fp = fopen("testfile/disk", "w+");    
+    Dev* dev = dev_create(fp);    
     
     init_mysh();
     
