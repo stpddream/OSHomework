@@ -32,7 +32,7 @@ int exec_job(Job* new_job) {
     } else if (strcmp(cur_cmd, "pwd") == 0) {
         cmd_pwd(new_job->redir_mode, new_job->file);
     } else if (strcmp(cur_cmd, "cat") == 0) {
-        printf("cat:\t under construction...\n");
+        cmd_cat(p->args[1]);
     } else if (strcmp(cur_cmd, "more") == 0) {
         printf("more:\t under construction...\n");
     } else if (strcmp(cur_cmd, "rm") == 0) {

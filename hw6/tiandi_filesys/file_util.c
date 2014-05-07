@@ -16,8 +16,7 @@ int activate_inode(iNode* inode, int file_type, char* name) {
     inode->atime = time(0);
          
     inode->uid = cur_user->uid;
-    inode->gid = cur_user->gid;
-    
+    inode->gid = cur_user->gid;    
     inode->permission = get_pm_val(PM_READ | PM_WRITE, PM_READ | PM_WRITE, PM_READ);
     
         
@@ -33,7 +32,7 @@ int check_permission(iNode* inode, int mode) {
     
     //By owner
     if(cur_user->uid == inode->uid) {
-        pch = inode->permission % 10;
+        pch = inode->permission / 100;
     }
     //By group member
     else if(cur_user->gid == inode->gid) {
@@ -41,7 +40,7 @@ int check_permission(iNode* inode, int mode) {
     }
     //Random user
     else {
-        pch = inode->permission / 100;
+        pch = inode->permission % 10;
     }
     
     //PM_READ
