@@ -16,6 +16,7 @@
 #include "inode_table.h"
 #include "filesys_hd.h"
 #include "file_util.h"
+#include "kernel_mem.h"
 #include "ft_dir.h"
 
 #define FP_READ 1
