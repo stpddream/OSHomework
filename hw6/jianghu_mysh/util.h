@@ -16,6 +16,7 @@
 
 #define TRUE 1
 #define FALSE 0
+#define MAX_PATH_LEN 256
 
 /* command id */
 #define KILL 1

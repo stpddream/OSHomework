@@ -13,21 +13,40 @@
 #include <signal.h>
 #include <readline/readline.h>
 #include <sys/types.h>
-
+#include <termios.h>
 
 #include "parser.h"
 #include "cmd_control.h"
 #include "cmd_history.h"
 #include "util.h"
 #include "jobs.h"
+#include "inode_list.h"
+#include "usr.h"
 #include "commands.h"
+
 #include "libs/device_ctrl.h"
 #include "libs/kernel_mem.h"
-#include <termios.h>
-#include "usr.h"
+#include "libs/bitmap.h"
+#include "libs/util.h"
+#include "libs/filesys_util.h"
+#include "libs/file_table.h"
+#include "libs/file.h"
+#include "libs/ft_dir.h"
+
 
 #define MAX_CMD 20
 #define MAX_ARG_LEN 256
+
+/***HEADERS***/
+void init_mysh();
+void clean_up();
+
+
+/*** GLOBAL VARIABLES ***/
+extern Dev* cur_dev;
+
+char cur_dir[MAX_PATH_LEN];
+User* users[3];
 
 
 char** args;
@@ -42,19 +61,30 @@ pid_t mysh_pgid;
 struct termios mysh_tmodes;
 sigset_t chld_mask; //Sig set that contains only SIG_CHLD
 
-void init_mysh();
-void clean_up();
-
 User* users[3];
 int cur_usr;
 
-int main(int argc, char** argv) {
 
+int main(int argc, char** argv) {    
+    ///////////////// INITIALIZE EVERYTHING /////////////////////
+    FILE* fp;
+    fp = fopen("testfile/disk", "w+");
+    cur_dev = dev_create(fp);
+
+    dev_init(cur_dev, 10240000);
+    fs_init(cur_dev, 10240000);
+
+    //Init tables
+    ft_init();
+    it_init();
+    
+    user_init();
     init_mysh();
+    
+    //////////////////////// INIT END ////////////////////////////
 
     printf("---- Welcome to Jianghu Shell Please login ---- \n");
 
-    user_init();
     while ((cur_usr = user_login()) == -1);
 
     printf("Welcome user %d\n", cur_usr);
@@ -76,33 +106,11 @@ int main(int argc, char** argv) {
         //further parse each commands and execute the commands
 
         int i, j;
-        int writeMode, writeStart;
-        int readMode, readFrom;
+       
         for (i = 0; i < n_cmd; i++) {
             job_line = (char*) malloc(sizeof (char)*strlen(commands[i]));
             proc_cmds = (char**) malloc(sizeof (char*)*MAX_CMD);
             printf("%s\n", commands[i]);
-            
-            while(commands[i][j] != '\0'){ //while not at the end of the command
-                if(commands[i][j] == '>'){
-                    //check ahead to see if it is >>
-                    if(commands[i][j+1] == '>'){
-                        writeMode = WRITE_APND;
-                        writeStart = j+2;
-                        commands[i][j] = '\0';
-                        commands[i][j+1] = '\0';
-                        j++;
-                    }else{
-                        writeMode = WRITE_OVRWT;
-                        writeStart = j+1;
-                    }
-                }else if(commands[i][j] == '<'){
-                    readMode = READ_MODE;
-                    readFrom = j+1;
-                    commands[i][j] = '\0';
-                }
-                j++;
-            }
 
         }
     }
