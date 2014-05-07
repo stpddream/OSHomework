@@ -36,11 +36,11 @@ inode_table.o: inode_table.c inode_table.h util.h
 util.o: util.c util.h filesys.h
 	$(CC) $(CFLAGS) -c util.c
 	
-kernel_mem.o: kernel_mem.c kernel_mem.h
-	$(CC) $(CFALGS) -c kernel_mem.c
-	
 kernel_usr.o: kernel_usr.c kernel_usr.h
 	$(CC) $(CFLAGS) -c kernel_usr.c
+		
+kernel_mem.o: kernel_mem.c kernel_mem.h
+	$(CC) $(CFALGS) -c kernel_mem.c
 	
 clean:
 	rm -f *.o test_main .*.sw*

@@ -19,6 +19,7 @@ int ft_put(int inode_idx, int protection);
 int ft_get_idx(int fd);
 int ft_get_perm(int fd);
 int ft_get_pos(int fd);
+int ft_set_pos(int fd, int pos);
 int ft_remove(int fd);
 int ft_exist(int inode_idx);
 

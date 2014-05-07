@@ -22,6 +22,8 @@ extern Dev* cur_dev;
 extern User* cur_user;
 
 void set_user(User* user);
+void set_cur_idx(int idx);
+
 
 #endif	/* KERNEL_MEM_H */
 

@@ -95,7 +95,23 @@ int fs_init(Dev* device, int size) {
     iNode* inode = (iNode*)malloc(sizeof(iNode));
     fs_alloc_inode(device); /* Allocate inode 2 */
     fs_get_inode(inode, ROOT_NODE, device);       
-    activate_inode(inode, FT_DIR, "/");             
+        
+    inode->nlink = 1;
+    inode->file_type = FT_DIR;
+    inode->mtime = time(0);
+    inode->ctime = time(0);
+    inode->atime = time(0);
+         
+    inode->uid = 0;
+    inode->gid = 0;
+    
+    inode->permission = get_pm_val(PM_READ | PM_WRITE, PM_READ | PM_WRITE, PM_READ);
+            
+    strcpy(inode->name, "/");
+    inode->size = 0;
+    
+    
+    
     fs_update_inode(inode, ROOT_NODE, device);    
     it_put(inode, ROOT_NODE);   
     return 0;

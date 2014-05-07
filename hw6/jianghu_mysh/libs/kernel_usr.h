@@ -35,7 +35,14 @@ extern "C" {
     
     
     
-
+//Permissions
+#define PM_EXC 1
+#define PM_READ 1 << 1
+#define PM_WRITE 1 << 2
+    
+#define PM_USER 0
+#define PM_GROUP 1
+#define PM_ALL 2
     
 int get_pm_val(char owner, char group, char all);
 

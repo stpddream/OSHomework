@@ -89,6 +89,7 @@ int f_open(char* path, const char* mode) {
     } else fs_get_inode(inode, prev_idx, cur_dev);
     
     //check permission
+    if(check_permission(inode, mode) == FALSE) return -1;
 
     
     
@@ -119,7 +120,11 @@ int f_read(void* ptr, size_t size, size_t nmemb, int fd) {
     int inode_idx = ft_get_idx(fd);
     int cur_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
-    return fl_read(cur_dev, inode, cur_pos, size * nmemb, ptr);
+    
+    int byte_read = fl_read(cur_dev, inode, cur_pos, size * nmemb, ptr);    
+    cur_pos += byte_read;    
+    ft_set_pos(fd, cur_pos);
+    return byte_read;    
 }
 
 int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
@@ -145,8 +150,11 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
 
     int bytes_written = fl_write(cur_dev, inode, write_pos, size * nmemb, ptr);
     inode->size += bytes_written;
-    fs_update_inode(inode, inode_idx, cur_dev);
-    return 0;
+    fs_update_inode(inode, inode_idx, cur_dev);    
+    write_pos += bytes_written;
+    ft_set_pos(fd, write_pos);    
+    return bytes_written;    
+
 }
 
 int f_remove(char* path) {
