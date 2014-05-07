@@ -1,6 +1,6 @@
 CFLAGS = -g -Wall -fpic
 CC = gcc
-OBJS = test_main.o device_ctrl.o bitmap.o filesys.o filesys_util.o util.o file_table.o file.o inode_table.o file_util.o ft_dir.o kernel_mem.o
+OBJS = test_main.o device_ctrl.o bitmap.o filesys.o filesys_util.o util.o file_table.o file.o inode_table.o file_util.o ft_dir.o kernel_mem.o kernel_usr.o
 
 All:	tiandi_file
 tiandi_file: $(OBJS)
@@ -38,6 +38,9 @@ util.o: util.c util.h filesys.h
 	
 kernel_mem.o: kernel_mem.c kernel_mem.h
 	$(CC) $(CFALGS) -c kernel_mem.c
+	
+kernel_usr.o: kernel_usr.c kernel_usr.h
+	$(CC) $(CFLAGS) -c kernel_usr.c
 	
 clean:
 	rm -f *.o test_main .*.sw*

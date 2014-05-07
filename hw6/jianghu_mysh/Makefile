@@ -2,7 +2,7 @@ COMPILERFLAGS = -g -Wall -L../tiandi_filesys
 FLB = -lfilesys
 CC = gcc
 CFLAGS = $(COMPILERFLAGS)
-OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o usr.o commands.o
+OBJS = main.o cmd_control.o cmd_history.o parser.o jobs.o util.o commands.o
 
 All:	shell
 
@@ -26,9 +26,6 @@ parser.o:	parser.c parser.h
 
 jobs.o: jobs.c jobs.h
 	$(CC) $(CFLAGS) -c jobs.c
-	
-usr.o: usr.c usr.h util.h
-	$(CC) $(CFLAGS) -c usr.c	
 
 util.o: util.c util.h
 	$(CC) $(CFLAGS) -c util.c $(FLB)
