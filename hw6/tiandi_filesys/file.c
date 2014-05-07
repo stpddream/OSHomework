@@ -285,8 +285,12 @@ int f_stat(int fd, char* buf) {
 
 int f_close(int fd) {
     int inode_idx = ft_get_idx(fd);
-    iNode* inode = it_get_node(inode_idx);
-    fs_update_inode(inode, inode_idx, cur_dev);
+    int mode = ft_get_perm(fd);
+    if(((mode >> 1) & 1) == 1) {
+        iNode* inode = it_get_node(inode_idx);
+        fs_update_inode(inode, inode_idx, cur_dev);
+    }
+    
     ft_remove(fd);
     it_remove(inode_idx);
     return 0;

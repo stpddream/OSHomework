@@ -124,8 +124,6 @@ int cmd_cat(char* path) {
         if (act_size == 0) break;
         printf("%s", buffer);
     }
-    while (act_size != 0);
-
     printf("\n");
     f_close(fd);
     return 0;
