@@ -46,8 +46,8 @@ extern char cur_dir[MAX_PATH_LEN];
 #define CHMOD_ALL 24
 
 int cmd_more(char* content);
-int cmd_cat(int fd);
-int cmd_ls(char** args, int n_args, int redir_mode, int fd);
+int cmd_cat(char* path);
+//int cmd_ls(char** args, int n_args);
 int cmd_mkdir(char** dir_name, int n_args); 
 int cmd_rmdir(char** dir_name, int n_args);
 int cmd_cd(char* dir_name);

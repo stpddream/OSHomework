@@ -1,4 +1,4 @@
-COMPILERFLAGS = -g -Wall -L.
+COMPILERFLAGS = -g -Wall -L../tiandi_filesys/
 FLB = -lfilesys
 CC = gcc
 CFLAGS = $(COMPILERFLAGS)

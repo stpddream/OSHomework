@@ -11,6 +11,7 @@ int f_open(char* path, const char* mode) {
     int create_flag = FALSE;
     int mode_v = 0;
 
+      
     if (strcmp(mode, "r") == 0) {
         mode_v = mode_v | FP_READ;
     } else if (strcmp(mode, "r+") == 0) {
@@ -29,7 +30,7 @@ int f_open(char* path, const char* mode) {
         mode_v = mode_v | FP_READ | FP_WRITE | FP_APPEND;
         create_flag = TRUE;
     } else return -1;
-
+    
     char* dirs;
     int cur_idx;
     char this_path[strlen(path) + 1];
@@ -71,7 +72,6 @@ int f_open(char* path, const char* mode) {
         fs_get_inode(&cur_node, cur_idx, cur_dev);
         cur_idx = dir_lookup(&cur_node, dirs);
         if (create_flag == FALSE && cur_idx == -1) return -1;
-
         cnt++;
     }
 
@@ -89,16 +89,10 @@ int f_open(char* path, const char* mode) {
     } else fs_get_inode(inode, prev_idx, cur_dev);
     
     //check permission
-    if(check_permission(inode, mode) == FALSE) return -1;
-
-    
-    
+    if(check_permission(inode, mode_v) == FALSE) return -1;
+        
     it_put(inode, inode_idx);
     int fd = ft_put(inode_idx, mode_v);
-
-    
-    print_filetable();
-
 
     /** Add file to directory */
     iNode parent_node;
@@ -140,6 +134,7 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
     int inode_idx = ft_get_idx(fd);
     write_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
+    printf("permission for file is %d\n", inode->permission);
     
     //Check file permission
     if(check_permission(inode, PM_WRITE) == 0) return -1;
@@ -154,7 +149,6 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
     write_pos += bytes_written;
     ft_set_pos(fd, write_pos);    
     return bytes_written;    
-
 }
 
 int f_remove(char* path) {
@@ -190,9 +184,6 @@ int f_remove(char* path) {
     //printf("so it's here?? cur_idx %d\n", cur_idx);
     //printf("right now examining %s\n", dirs);
     if (cur_idx == -1) return -1;
-
-    printf("current inode %s\n", cur_node.name);   
-
 
     while (dirs != NULL) {
         parent_idx = prev_idx;
@@ -277,8 +268,7 @@ int f_remove_dir(char* path) {
         }
 
     }
-
-    printf("tiaochuqule\n");
+   
     f_closedir(ds);
     f_remove(path);
 
@@ -316,7 +306,7 @@ int f_rewind(int fd) {
 
 DirStream* f_opendir(char* path) {
     char this_path[strlen(path)];
-    strcpy(this_path, path);
+  
 
     char* dir;
     iNode cur_node;
@@ -325,8 +315,13 @@ DirStream* f_opendir(char* path) {
 
     if (path[0] == '/') {
         ds->inode_idx = 2;
+        strcpy(this_path, path + 1);
     }
-
+    else {
+        ds->inode_idx = cur_dir_idx;
+        strcpy(this_path, path);
+    }
+    
     dir = strtok(this_path, "/");
     while (dir != NULL) {
         fs_get_inode(&cur_node, ds->inode_idx, cur_dev);
@@ -371,13 +366,10 @@ int f_mkdir(char* path) {
         cur_idx = 2;
         strcpy(this_path, path + 1);
     } else {
-        cur_idx = cur_dir_idx;
-        printf("current directory is: %d\n", cur_idx);
-        printf("cur dir idx is %d\n", cur_dir_idx);
+        cur_idx = cur_dir_idx;        
         strcpy(this_path, path);
     }
-    printf("start to make\n");
-
+   
     dirs = strtok(this_path, "/");
 
     iNode cur_node;
@@ -444,12 +436,23 @@ int f_chmod(char* path, int type, int which, int mode) {
         inode->permission = inode->permission - inode->permission % 10 + mode;
     }
     
-    else if(which = PM_GROUP) {
+    else if(which == PM_GROUP) {
         inode->permission = inode->permission - (inode->permission / 10 % 10) + mode * 10;
     }    
     else {
         inode->permission = inode->permission - inode->permission / 100 + mode * 100;
     }    
 
+    return 0;
+}
+
+int f_mount(Dev* device) {
+    cur_dev = device;
+    return 0;
+}
+
+
+int f_umount() {
+    cur_dev = NULL;
     return 0;
 }
