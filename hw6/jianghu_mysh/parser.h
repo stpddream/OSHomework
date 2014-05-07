@@ -20,11 +20,16 @@
 #define DIR_IN 1
 #define DIR_OUT 0
 
+#define READ_MODE 0
+#define WRITE_OVRWT 1
+#define WRITE_APND 2
+
 char* strip_space(char*);
 
 int parse_args(char*, char**);
 int parse_process(char*, char**);
 int parse_space(char*, char**);
+int parse_redirection(char*, char*, char*);
 
 
 

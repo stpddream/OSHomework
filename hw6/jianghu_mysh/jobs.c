@@ -11,7 +11,7 @@ Job* job_createc(int id) {
 /**
  * Constructor for Job 
  */
-Job* job_create(char* path, Process* process_head, int status, int file) {
+Job* job_create(char* path, Process* process_head, int status, int file, int redir_mode) {
     Job* new_job = (Job*)malloc(sizeof(Job));
     new_job->id = id_edge++;
     new_job->status = status;
@@ -22,14 +22,13 @@ Job* job_create(char* path, Process* process_head, int status, int file) {
     new_job->f_process = process_head;
     new_job->pgid = -1;
     new_job->file = file;
+    new_job->redir_mode = redir_mode;
     return new_job;
 }
 
 void job_setpgid(Job* job, pid_t pid) {
     job->pgid = pid;
 }
-
-
 
 
 void job_print(Job* job) {
@@ -57,7 +56,7 @@ void job_free(Job* j){
 int jobs_init() {
     //Init Dummy Node
     head = (JobNode*)malloc(sizeof(JobNode));
-    head->job = job_create(NULL, NULL, -1, -1); //Dummy Node
+    head->job = job_create(NULL, NULL, -1, -1, -1); //Dummy Node
     tail = head;
     size = 0;
     id_edge = 0;

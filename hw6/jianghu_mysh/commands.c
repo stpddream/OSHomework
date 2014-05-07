@@ -1,17 +1,23 @@
 #include "commands.h"
 
-int cmd_ls(char* flags) {
+int cmd_ls(char** args, int n_args) {
     int i;
     int lflag = FALSE;
     int fflag = FALSE;
 
-    for (i = 0; i < strlen(flags); i++) {
-        if (flags[i] == 'F') {
-            fflag = TRUE;
-        } else if (flags[i] == 'l') {
-            lflag = TRUE;
+    for (i = 0; i < n_args; i++) {
+        // if it is a flag
+        if (args[i][0] == '-') {
+            if (args[i][1] == 'F') {
+                fflag = TRUE;
+            } else if (args[i][1] == 'l') {
+                lflag = TRUE;
+            } else {
+                printf("ls: invalid option -- '%c'", args[i][1]);
+                return -1;
+            }
         } else {
-            continue;
+            //ignore for now
         }
     }
 
@@ -54,13 +60,19 @@ int cmd_ls(char* flags) {
     return 0;
 }
 
-int cmd_mkdir(char* dir_name) {
-    f_mkdir(dir_name);
+int cmd_mkdir(char** dir_name, int n_args) {
+    int i = 0;
+    for (i = 0; i < n_args; i++) {
+        f_mkdir(dir_name[i]);
+    }
     return 0;
 }
 
-int cmd_rmdir(char* dir_name) {
-    f_remove_dir(dir_name);
+int cmd_rmdir(char** dir_name, int n_args) {
+    int i = 0;
+    for (i = 0; i < n_args; i++) {
+        f_remove_dir(dir_name[i]);
+    }
     return 0;
 }
 
@@ -75,6 +87,7 @@ int cmd_cat(int fd) {
 }
 
 int cmd_cd(char* dir_name) {
+
     int found = FALSE;
     DirStream ds;
     DirFileEntry entry;
@@ -103,12 +116,15 @@ int cmd_pwd() {
     return 0;
 }
 
-int cmd_rm(char* path) {
-    f_remove(path);
+int cmd_rm(char** path, int n_args) {
+    int i = 0;
+    for(i = 0; i < n_args; i++){
+        f_remove(path[i]);
+    }
     return 0;
 }
 
-int cmd_chmod(){
+int cmd_chmod() {
     return 0;
 }
 
