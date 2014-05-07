@@ -98,8 +98,6 @@ int f_open(char* path, const char* mode) {
     it_put(inode, inode_idx);
     int fd = ft_put(inode_idx, mode_v);
 
-
-
     return fd;
 }
 
@@ -140,14 +138,22 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
     if(check_permission(inode, PM_WRITE) == 0) return -1;
 
     if ((permission & 1) == 1) {
-        write_pos = inode->size + 1;
+        write_pos = inode->size - 1;// + 1;
     }
-
+           
     int bytes_written = fl_write(cur_dev, inode, write_pos, size * nmemb, ptr);
     inode->size += bytes_written;
+    printf("inode size is %d\n", inode->size);
     fs_update_inode(inode, inode_idx, cur_dev);    
     write_pos += bytes_written;
-    ft_set_pos(fd, write_pos);    
+    
+    printf("write_pos is %d\n", write_pos);
+    
+    //Not appending
+    if ((permission & 1) != 1) {
+        ft_set_pos(fd, write_pos);    
+    }
+    
     return bytes_written;    
 }
 
@@ -266,7 +272,6 @@ int f_remove_dir(char* path) {
                 return -1;
             }
         }
-
     }
    
     f_closedir(ds);
