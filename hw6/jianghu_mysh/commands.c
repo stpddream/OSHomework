@@ -26,7 +26,7 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     dir_stream.inode_idx = iList_tail->inode_idx;
 
     DirFileEntry entry;
-    iNode* inode = (iNode*) malloc(sizeof (iNode));
+    iNode* inode;
     char display[FILE_NAME_MAX + 1];
     char str[MAX_PATH_LEN];
 
@@ -35,6 +35,8 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
         if (strcmp(entry.file_name, ".") == 0) continue;
         if (strcmp(entry.file_name, "..") == 0) continue;
 
+        inode = (iNode*) malloc(sizeof (iNode));
+        
         strcpy(display, entry.file_name);
 
         if (it_exist(entry.inode_idx) == TRUE) {
@@ -67,6 +69,8 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
             printf("%s\t", display);
             if (lflag) printf("\n");
         }
+
+        free(inode);
     }
 
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
@@ -75,8 +79,6 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
     } else {
         printf("\n");
     }
-
-    free(inode);
 
     return 0;
 }
@@ -112,9 +114,7 @@ int cmd_rmdir(char** dir_name, int n_args) {
 int cmd_cat(char* path) {
 
     int fd = f_open(path, "r");
-    printf("path is %s\n", path);
-    printf("fd is %d\n", fd);
-
+    
     char buffer[512];
     int act_size;
     while (1) {
@@ -122,9 +122,10 @@ int cmd_cat(char* path) {
         if (act_size == 0) break;
         printf("%s", buffer);
     }
-    while (act_size != 0);
 
+    printf("\n");    
     f_close(fd);
+   
     return 0;
 }
 
