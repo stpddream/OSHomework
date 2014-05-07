@@ -102,7 +102,7 @@ int cmd_rmdir(char** dir_name, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
         if (f_remove_dir(dir_name[i]) == -1) {
-            printf("rm: cannot remove %s: No such file\n", path[i]);
+            printf("rm: cannot remove %s: No such directory\n", dir_name[i]);
         }
     }
     return 0;
@@ -155,7 +155,12 @@ int cmd_cat(int fd) {
     return 0;
 }
 
-int cmd_chmod() {
+int cmd_chmod(char* mode, char** files, int n_files) {
+    int i,who,what,symbol;
+    printf("tada!\n");
+    // parse symbolic mode
+    if(strlen(mode) != 3) printf("chmod: invalid mode: ‘%s’\n", mode);
+    
     return 0;
 }
 
@@ -199,26 +204,3 @@ int cmd_more(char* content) {
     }
 
 }
-
-int chmod(char* args) {
-    /*  int fd = f_open(args[1], "r");
-      int mult = 0;
-      char grp = args[0];
-    
-      char op = args[1];
-      int sum = 0;
-    
-      if(grp == 'x') mult = 1;
-      else if(grp == 'g') mult = 10;
-      else if(grp == 'u') mult = 100;*/
-
-
-
-    //    sum = ;
-
-
-
-    return 0;
-
-}
-

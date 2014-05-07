@@ -32,6 +32,19 @@
 
 extern char cur_dir[MAX_PATH_LEN];
 
+#define CHMOD_READ 0
+#define CHMOD_WRITE 1
+#define CHMOD_EXEC 2
+
+#define CHMOD_ADD 11
+#define CHMOD_RM 12
+#define CHMOD_SET 13
+
+#define CHMOD_USR 21
+#define CHMOD_GRP 22
+#define CHMOD_OTHR 23
+#define CHMOD_ALL 24
+
 int cmd_more(char* content);
 int cmd_cat(int fd);
 int cmd_ls(char** args, int n_args, int redir_mode, int fd);
