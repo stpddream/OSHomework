@@ -36,12 +36,10 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
         if (strcmp(entry.file_name, "..") == 0) continue;
 
         strcpy(display, entry.file_name);
-        printf("cur file %s\n", entry.file_name);
-     
+
         if (it_exist(entry.inode_idx) == TRUE) {
             inode = it_get_node(entry.inode_idx);
         } else {
-            inode = (iNode*)malloc(sizeof(iNode));
             fs_get_inode(inode, entry.inode_idx, cur_dev);
         }
 
@@ -72,7 +70,6 @@ int cmd_ls(char** args, int n_args, int redir_mode, int fd) {
 
         printf("%s\t", display);
         if (lflag) printf("\n");
-        free(inode);
     }
 
     if (redir_mode == WRITE_OVRWT || redir_mode == WRITE_APND) {
@@ -110,26 +107,26 @@ int cmd_rmdir(char** dir_name, int n_args) {
     int i = 0;
     for (i = 0; i < n_args; i++) {
         if (f_remove_dir(dir_name[i]) == -1) {
-            //printf("rm: cannot remove %s: No such file\n", path[i]);
+            printf("rm: cannot remove %s: No such directory\n", dir_name[i]);
         }
     }
     return 0;
 }
 
 int cmd_cat(char* path) {
-    
+
     int fd = f_open(path, "r");
-    printf("path is %s\n", path);
-    printf("fd is %d\n", fd);
-    
+
     char buffer[512];
-    int act_size;   
-    while(1) {
-        act_size = f_read(buffer, sizeof(buffer), 1, fd);
-        if(act_size == 0) break;
+    int act_size;
+    while (1) {
+        act_size = f_read(buffer, sizeof (buffer), 1, fd);
+        if (act_size == 0) break;
         printf("%s", buffer);
-    } while(act_size != 0);
-    
+    }
+    while (act_size != 0);
+
+    printf("\n");
     f_close(fd);
     return 0;
 }
@@ -177,7 +174,11 @@ int cmd_rm(char** path, int n_args) {
     return 0;
 }
 
-int cmd_chmod() {
+int cmd_chmod(char* mode, char** files, int n_files) {
+    int i, who, what, symbol;
+    printf("tada!\n");
+    // parse symbolic mode
+    if (strlen(mode) != 3) printf("chmod: invalid mode: ‘%s’\n", mode);
     return 0;
 }
 
@@ -219,42 +220,20 @@ int cmd_more(char* content) {
 
 
     }
-
 }
 
 int chmod(char* args) {
     int fd = f_open(args, "r");
     int mult = 0;
     char grp = args[0];
-    
+
     char op = args[1];
     int sum = 0;
-    
-    if(grp == 'x') mult = 1;
-    else if(grp == 'g') mult = 10;
-    else if(grp == 'u') mult = 100;
-    
-    
-    
-//    sum = ;
 
-    /*  int fd = f_open(args[1], "r");
-      int mult = 0;
-      char grp = args[0];
-    
-      char op = args[1];
-      int sum = 0;
-    
-      if(grp == 'x') mult = 1;
-      else if(grp == 'g') mult = 10;
-      else if(grp == 'u') mult = 100;*/
+    if (grp == 'x') mult = 1;
+    else if (grp == 'g') mult = 10;
+    else if (grp == 'u') mult = 100;
 
 
 
-    //    sum = ;
-
-
-
-    return 0;
 }
-
