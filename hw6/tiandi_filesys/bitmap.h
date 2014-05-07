@@ -22,6 +22,8 @@
 
 int ibit_on(Dev* device, int inode_idx);
 int ibit_off(Dev* device, int inode_idx);
+int ibit_is_on(Dev* device, int inode_idx);
+
 
 int abit_on(Dev* device, int databl_idx);
 int abit_off(Dev* device, int databl_idx);

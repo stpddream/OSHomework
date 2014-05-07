@@ -6,19 +6,22 @@ extern Dev* cur_dev;
 int dir_add(iNode* dir_inode, int inode_file_idx, char* name) {    
     DirFileEntry entry; 
     strcpy(entry.file_name, name);
+   
     entry.inode_idx = inode_file_idx;    
-    printf("size of dir node %d\n", dir_inode->size);
     fl_write(cur_dev, dir_inode, dir_inode->size, DIR_ENTRY_SZ, &entry);    
-    dir_inode->size += DIR_ENTRY_SZ;                
+    dir_inode->size += DIR_ENTRY_SZ;         
+   
+
     return 0;
 }
 
 
 int dir_lookup(iNode* dir_inode, char* file_name) {
     int i;
-    DirFileEntry entry;
+    DirFileEntry entry;  
     for(i = 0; i < dir_inode->size / DIR_ENTRY_SZ; i++) {
-        fl_read(cur_dev, dir_inode, i * DIR_ENTRY_SZ, DIR_ENTRY_SZ, &entry);
+        fl_read(cur_dev, dir_inode, i * DIR_ENTRY_SZ, DIR_ENTRY_SZ, &entry);      
+//        printf("file name is %s\n", entry.file_name);
         if(strcmp(entry.file_name, file_name) == 0) return entry.inode_idx;
     }
     return -1;    
@@ -29,7 +32,7 @@ int dir_remove_file(iNode* dir_inode, int dir_inode_idx, int inode_file_idx) {
     int i;
     DirFileEntry cur_entry;
     for(i = 0; i < dir_inode->size / DIR_ENTRY_SZ; i++) {
-        fl_read(cur_dev, dir_inode, i * DIR_ENTRY_SZ, DIR_ENTRY_SZ, &cur_entry);
+        fl_read(cur_dev, dir_inode, i * DIR_ENTRY_SZ, DIR_ENTRY_SZ, &cur_entry);        
         if(cur_entry.inode_idx == inode_file_idx) break;                  
     }
     

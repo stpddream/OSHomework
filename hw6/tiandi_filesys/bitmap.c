@@ -13,6 +13,26 @@ int ibit_off(Dev* device, int inode_idx) {
     return bit_turn(device, IBIT_BYTE_ADDR(byte_idx), offset, bm_off);
 }
 
+int ibit_is_on(Dev* device, int inode_idx) {
+    int byteno = inode_idx / 8;
+    int offset = inode_idx % 8;
+    char byte;
+
+    dev_read(&byte, sizeof(char), IBIT_BYTE_ADDR(byteno), device);           
+    return bm_is_on(&byte, offset);
+}
+
+
+int abit_is_on(Dev* device, int inode_idx) {
+    int byteno = inode_idx / 8;
+    int offset = inode_idx % 8;
+    char byte;
+
+    dev_read(&byte, sizeof(char), ABIT_BYTE_ADDR(byteno), device);           
+    return bm_is_on(&byte, offset);
+}
+
+
 int abit_on(Dev* device, int databl_idx) {    
     int byte_idx = databl_idx / 8;
     int offset = databl_idx % 8;
@@ -68,5 +88,5 @@ int bm_get_free(char* map) {
  * Check if offset is on
  */
 int bm_is_on(char* map, int offset) {
-    return ((*map) >> offset & 1) == 1;
+    return (((*map) >> offset) & 1) == 1;
 }
