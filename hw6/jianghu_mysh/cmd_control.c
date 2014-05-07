@@ -56,8 +56,7 @@ void b_kill(char** cur_args, int n_args) {
                         kill(process->pid, (kill_flag ? SIGKILL : SIGTERM));      
                         process = process->next;
                     }
-                }                                                
-                
+                }                                                            
             }
             else {                
                 if(kill(id, (kill_flag ? SIGKILL : SIGTERM)) == -1) { 
