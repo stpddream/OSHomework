@@ -372,8 +372,11 @@ int f_mkdir(char* path) {
         strcpy(this_path, path + 1);
     } else {
         cur_idx = cur_dir_idx;
+        printf("current directory is: %d\n", cur_idx);
+        printf("cur dir idx is %d\n", cur_dir_idx);
         strcpy(this_path, path);
     }
+    printf("start to make\n");
 
     dirs = strtok(this_path, "/");
 
