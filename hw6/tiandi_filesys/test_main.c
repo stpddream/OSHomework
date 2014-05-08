@@ -46,20 +46,37 @@ int main(int argc, char** argv) {
     int mfd = f_open("file", "w+");
 
     
-    char* data = "hahahaha";
+    char* data = "wordisgoodl";
+    char* another = "hohohohoh"; 
+    
     int rt2 = f_write(data, strlen(data), 1, mfd);
     
     printf("rt2 %d\n", rt2);
-    printf("gui after close\n");
     f_close(mfd);
-    printf("guile\n");
+    int hahafd = f_open("file", "a+");
     
-    char another[20];
-    
-    int hahafd = f_open("file", "r");
-    int rt3 = f_read(another, strlen(data), 1, hahafd);
+    int rt3 = f_write(another, strlen(another), 1, hahafd);
     printf("rt3 is %d\n", rt3);
     printf("content: %s\n", another);
+    
+    
+    f_close(hahafd);
+    
+    char result[50];
+    int outfd = f_open("file", "r");
+    int bytesss = f_read(result, strlen(another) + strlen(another), 1, outfd);
+    printf("read %d\n", bytesss);
+    printf("Actual is %s\n", result);
+    
+    
+    /*
+    
+    char result[30];
+    //f_seek(hahafd, 0, SEEK_SET);
+    int rt4 = f_read(result, strlen(another) + strlen(data), 1, hahafd);
+    printf("rt4 is %d\n", rt4);
+    printf("actual data is %s\n", result);
+     */
     
     
     /*
