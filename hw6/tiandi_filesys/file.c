@@ -85,12 +85,23 @@ int f_open(char* path, const char* mode) {
         activate_inode(inode, FT_FILE, prev_name);
         fs_update_inode(inode, inode_idx, cur_dev);
         
-            /** Add file to directory */
+        /** Add file to directory */
         iNode parent_node;
         fs_get_inode(&parent_node, parent_idx, cur_dev);
         dir_add(&parent_node, inode_idx, prev_name);
         fs_update_inode(&parent_node, parent_idx, cur_dev);
-    } else fs_get_inode(inode, prev_idx, cur_dev);
+    } else {
+        //File exist
+        fs_get_inode(inode, prev_idx, cur_dev);
+        
+        //No append & Write mode
+        if((mode_v & 1) == 0 && ((mode_v >> 1) & 1 == 1)) {
+            //Truncate file
+            clear_data_bits(cur_dev, inode);
+            inode->size = 0;
+            inode->mtime = time(0);            
+        }
+    }
     
     //check permission
     if(check_permission(inode, mode_v) == FALSE) return -1;
@@ -132,13 +143,13 @@ int f_write(void* ptr, size_t size, size_t nmemb, int fd) {
     int inode_idx = ft_get_idx(fd);
     write_pos = ft_get_pos(fd);
     iNode* inode = it_get_node(inode_idx);
-    printf("permission for file is %d\n", inode->permission);
+    //printf("permission for file is %d\n", inode->permission);
     
     //Check file permission
     if(check_permission(inode, PM_WRITE) == 0) return -1;
 
     if ((permission & 1) == 1) {
-        write_pos = inode->size - 1;// + 1;
+        write_pos = inode->size;// + 1;
     }
            
     int bytes_written = fl_write(cur_dev, inode, write_pos, size * nmemb, ptr);

@@ -42,19 +42,53 @@ int main(int argc, char** argv) {
     set_user(users[0]);
     set_cur_idx(2);
     int cur_dir_idx = 2;
-    
-    int mfd = f_open("file", "w+");
 
     
-    char* data = "wordisgoodl";
-    char* another = "hohohohoh"; 
+    char* data = "word";
     
-    int rt2 = f_write(data, strlen(data), 1, mfd);
     
+    
+    int mfd = f_open("file", "w");     
+    int rt2 = f_write(data, strlen(data), 1, mfd);    
     printf("rt2 %d\n", rt2);
     f_close(mfd);
+    
+    
+    //Try to read out
+    int somefd = f_open("file", "r");
+    char some[20];
+    int st = f_read(some, strlen(data), 1, somefd);
+    printf("read out is %s\n", some);
+    printf("bytes: %d\n", st);
+        
+    //Write another
+    char* another = "abcdefghijklmn"; 
     int hahafd = f_open("file", "a+");
     
+    char ar[20];
+    f_seek(hahafd, 0, SEEK_SET);
+    int rt5 = f_read(ar, strlen(data), 1, hahafd);
+    printf("right now is %s\n", ar);
+    printf("rt5 is %d\n", rt5);
+    
+    int rt4 = f_write(another, strlen(another), 1, hahafd);
+    printf("rt4 is %d\n", rt4);
+    
+    char readout[20];
+    f_seek(hahafd, 0, SEEK_SET);
+    int rt3 = f_read(readout, strlen(another) + strlen(data), 1, hahafd);
+    printf("read out to be %s\n", readout);
+    printf("rt3 %d\n", rt3);
+    
+    
+    
+    
+    //Read
+    
+    
+    
+    
+    /*
     int rt3 = f_write(another, strlen(another), 1, hahafd);
     printf("rt3 is %d\n", rt3);
     printf("content: %s\n", another);
@@ -67,7 +101,7 @@ int main(int argc, char** argv) {
     int bytesss = f_read(result, strlen(another) + strlen(another), 1, outfd);
     printf("read %d\n", bytesss);
     printf("Actual is %s\n", result);
-    
+    */
     
     /*
     

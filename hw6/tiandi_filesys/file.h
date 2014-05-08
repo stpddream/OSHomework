@@ -14,6 +14,7 @@
 #include "filesys_hd.h"
 #include "file_table.h"
 #include "inode_table.h"
+#include "filesys_util.h"
 #include "filesys_hd.h"
 #include "file_util.h"
 #include "kernel_mem.h"
